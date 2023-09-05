@@ -1,0 +1,316 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (logApiList.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!logApiList.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!logApiList.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(logApiList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { log_API: currentTable } });
+var currentPageID = ew.PAGE_ID = "list";
+var currentForm;
+var @(logApiList.FormName);
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("@(logApiList.FormName)")
+        .setPageId("list")
+        .setSubmitWithFetch(@(logApiList.UseAjaxActions ? "true" : "false"))
+        .setFormKeyCountName("@(logApiList.FormKeyCountName)")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+ew.PREVIEW_SELECTOR = ".ew-preview-btn";
+ew.PREVIEW_MODAL_CLASS = "modal modal-fullscreen-sm-down";
+ew.PREVIEW_ROW = true;
+ew.PREVIEW_SINGLE_ROW = false;
+ew.PREVIEW || ew.ready("head", ew.PATH_BASE + "js/preview.min.js?v=20.6.0", "preview");
+</script>
+<script>
+window.Tabulator || loadjs([
+    ew.PATH_BASE + "js/tabulator.min.js?v=20.6.3",
+    ew.PATH_BASE + "css/@CssFile("tabulator_bootstrap5.css", false)?v=20.6.3"
+], "import");
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!logApiList.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+@if (logApiList.TotalRecords > 0 && logApiList.ExportOptions.Visible) {
+    logApiList.ExportOptions.Render("body");
+}
+@if (logApiList.ImportOptions.Visible) {
+    logApiList.ImportOptions.Render("body");
+}
+@if (logApiList.SearchOptions.Visible) {
+    logApiList.SearchOptions.Render("body");
+}
+@if (logApiList.FilterOptions.Visible) {
+    logApiList.FilterOptions.Render("body");
+}
+</div>
+}
+@if (!logApiList.IsModal) {
+<form name="flog_APIsrch" id="flog_APIsrch" class="ew-form ew-ext-search-form" action="@AppPath(CurrentPageName())" novalidate autocomplete="off">
+<div id="flog_APIsrch_search_panel" class="mb-2 mb-sm-0 @(logApiList.SearchPanelClass)"><!-- .ew-search-panel -->
+<script>
+var currentTable = @Html.Raw(ConvertToJson(logApiList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { log_API: currentTable } });
+var currentForm;
+var flog_APIsrch, currentSearchForm, currentAdvancedSearchForm;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery,
+        fields = currentTable.fields;
+
+    // Form object for search
+    let form = new ew.FormBuilder()
+        .setId("flog_APIsrch")
+        .setPageId("list")
+@if (logApiList.UseAjaxActions) {
+        <text>.setSubmitWithFetch(true)</text>
+}
+
+        // Dynamic selection lists
+        .setLists({
+        })
+
+        // Filters
+        .setFilterList(@Html.Raw(await logApiList.GetFilterList()))
+        .build();
+    window[form.id] = form;
+    currentSearchForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<input type="hidden" name="cmd" value="search">
+@if (Security.CanSearch) {
+if (!logApiList.IsExport() && Empty(logApiList.CurrentAction) && logApiList.HasSearchFields()) { @* Show search form (begin) *@
+<div class="ew-extended-search container-fluid ps-2">
+<div class="row mb-0">
+    <div class="col-sm-auto px-0 pe-sm-2">
+        <div class="ew-basic-search input-group">
+            <input type="search" name="@(Config.TableBasicSearch)" id="@(Config.TableBasicSearch)" class="form-control ew-basic-search-keyword" value="@Html.Raw(HtmlEncode(logApiList.BasicSearch.SessionKeyword))" placeholder="@(HtmlEncode(Language.Phrase("Search")))" aria-label="@(HtmlEncode(Language.Phrase("Search")))">
+            <input type="hidden" name="@(Config.TableBasicSearchType)" id="@(Config.TableBasicSearchType)" class="ew-basic-search-type" value="@(HtmlEncode(logApiList.BasicSearch.SessionType))">
+            <button type="button" data-bs-toggle="dropdown" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" aria-haspopup="true" aria-expanded="false">
+                <span id="searchtype">@Html.Raw(logApiList.BasicSearch.TypeNameShort)</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end">
+                <button type="button" class="dropdown-item@(logApiList.BasicSearch.SessionType == "" ? " active" : "")" form="flog_APIsrch" data-ew-action="search-type">@Html.Raw(Language.Phrase("QuickSearchAuto"))</button>
+                <button type="button" class="dropdown-item@(logApiList.BasicSearch.SessionType == "=" ? " active" : "")" form="flog_APIsrch" data-ew-action="search-type" data-search-type="=">@Html.Raw(Language.Phrase("QuickSearchExact"))</button>
+                <button type="button" class="dropdown-item@(logApiList.BasicSearch.SessionType == "AND" ? " active" : "")" form="flog_APIsrch" data-ew-action="search-type" data-search-type="AND">@Html.Raw(Language.Phrase("QuickSearchAll"))</button>
+                <button type="button" class="dropdown-item@(logApiList.BasicSearch.SessionType == "OR" ? " active" : "")" form="flog_APIsrch" data-ew-action="search-type" data-search-type="OR">@Html.Raw(Language.Phrase("QuickSearchAny"))</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-auto mb-3">
+        <button class="btn btn-primary" name="btn-submit" id="btn-submit" type="submit">@Html.Raw(Language.Phrase("SearchBtn"))</button>
+    </div>
+</div>
+</div><!-- /.ew-extended-search -->
+} @* Show search form (end) *@
+}
+</div><!-- /.ew-search-panel -->
+</form>
+}
+@logApiList.ShowPageHeader()
+@logApiList.ShowMessages()
+<main class="list @(logApiList.TotalRecords == 0 && !logApiList.IsAdd ? " ew-no-record" : "")">
+<div id="ew-list">
+@if (logApiList.TotalRecords > 0 || !Empty(logApiList.CurrentAction)) {
+<div class="card ew-card ew-grid@(logApiList.IsAddOrEdit ? " ew-grid-add-edit" : "") @(logApiList.TableGridClass)">
+<form name="@(logApiList.FormName)" id="@(logApiList.FormName)" class="ew-form ew-list-form" action="@AppPath(logApiList.PageName)" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+@if (logApiList.IsModal) {
+<input type="hidden" name="modal" value="1">
+}
+<div id="gmp_log_API" class="card-body ew-grid-middle-panel @(logApiList.TableContainerClass)" style="@(logApiList.TableContainerStyle)">
+@if (logApiList.TotalRecords > 0 || logApiList.IsGridEdit || logApiList.IsMultiEdit) {
+<table id="tbl_log_APIlist" class="@(logApiList.TableClass)"><!-- .ew-table -->
+<thead>
+    <tr class="ew-table-header">
+@{
+    // Header row
+    logApiList.RowType = RowType.Header;
+
+    // Render list options
+    await logApiList.RenderListOptions();
+}
+@* Render list options (header, left) *@
+@logApiList.ListOptions.RenderHeader("left")
+@if (logApiList.id.Visible) { // logApiList.id.Visible (begin)
+        <th data-name="id" class="@(logApiList.id.HeaderCellClass)"><div id="elh_log_API_id" class="log_API_id">@Html.Raw(logApiList.RenderFieldHeader(logApiList.id))</div></th>
+} @* logApiList.id.Visible (end) *@
+@if (logApiList.API_Type.Visible) { // logApiList.API_Type.Visible (begin)
+        <th data-name="API_Type" class="@(logApiList.API_Type.HeaderCellClass)"><div id="elh_log_API_API_Type" class="log_API_API_Type">@Html.Raw(logApiList.RenderFieldHeader(logApiList.API_Type))</div></th>
+} @* logApiList.API_Type.Visible (end) *@
+@if (logApiList.API_Link.Visible) { // logApiList.API_Link.Visible (begin)
+        <th data-name="API_Link" class="@(logApiList.API_Link.HeaderCellClass)"><div id="elh_log_API_API_Link" class="log_API_API_Link">@Html.Raw(logApiList.RenderFieldHeader(logApiList.API_Link))</div></th>
+} @* logApiList.API_Link.Visible (end) *@
+@if (logApiList.API_Body.Visible) { // logApiList.API_Body.Visible (begin)
+        <th data-name="API_Body" class="@(logApiList.API_Body.HeaderCellClass)"><div id="elh_log_API_API_Body" class="log_API_API_Body">@Html.Raw(logApiList.RenderFieldHeader(logApiList.API_Body))</div></th>
+} @* logApiList.API_Body.Visible (end) *@
+@if (logApiList.API_Status.Visible) { // logApiList.API_Status.Visible (begin)
+        <th data-name="API_Status" class="@(logApiList.API_Status.HeaderCellClass)"><div id="elh_log_API_API_Status" class="log_API_API_Status">@Html.Raw(logApiList.RenderFieldHeader(logApiList.API_Status))</div></th>
+} @* logApiList.API_Status.Visible (end) *@
+@if (logApiList.API_Result.Visible) { // logApiList.API_Result.Visible (begin)
+        <th data-name="API_Result" class="@(logApiList.API_Result.HeaderCellClass)"><div id="elh_log_API_API_Result" class="log_API_API_Result">@Html.Raw(logApiList.RenderFieldHeader(logApiList.API_Result))</div></th>
+} @* logApiList.API_Result.Visible (end) *@
+@* Render list options (header, right) *@
+@logApiList.ListOptions.RenderHeader("right")
+    </tr>
+</thead>
+<tbody data-page="@(logApiList.PageNumber)">
+@{
+    await logApiList.SetupGrid();
+    bool eof = logApiList.Recordset == null; // DN
+}
+@while (logApiList.RecordCount < logApiList.StopRecord || SameString(logApiList.RowIndex, "$rowindex$")) { // Begin While
+    if (!eof && !SameString(logApiList.RowIndex, "$rowindex$") &&
+        (!logApiList.IsGridAdd || logApiList.CurrentMode == "copy") &&
+        (!((logApiList.IsCopy || logApiList.IsAdd) && logApiList.RowIndex is int rowIndex && rowIndex == 0))) // DN
+        eof = !await logApiList.Recordset.ReadAsync();
+    logApiList.RecordCount++;
+    if (logApiList.RecordCount >= logApiList.StartRecord) {
+        await logApiList.SetupRow();
+    <tr @Html.Raw(logApiList.RowAttributes)>
+    @* Render list options (body, left) *@
+    @logApiList.ListOptions.RenderBody("left", logApiList.RowCount)
+    @if (logApiList.id.Visible) { // logApiList.id.Visible (begin)
+        <td data-name="id" @Html.Raw(logApiList.id.CellAttributes)>
+<span id="el@(logApiList.RowIndex == "$rowindex$" ? "$rowindex$" : logApiList.RowCount)_log_API_id" class="el_log_API_id">
+<span @Html.Raw(logApiList.id.ViewAttributes)>
+@Html.Raw(logApiList.id.GetViewValue())</span>
+</span>
+</td>
+    } @* logApiList.id.Visible (end) *@
+    @if (logApiList.API_Type.Visible) { // logApiList.API_Type.Visible (begin)
+        <td data-name="API_Type" @Html.Raw(logApiList.API_Type.CellAttributes)>
+<span id="el@(logApiList.RowIndex == "$rowindex$" ? "$rowindex$" : logApiList.RowCount)_log_API_API_Type" class="el_log_API_API_Type">
+<span @Html.Raw(logApiList.API_Type.ViewAttributes)>
+@Html.Raw(logApiList.API_Type.GetViewValue())</span>
+</span>
+</td>
+    } @* logApiList.API_Type.Visible (end) *@
+    @if (logApiList.API_Link.Visible) { // logApiList.API_Link.Visible (begin)
+        <td data-name="API_Link" @Html.Raw(logApiList.API_Link.CellAttributes)>
+<span id="el@(logApiList.RowIndex == "$rowindex$" ? "$rowindex$" : logApiList.RowCount)_log_API_API_Link" class="el_log_API_API_Link">
+<span @Html.Raw(logApiList.API_Link.ViewAttributes)>
+@Html.Raw(logApiList.API_Link.GetViewValue())</span>
+</span>
+</td>
+    } @* logApiList.API_Link.Visible (end) *@
+    @if (logApiList.API_Body.Visible) { // logApiList.API_Body.Visible (begin)
+        <td data-name="API_Body" @Html.Raw(logApiList.API_Body.CellAttributes)>
+<span id="el@(logApiList.RowIndex == "$rowindex$" ? "$rowindex$" : logApiList.RowCount)_log_API_API_Body" class="el_log_API_API_Body">
+<span @Html.Raw(logApiList.API_Body.ViewAttributes)>
+@Html.Raw(logApiList.API_Body.GetViewValue())</span>
+</span>
+</td>
+    } @* logApiList.API_Body.Visible (end) *@
+    @if (logApiList.API_Status.Visible) { // logApiList.API_Status.Visible (begin)
+        <td data-name="API_Status" @Html.Raw(logApiList.API_Status.CellAttributes)>
+<span id="el@(logApiList.RowIndex == "$rowindex$" ? "$rowindex$" : logApiList.RowCount)_log_API_API_Status" class="el_log_API_API_Status">
+<span @Html.Raw(logApiList.API_Status.ViewAttributes)>
+@Html.Raw(logApiList.API_Status.GetViewValue())</span>
+</span>
+</td>
+    } @* logApiList.API_Status.Visible (end) *@
+    @if (logApiList.API_Result.Visible) { // logApiList.API_Result.Visible (begin)
+        <td data-name="API_Result" @Html.Raw(logApiList.API_Result.CellAttributes)>
+<span id="el@(logApiList.RowIndex == "$rowindex$" ? "$rowindex$" : logApiList.RowCount)_log_API_API_Result" class="el_log_API_API_Result">
+<span @Html.Raw(logApiList.API_Result.ViewAttributes)>
+@Html.Raw(logApiList.API_Result.GetViewValue())</span>
+</span>
+</td>
+    } @* logApiList.API_Result.Visible (end) *@
+    @* Render list options (body, right) *@
+    @logApiList.ListOptions.RenderBody("right", logApiList.RowCount)
+    </tr>
+    } @* End if *@
+
+    // Reset for template row
+    if (SameString(logApiList.RowIndex, "$rowindex$"))
+        logApiList.RowIndex = 0;
+
+    // Reset inline add/copy row
+    if ((logApiList.IsCopy || logApiList.IsAdd) && logApiList.RowIndex is int rowIndex2 && rowIndex2 == 0)
+        logApiList.RowIndex = 1;
+} @* End While *@
+</tbody>
+</table><!-- /.ew-table -->
+} @* End If TotalRecords > 0 *@
+</div><!-- /.ew-grid-middle-panel -->
+@if (Empty(logApiList.CurrentAction) && !logApiList.UseAjaxActions) {
+<input type="hidden" name="action" id="action" value="">
+}
+</form><!-- /.ew-list-form -->
+@{ logApiList.CloseRecordset(); }
+@if (!logApiList.IsExport()) {
+<div class="card-footer ew-grid-lower-panel">
+@if (!logApiList.IsGridAdd && !(logApiList.IsGridEdit && logApiList.ModalGridEdit) && !logApiList.IsMultiEdit) {
+@Html.Raw(logApiList.Pager.Render())
+}
+<div class="ew-list-other-options">
+@logApiList.OtherOptions.RenderBody("bottom")
+</div>
+</div>
+}
+</div><!-- /.ew-grid -->
+} else { // Show other options
+<div class="ew-list-other-options">
+@logApiList.OtherOptions.ForEach(opt => opt.ButtonClass = "").RenderBody()
+</div>
+}
+</div>
+</main>
+@logApiList.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!logApiList.IsExport()) {
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("log_API");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

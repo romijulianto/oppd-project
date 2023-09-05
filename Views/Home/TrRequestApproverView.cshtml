@@ -1,0 +1,195 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (trRequestApproverView.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!trRequestApproverView.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!trRequestApproverView.IsExport()) {
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!trRequestApproverView.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+    @trRequestApproverView.ExportOptions.RenderBody()
+    @trRequestApproverView.OtherOptions.RenderBody()
+</div>
+}
+@trRequestApproverView.ShowPageHeader()
+@trRequestApproverView.ShowMessages()
+<main class="view">
+<form name="ftr_request_approverview" id="ftr_request_approverview" class="ew-form ew-view-form overlay-wrapper" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (!trRequestApproverView.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(trRequestApproverView.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { tr_request_approver: currentTable } });
+var currentPageID = ew.PAGE_ID = "view";
+var currentForm;
+var ftr_request_approverview;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("ftr_request_approverview")
+        .setPageId("view")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+}
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="modal" value="@ConvertToInt(trRequestApproverView.IsModal)">
+<table class="@(trRequestApproverView.TableClass)">
+@if (trRequestApproverView.id.Visible) { // trRequestApproverView.id.Visible (begin)
+    <tr id="r_id" @Html.Raw(trRequestApproverView.id.RowAttributes)>
+        <td class="@(trRequestApproverView.TableLeftColumnClass)"><span id="elh_tr_request_approver_id">@Html.Raw(trRequestApproverView.id.Caption)</span></td>
+        <td data-name="id" @Html.Raw(trRequestApproverView.id.CellAttributes)>
+<span id="el_tr_request_approver_id">
+<span @Html.Raw(trRequestApproverView.id.ViewAttributes)>
+@Html.Raw(trRequestApproverView.id.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestApproverView.id.Visible (end) *@
+@if (trRequestApproverView.request_id.Visible) { // trRequestApproverView.request_id.Visible (begin)
+    <tr id="r_request_id" @Html.Raw(trRequestApproverView.request_id.RowAttributes)>
+        <td class="@(trRequestApproverView.TableLeftColumnClass)"><span id="elh_tr_request_approver_request_id">@Html.Raw(trRequestApproverView.request_id.Caption)</span></td>
+        <td data-name="request_id" @Html.Raw(trRequestApproverView.request_id.CellAttributes)>
+<span id="el_tr_request_approver_request_id">
+<span @Html.Raw(trRequestApproverView.request_id.ViewAttributes)>
+@Html.Raw(trRequestApproverView.request_id.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestApproverView.request_id.Visible (end) *@
+@if (trRequestApproverView._UserName.Visible) { // trRequestApproverView._UserName.Visible (begin)
+    <tr id="r__UserName" @Html.Raw(trRequestApproverView._UserName.RowAttributes)>
+        <td class="@(trRequestApproverView.TableLeftColumnClass)"><span id="elh_tr_request_approver__UserName">@Html.Raw(trRequestApproverView._UserName.Caption)</span></td>
+        <td data-name="_UserName" @Html.Raw(trRequestApproverView._UserName.CellAttributes)>
+<span id="el_tr_request_approver__UserName">
+<span @Html.Raw(trRequestApproverView._UserName.ViewAttributes)>
+@Html.Raw(trRequestApproverView._UserName.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestApproverView._UserName.Visible (end) *@
+@if (trRequestApproverView.Full_Name.Visible) { // trRequestApproverView.Full_Name.Visible (begin)
+    <tr id="r_Full_Name" @Html.Raw(trRequestApproverView.Full_Name.RowAttributes)>
+        <td class="@(trRequestApproverView.TableLeftColumnClass)"><span id="elh_tr_request_approver_Full_Name">@Html.Raw(trRequestApproverView.Full_Name.Caption)</span></td>
+        <td data-name="Full_Name" @Html.Raw(trRequestApproverView.Full_Name.CellAttributes)>
+<span id="el_tr_request_approver_Full_Name">
+<span @Html.Raw(trRequestApproverView.Full_Name.ViewAttributes)>
+@Html.Raw(trRequestApproverView.Full_Name.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestApproverView.Full_Name.Visible (end) *@
+@if (trRequestApproverView.Position_Name.Visible) { // trRequestApproverView.Position_Name.Visible (begin)
+    <tr id="r_Position_Name" @Html.Raw(trRequestApproverView.Position_Name.RowAttributes)>
+        <td class="@(trRequestApproverView.TableLeftColumnClass)"><span id="elh_tr_request_approver_Position_Name">@Html.Raw(trRequestApproverView.Position_Name.Caption)</span></td>
+        <td data-name="Position_Name" @Html.Raw(trRequestApproverView.Position_Name.CellAttributes)>
+<span id="el_tr_request_approver_Position_Name">
+<span @Html.Raw(trRequestApproverView.Position_Name.ViewAttributes)>
+@Html.Raw(trRequestApproverView.Position_Name.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestApproverView.Position_Name.Visible (end) *@
+@if (trRequestApproverView.Approval_Status.Visible) { // trRequestApproverView.Approval_Status.Visible (begin)
+    <tr id="r_Approval_Status" @Html.Raw(trRequestApproverView.Approval_Status.RowAttributes)>
+        <td class="@(trRequestApproverView.TableLeftColumnClass)"><span id="elh_tr_request_approver_Approval_Status">@Html.Raw(trRequestApproverView.Approval_Status.Caption)</span></td>
+        <td data-name="Approval_Status" @Html.Raw(trRequestApproverView.Approval_Status.CellAttributes)>
+<span id="el_tr_request_approver_Approval_Status">
+<span @Html.Raw(trRequestApproverView.Approval_Status.ViewAttributes)>
+@Html.Raw(trRequestApproverView.Approval_Status.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestApproverView.Approval_Status.Visible (end) *@
+@if (trRequestApproverView.Approval_Date.Visible) { // trRequestApproverView.Approval_Date.Visible (begin)
+    <tr id="r_Approval_Date" @Html.Raw(trRequestApproverView.Approval_Date.RowAttributes)>
+        <td class="@(trRequestApproverView.TableLeftColumnClass)"><span id="elh_tr_request_approver_Approval_Date">@Html.Raw(trRequestApproverView.Approval_Date.Caption)</span></td>
+        <td data-name="Approval_Date" @Html.Raw(trRequestApproverView.Approval_Date.CellAttributes)>
+<span id="el_tr_request_approver_Approval_Date">
+<span @Html.Raw(trRequestApproverView.Approval_Date.ViewAttributes)>
+@Html.Raw(trRequestApproverView.Approval_Date.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestApproverView.Approval_Date.Visible (end) *@
+@if (trRequestApproverView.Last_Update_By.Visible) { // trRequestApproverView.Last_Update_By.Visible (begin)
+    <tr id="r_Last_Update_By" @Html.Raw(trRequestApproverView.Last_Update_By.RowAttributes)>
+        <td class="@(trRequestApproverView.TableLeftColumnClass)"><span id="elh_tr_request_approver_Last_Update_By">@Html.Raw(trRequestApproverView.Last_Update_By.Caption)</span></td>
+        <td data-name="Last_Update_By" @Html.Raw(trRequestApproverView.Last_Update_By.CellAttributes)>
+<span id="el_tr_request_approver_Last_Update_By">
+<span @Html.Raw(trRequestApproverView.Last_Update_By.ViewAttributes)>
+@Html.Raw(trRequestApproverView.Last_Update_By.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestApproverView.Last_Update_By.Visible (end) *@
+@if (trRequestApproverView.Created_By.Visible) { // trRequestApproverView.Created_By.Visible (begin)
+    <tr id="r_Created_By" @Html.Raw(trRequestApproverView.Created_By.RowAttributes)>
+        <td class="@(trRequestApproverView.TableLeftColumnClass)"><span id="elh_tr_request_approver_Created_By">@Html.Raw(trRequestApproverView.Created_By.Caption)</span></td>
+        <td data-name="Created_By" @Html.Raw(trRequestApproverView.Created_By.CellAttributes)>
+<span id="el_tr_request_approver_Created_By">
+<span @Html.Raw(trRequestApproverView.Created_By.ViewAttributes)>
+@Html.Raw(trRequestApproverView.Created_By.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestApproverView.Created_By.Visible (end) *@
+@if (trRequestApproverView.Created_Date.Visible) { // trRequestApproverView.Created_Date.Visible (begin)
+    <tr id="r_Created_Date" @Html.Raw(trRequestApproverView.Created_Date.RowAttributes)>
+        <td class="@(trRequestApproverView.TableLeftColumnClass)"><span id="elh_tr_request_approver_Created_Date">@Html.Raw(trRequestApproverView.Created_Date.Caption)</span></td>
+        <td data-name="Created_Date" @Html.Raw(trRequestApproverView.Created_Date.CellAttributes)>
+<span id="el_tr_request_approver_Created_Date">
+<span @Html.Raw(trRequestApproverView.Created_Date.ViewAttributes)>
+@Html.Raw(trRequestApproverView.Created_Date.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestApproverView.Created_Date.Visible (end) *@
+@if (trRequestApproverView.ETL_Date.Visible) { // trRequestApproverView.ETL_Date.Visible (begin)
+    <tr id="r_ETL_Date" @Html.Raw(trRequestApproverView.ETL_Date.RowAttributes)>
+        <td class="@(trRequestApproverView.TableLeftColumnClass)"><span id="elh_tr_request_approver_ETL_Date">@Html.Raw(trRequestApproverView.ETL_Date.Caption)</span></td>
+        <td data-name="ETL_Date" @Html.Raw(trRequestApproverView.ETL_Date.CellAttributes)>
+<span id="el_tr_request_approver_ETL_Date">
+<span @Html.Raw(trRequestApproverView.ETL_Date.ViewAttributes)>
+@Html.Raw(trRequestApproverView.ETL_Date.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestApproverView.ETL_Date.Visible (end) *@
+</table>
+@{ trRequestApproverView.CloseRecordset(); }
+</form>
+</main>
+@trRequestApproverView.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!trRequestApproverView.IsExport()) {
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

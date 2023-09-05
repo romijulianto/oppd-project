@@ -1,0 +1,283 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (mtReasonList.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!mtReasonList.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!mtReasonList.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtReasonList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_reason: currentTable } });
+var currentPageID = ew.PAGE_ID = "list";
+var currentForm;
+var @(mtReasonList.FormName);
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("@(mtReasonList.FormName)")
+        .setPageId("list")
+        .setSubmitWithFetch(@(mtReasonList.UseAjaxActions ? "true" : "false"))
+        .setFormKeyCountName("@(mtReasonList.FormKeyCountName)")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+ew.PREVIEW_SELECTOR = ".ew-preview-btn";
+ew.PREVIEW_MODAL_CLASS = "modal modal-fullscreen-sm-down";
+ew.PREVIEW_ROW = true;
+ew.PREVIEW_SINGLE_ROW = false;
+ew.PREVIEW || ew.ready("head", ew.PATH_BASE + "js/preview.min.js?v=20.6.0", "preview");
+</script>
+<script>
+window.Tabulator || loadjs([
+    ew.PATH_BASE + "js/tabulator.min.js?v=20.6.3",
+    ew.PATH_BASE + "css/@CssFile("tabulator_bootstrap5.css", false)?v=20.6.3"
+], "import");
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!mtReasonList.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+@if (mtReasonList.TotalRecords > 0 && mtReasonList.ExportOptions.Visible) {
+    mtReasonList.ExportOptions.Render("body");
+}
+@if (mtReasonList.ImportOptions.Visible) {
+    mtReasonList.ImportOptions.Render("body");
+}
+@if (mtReasonList.SearchOptions.Visible) {
+    mtReasonList.SearchOptions.Render("body");
+}
+@if (mtReasonList.FilterOptions.Visible) {
+    mtReasonList.FilterOptions.Render("body");
+}
+</div>
+}
+@if (!mtReasonList.IsModal) {
+<form name="fmt_reasonsrch" id="fmt_reasonsrch" class="ew-form ew-ext-search-form" action="@AppPath(CurrentPageName())" novalidate autocomplete="off">
+<div id="fmt_reasonsrch_search_panel" class="mb-2 mb-sm-0 @(mtReasonList.SearchPanelClass)"><!-- .ew-search-panel -->
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtReasonList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_reason: currentTable } });
+var currentForm;
+var fmt_reasonsrch, currentSearchForm, currentAdvancedSearchForm;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery,
+        fields = currentTable.fields;
+
+    // Form object for search
+    let form = new ew.FormBuilder()
+        .setId("fmt_reasonsrch")
+        .setPageId("list")
+@if (mtReasonList.UseAjaxActions) {
+        <text>.setSubmitWithFetch(true)</text>
+}
+
+        // Dynamic selection lists
+        .setLists({
+        })
+
+        // Filters
+        .setFilterList(@Html.Raw(await mtReasonList.GetFilterList()))
+        .build();
+    window[form.id] = form;
+    currentSearchForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<input type="hidden" name="cmd" value="search">
+@if (Security.CanSearch) {
+if (!mtReasonList.IsExport() && Empty(mtReasonList.CurrentAction) && mtReasonList.HasSearchFields()) { @* Show search form (begin) *@
+<div class="ew-extended-search container-fluid ps-2">
+<div class="row mb-0">
+    <div class="col-sm-auto px-0 pe-sm-2">
+        <div class="ew-basic-search input-group">
+            <input type="search" name="@(Config.TableBasicSearch)" id="@(Config.TableBasicSearch)" class="form-control ew-basic-search-keyword" value="@Html.Raw(HtmlEncode(mtReasonList.BasicSearch.SessionKeyword))" placeholder="@(HtmlEncode(Language.Phrase("Search")))" aria-label="@(HtmlEncode(Language.Phrase("Search")))">
+            <input type="hidden" name="@(Config.TableBasicSearchType)" id="@(Config.TableBasicSearchType)" class="ew-basic-search-type" value="@(HtmlEncode(mtReasonList.BasicSearch.SessionType))">
+            <button type="button" data-bs-toggle="dropdown" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" aria-haspopup="true" aria-expanded="false">
+                <span id="searchtype">@Html.Raw(mtReasonList.BasicSearch.TypeNameShort)</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end">
+                <button type="button" class="dropdown-item@(mtReasonList.BasicSearch.SessionType == "" ? " active" : "")" form="fmt_reasonsrch" data-ew-action="search-type">@Html.Raw(Language.Phrase("QuickSearchAuto"))</button>
+                <button type="button" class="dropdown-item@(mtReasonList.BasicSearch.SessionType == "=" ? " active" : "")" form="fmt_reasonsrch" data-ew-action="search-type" data-search-type="=">@Html.Raw(Language.Phrase("QuickSearchExact"))</button>
+                <button type="button" class="dropdown-item@(mtReasonList.BasicSearch.SessionType == "AND" ? " active" : "")" form="fmt_reasonsrch" data-ew-action="search-type" data-search-type="AND">@Html.Raw(Language.Phrase("QuickSearchAll"))</button>
+                <button type="button" class="dropdown-item@(mtReasonList.BasicSearch.SessionType == "OR" ? " active" : "")" form="fmt_reasonsrch" data-ew-action="search-type" data-search-type="OR">@Html.Raw(Language.Phrase("QuickSearchAny"))</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-auto mb-3">
+        <button class="btn btn-primary" name="btn-submit" id="btn-submit" type="submit">@Html.Raw(Language.Phrase("SearchBtn"))</button>
+    </div>
+</div>
+</div><!-- /.ew-extended-search -->
+} @* Show search form (end) *@
+}
+</div><!-- /.ew-search-panel -->
+</form>
+}
+@mtReasonList.ShowPageHeader()
+@mtReasonList.ShowMessages()
+<main class="list @(mtReasonList.TotalRecords == 0 && !mtReasonList.IsAdd ? " ew-no-record" : "")">
+<div id="ew-list">
+@if (mtReasonList.TotalRecords > 0 || !Empty(mtReasonList.CurrentAction)) {
+<div class="card ew-card ew-grid@(mtReasonList.IsAddOrEdit ? " ew-grid-add-edit" : "") @(mtReasonList.TableGridClass)">
+<form name="@(mtReasonList.FormName)" id="@(mtReasonList.FormName)" class="ew-form ew-list-form" action="@AppPath(mtReasonList.PageName)" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+@if (mtReasonList.IsModal) {
+<input type="hidden" name="modal" value="1">
+}
+<div id="gmp_mt_reason" class="card-body ew-grid-middle-panel @(mtReasonList.TableContainerClass)" style="@(mtReasonList.TableContainerStyle)">
+@if (mtReasonList.TotalRecords > 0 || mtReasonList.IsGridEdit || mtReasonList.IsMultiEdit) {
+<table id="tbl_mt_reasonlist" class="@(mtReasonList.TableClass)"><!-- .ew-table -->
+<thead>
+    <tr class="ew-table-header">
+@{
+    // Header row
+    mtReasonList.RowType = RowType.Header;
+
+    // Render list options
+    await mtReasonList.RenderListOptions();
+}
+@* Render list options (header, left) *@
+@mtReasonList.ListOptions.RenderHeader("left")
+@if (mtReasonList.id.Visible) { // mtReasonList.id.Visible (begin)
+        <th data-name="id" class="@(mtReasonList.id.HeaderCellClass)"><div id="elh_mt_reason_id" class="mt_reason_id">@Html.Raw(mtReasonList.RenderFieldHeader(mtReasonList.id))</div></th>
+} @* mtReasonList.id.Visible (end) *@
+@if (mtReasonList.Reason_Type.Visible) { // mtReasonList.Reason_Type.Visible (begin)
+        <th data-name="Reason_Type" class="@(mtReasonList.Reason_Type.HeaderCellClass)"><div id="elh_mt_reason_Reason_Type" class="mt_reason_Reason_Type">@Html.Raw(mtReasonList.RenderFieldHeader(mtReasonList.Reason_Type))</div></th>
+} @* mtReasonList.Reason_Type.Visible (end) *@
+@if (mtReasonList.Reason_Description.Visible) { // mtReasonList.Reason_Description.Visible (begin)
+        <th data-name="Reason_Description" class="@(mtReasonList.Reason_Description.HeaderCellClass)"><div id="elh_mt_reason_Reason_Description" class="mt_reason_Reason_Description">@Html.Raw(mtReasonList.RenderFieldHeader(mtReasonList.Reason_Description))</div></th>
+} @* mtReasonList.Reason_Description.Visible (end) *@
+@* Render list options (header, right) *@
+@mtReasonList.ListOptions.RenderHeader("right")
+    </tr>
+</thead>
+<tbody data-page="@(mtReasonList.PageNumber)">
+@{
+    await mtReasonList.SetupGrid();
+    bool eof = mtReasonList.Recordset == null; // DN
+}
+@while (mtReasonList.RecordCount < mtReasonList.StopRecord || SameString(mtReasonList.RowIndex, "$rowindex$")) { // Begin While
+    if (!eof && !SameString(mtReasonList.RowIndex, "$rowindex$") &&
+        (!mtReasonList.IsGridAdd || mtReasonList.CurrentMode == "copy") &&
+        (!((mtReasonList.IsCopy || mtReasonList.IsAdd) && mtReasonList.RowIndex is int rowIndex && rowIndex == 0))) // DN
+        eof = !await mtReasonList.Recordset.ReadAsync();
+    mtReasonList.RecordCount++;
+    if (mtReasonList.RecordCount >= mtReasonList.StartRecord) {
+        await mtReasonList.SetupRow();
+    <tr @Html.Raw(mtReasonList.RowAttributes)>
+    @* Render list options (body, left) *@
+    @mtReasonList.ListOptions.RenderBody("left", mtReasonList.RowCount)
+    @if (mtReasonList.id.Visible) { // mtReasonList.id.Visible (begin)
+        <td data-name="id" @Html.Raw(mtReasonList.id.CellAttributes)>
+<span id="el@(mtReasonList.RowIndex == "$rowindex$" ? "$rowindex$" : mtReasonList.RowCount)_mt_reason_id" class="el_mt_reason_id">
+<span @Html.Raw(mtReasonList.id.ViewAttributes)>
+@Html.Raw(mtReasonList.id.GetViewValue())</span>
+</span>
+</td>
+    } @* mtReasonList.id.Visible (end) *@
+    @if (mtReasonList.Reason_Type.Visible) { // mtReasonList.Reason_Type.Visible (begin)
+        <td data-name="Reason_Type" @Html.Raw(mtReasonList.Reason_Type.CellAttributes)>
+<span id="el@(mtReasonList.RowIndex == "$rowindex$" ? "$rowindex$" : mtReasonList.RowCount)_mt_reason_Reason_Type" class="el_mt_reason_Reason_Type">
+<span @Html.Raw(mtReasonList.Reason_Type.ViewAttributes)>
+@Html.Raw(mtReasonList.Reason_Type.GetViewValue())</span>
+</span>
+</td>
+    } @* mtReasonList.Reason_Type.Visible (end) *@
+    @if (mtReasonList.Reason_Description.Visible) { // mtReasonList.Reason_Description.Visible (begin)
+        <td data-name="Reason_Description" @Html.Raw(mtReasonList.Reason_Description.CellAttributes)>
+<span id="el@(mtReasonList.RowIndex == "$rowindex$" ? "$rowindex$" : mtReasonList.RowCount)_mt_reason_Reason_Description" class="el_mt_reason_Reason_Description">
+<span @Html.Raw(mtReasonList.Reason_Description.ViewAttributes)>
+@Html.Raw(mtReasonList.Reason_Description.GetViewValue())</span>
+</span>
+</td>
+    } @* mtReasonList.Reason_Description.Visible (end) *@
+    @* Render list options (body, right) *@
+    @mtReasonList.ListOptions.RenderBody("right", mtReasonList.RowCount)
+    </tr>
+    } @* End if *@
+
+    // Reset for template row
+    if (SameString(mtReasonList.RowIndex, "$rowindex$"))
+        mtReasonList.RowIndex = 0;
+
+    // Reset inline add/copy row
+    if ((mtReasonList.IsCopy || mtReasonList.IsAdd) && mtReasonList.RowIndex is int rowIndex2 && rowIndex2 == 0)
+        mtReasonList.RowIndex = 1;
+} @* End While *@
+</tbody>
+</table><!-- /.ew-table -->
+} @* End If TotalRecords > 0 *@
+</div><!-- /.ew-grid-middle-panel -->
+@if (Empty(mtReasonList.CurrentAction) && !mtReasonList.UseAjaxActions) {
+<input type="hidden" name="action" id="action" value="">
+}
+</form><!-- /.ew-list-form -->
+@{ mtReasonList.CloseRecordset(); }
+@if (!mtReasonList.IsExport()) {
+<div class="card-footer ew-grid-lower-panel">
+@if (!mtReasonList.IsGridAdd && !(mtReasonList.IsGridEdit && mtReasonList.ModalGridEdit) && !mtReasonList.IsMultiEdit) {
+@Html.Raw(mtReasonList.Pager.Render())
+}
+<div class="ew-list-other-options">
+@mtReasonList.OtherOptions.RenderBody("bottom")
+</div>
+</div>
+}
+</div><!-- /.ew-grid -->
+} else { // Show other options
+<div class="ew-list-other-options">
+@mtReasonList.OtherOptions.ForEach(opt => opt.ButtonClass = "").RenderBody()
+</div>
+}
+</div>
+</main>
+@mtReasonList.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!mtReasonList.IsExport()) {
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("mt_reason");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

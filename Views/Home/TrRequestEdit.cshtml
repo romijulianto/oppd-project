@@ -1,0 +1,488 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (trRequestEdit.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!trRequestEdit.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@trRequestEdit.ShowPageHeader()
+@trRequestEdit.ShowMessages()
+<main class="edit">
+<form name="ftr_requestedit" id="ftr_requestedit" class="@(trRequestEdit.FormClassName)" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+<script>
+var currentTable = @Html.Raw(ConvertToJson(trRequestEdit.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { tr_request: currentTable } });
+var currentPageID = ew.PAGE_ID = "edit";
+var currentForm;
+var ftr_requestedit;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("ftr_requestedit")
+        .setPageId("edit")
+
+        // Add fields
+        .setFields([
+
+            ["id", [fields.id.visible && fields.id.required ? ew.Validators.required(fields.id.caption) : null, ew.Validators.integer], fields.id.isInvalid],
+            ["Request_No", [fields.Request_No.visible && fields.Request_No.required ? ew.Validators.required(fields.Request_No.caption) : null], fields.Request_No.isInvalid],
+            ["Reference_Doc", [fields.Reference_Doc.visible && fields.Reference_Doc.required ? ew.Validators.required(fields.Reference_Doc.caption) : null], fields.Reference_Doc.isInvalid],
+            ["Reason", [fields.Reason.visible && fields.Reason.required ? ew.Validators.required(fields.Reason.caption) : null], fields.Reason.isInvalid],
+            ["Request_By", [fields.Request_By.visible && fields.Request_By.required ? ew.Validators.required(fields.Request_By.caption) : null], fields.Request_By.isInvalid],
+            ["Request_By_Name", [fields.Request_By_Name.visible && fields.Request_By_Name.required ? ew.Validators.required(fields.Request_By_Name.caption) : null], fields.Request_By_Name.isInvalid],
+            ["Request_By_Position", [fields.Request_By_Position.visible && fields.Request_By_Position.required ? ew.Validators.required(fields.Request_By_Position.caption) : null], fields.Request_By_Position.isInvalid],
+            ["Request_By_Branch", [fields.Request_By_Branch.visible && fields.Request_By_Branch.required ? ew.Validators.required(fields.Request_By_Branch.caption) : null], fields.Request_By_Branch.isInvalid],
+            ["Request_By_Region", [fields.Request_By_Region.visible && fields.Request_By_Region.required ? ew.Validators.required(fields.Request_By_Region.caption) : null], fields.Request_By_Region.isInvalid],
+            ["Request_Industry", [fields.Request_Industry.visible && fields.Request_Industry.required ? ew.Validators.required(fields.Request_Industry.caption) : null], fields.Request_Industry.isInvalid],
+            ["Customer_ID", [fields.Customer_ID.visible && fields.Customer_ID.required ? ew.Validators.required(fields.Customer_ID.caption) : null], fields.Customer_ID.isInvalid],
+            ["Customer_Name", [fields.Customer_Name.visible && fields.Customer_Name.required ? ew.Validators.required(fields.Customer_Name.caption) : null], fields.Customer_Name.isInvalid],
+            ["SAP_Total", [fields.SAP_Total.visible && fields.SAP_Total.required ? ew.Validators.required(fields.SAP_Total.caption) : null, ew.Validators.float], fields.SAP_Total.isInvalid],
+            ["Override_Total", [fields.Override_Total.visible && fields.Override_Total.required ? ew.Validators.required(fields.Override_Total.caption) : null, ew.Validators.float], fields.Override_Total.isInvalid],
+            ["Variance_Total", [fields.Variance_Total.visible && fields.Variance_Total.required ? ew.Validators.required(fields.Variance_Total.caption) : null, ew.Validators.float], fields.Variance_Total.isInvalid],
+            ["Variance_Percent", [fields.Variance_Percent.visible && fields.Variance_Percent.required ? ew.Validators.required(fields.Variance_Percent.caption) : null, ew.Validators.float], fields.Variance_Percent.isInvalid],
+            ["Notes", [fields.Notes.visible && fields.Notes.required ? ew.Validators.required(fields.Notes.caption) : null], fields.Notes.isInvalid],
+            ["Next_Approver", [fields.Next_Approver.visible && fields.Next_Approver.required ? ew.Validators.required(fields.Next_Approver.caption) : null], fields.Next_Approver.isInvalid],
+            ["Request_PIC", [fields.Request_PIC.visible && fields.Request_PIC.required ? ew.Validators.required(fields.Request_PIC.caption) : null], fields.Request_PIC.isInvalid],
+            ["Request_Status", [fields.Request_Status.visible && fields.Request_Status.required ? ew.Validators.required(fields.Request_Status.caption) : null], fields.Request_Status.isInvalid],
+            ["List_Approver", [fields.List_Approver.visible && fields.List_Approver.required ? ew.Validators.required(fields.List_Approver.caption) : null], fields.List_Approver.isInvalid],
+            ["Last_Update_By", [fields.Last_Update_By.visible && fields.Last_Update_By.required ? ew.Validators.required(fields.Last_Update_By.caption) : null], fields.Last_Update_By.isInvalid],
+            ["Created_By", [fields.Created_By.visible && fields.Created_By.required ? ew.Validators.required(fields.Created_By.caption) : null], fields.Created_By.isInvalid],
+            ["Created_Date", [fields.Created_Date.visible && fields.Created_Date.required ? ew.Validators.required(fields.Created_Date.caption) : null], fields.Created_Date.isInvalid],
+            ["Request_Currency", [fields.Request_Currency.visible && fields.Request_Currency.required ? ew.Validators.required(fields.Request_Currency.caption) : null], fields.Request_Currency.isInvalid]
+        ])
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Multi-Page
+        .setMultiPage(true)
+
+        // Dynamic selection lists
+        .setLists({
+            "Reason": @Html.Raw(trRequestEdit.Reason.ToClientList(trRequestEdit)),
+            "Request_Status": @Html.Raw(trRequestEdit.Request_Status.ToClientList(trRequestEdit)),
+        })
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="update">
+<input type="hidden" name="modal" value="@ConvertToInt(trRequestEdit.IsModal)">
+@if (IsJsonResponse()) {
+<input type="hidden" name="json" value="1">
+}
+<input type="hidden" name="@(trRequestEdit.OldKeyName)" value="@Html.Raw(trRequestEdit.OldKey)">
+<div class="ew-multi-page"><!-- multi-page -->
+<div class="ew-nav@(trRequestEdit.MultiPages.ContainerClasses)" id="pages_trRequestEdit"><!-- multi-page tabs -->
+    <ul class="@(trRequestEdit.MultiPages.NavClasses)" role="tablist">
+        <li class="nav-item"><button class="@(trRequestEdit.MultiPages.NavLinkClasses(1))" data-bs-target="#tab_tr_request1" data-bs-toggle="tab" type="button" role="tab" aria-controls="tab_tr_request1" aria-selected="@(ConvertToJson(trRequestEdit.MultiPages.IsActive(1)))">@Html.Raw(trRequestEdit.PageCaption(1))</button></li>
+        <li class="nav-item"><button class="@(trRequestEdit.MultiPages.NavLinkClasses(2))" data-bs-target="#tab_tr_request2" data-bs-toggle="tab" type="button" role="tab" aria-controls="tab_tr_request2" aria-selected="@(ConvertToJson(trRequestEdit.MultiPages.IsActive(2)))">@Html.Raw(trRequestEdit.PageCaption(2))</button></li>
+    </ul>
+    <div class="@(trRequestEdit.MultiPages.TabContentClasses)"><!-- multi-page tabs .tab-content -->
+        <div class="@(trRequestEdit.MultiPages.TabPaneClasses(1))" id="tab_tr_request1" role="tabpanel"><!-- multi-page .tab-pane -->
+<div class="ew-edit-div"><!-- page* -->
+@if (trRequestEdit.id.Visible) { // trRequestEdit.id.Visible (begin)
+    <div id="r_id" @Html.Raw(trRequestEdit.id.RowAttributes)>
+        <label id="elh_tr_request_id" for="x_id" class="@(trRequestEdit.LeftColumnClass)">@Html.Raw(trRequestEdit.id.Caption)@Html.Raw(trRequestEdit.id.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestEdit.RightColumnClass)"><div @Html.Raw(trRequestEdit.id.CellAttributes)>
+<span id="el_tr_request_id">
+<input type="@(trRequestEdit.id.InputTextType)" name="x_id" id="x_id" data-table="tr_request" data-field="x_id" value="@Html.Raw(trRequestEdit.id.EditValue)" data-page="1" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestEdit.id.PlaceHolder))" data-format-pattern="@(trRequestEdit.id.FormatPattern)"@Html.Raw(trRequestEdit.id.EditAttributes) aria-describedby="x_id_help">
+@Html.Raw(trRequestEdit.id.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestEdit.id.GetErrorMessage())</div>
+<input type="hidden" data-table="tr_request" data-field="x_id" data-hidden="1" data-old data-page="1" name="o_id" id="o_id" value="@Html.Raw(HtmlEncode(trRequestEdit.id.OldValue ?? trRequestEdit.id.CurrentValue))">
+</span>
+</div></div>
+    </div>
+} @* trRequestEdit.id.Visible (end) *@
+@if (trRequestEdit.Request_No.Visible) { // trRequestEdit.Request_No.Visible (begin)
+    <div id="r_Request_No" @Html.Raw(trRequestEdit.Request_No.RowAttributes)>
+        <label id="elh_tr_request_Request_No" for="x_Request_No" class="@(trRequestEdit.LeftColumnClass)">@Html.Raw(trRequestEdit.Request_No.Caption)@Html.Raw(trRequestEdit.Request_No.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestEdit.RightColumnClass)"><div @Html.Raw(trRequestEdit.Request_No.CellAttributes)>
+<span id="el_tr_request_Request_No">
+<input type="@(trRequestEdit.Request_No.InputTextType)" name="x_Request_No" id="x_Request_No" data-table="tr_request" data-field="x_Request_No" value="@Html.Raw(trRequestEdit.Request_No.EditValue)" data-page="1" size="30" maxlength="30" placeholder="@Html.Raw(HtmlEncode(trRequestEdit.Request_No.PlaceHolder))" data-format-pattern="@(trRequestEdit.Request_No.FormatPattern)"@Html.Raw(trRequestEdit.Request_No.EditAttributes) aria-describedby="x_Request_No_help">
+@Html.Raw(trRequestEdit.Request_No.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestEdit.Request_No.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestEdit.Request_No.Visible (end) *@
+@if (trRequestEdit.Reference_Doc.Visible) { // trRequestEdit.Reference_Doc.Visible (begin)
+    <div id="r_Reference_Doc" @Html.Raw(trRequestEdit.Reference_Doc.RowAttributes)>
+        <label id="elh_tr_request_Reference_Doc" for="x_Reference_Doc" class="@(trRequestEdit.LeftColumnClass)">@Html.Raw(trRequestEdit.Reference_Doc.Caption)@Html.Raw(trRequestEdit.Reference_Doc.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestEdit.RightColumnClass)"><div @Html.Raw(trRequestEdit.Reference_Doc.CellAttributes)>
+<span id="el_tr_request_Reference_Doc">
+<input type="@(trRequestEdit.Reference_Doc.InputTextType)" name="x_Reference_Doc" id="x_Reference_Doc" data-table="tr_request" data-field="x_Reference_Doc" value="@Html.Raw(trRequestEdit.Reference_Doc.EditValue)" data-page="1" size="30" maxlength="50" placeholder="@Html.Raw(HtmlEncode(trRequestEdit.Reference_Doc.PlaceHolder))" data-format-pattern="@(trRequestEdit.Reference_Doc.FormatPattern)"@Html.Raw(trRequestEdit.Reference_Doc.EditAttributes) aria-describedby="x_Reference_Doc_help">
+@Html.Raw(trRequestEdit.Reference_Doc.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestEdit.Reference_Doc.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestEdit.Reference_Doc.Visible (end) *@
+@if (trRequestEdit.Reason.Visible) { // trRequestEdit.Reason.Visible (begin)
+    <div id="r_Reason" @Html.Raw(trRequestEdit.Reason.RowAttributes)>
+        <label id="elh_tr_request_Reason" for="x_Reason" class="@(trRequestEdit.LeftColumnClass)">@Html.Raw(trRequestEdit.Reason.Caption)@Html.Raw(trRequestEdit.Reason.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestEdit.RightColumnClass)"><div @Html.Raw(trRequestEdit.Reason.CellAttributes)>
+<span id="el_tr_request_Reason">
+    <select
+        id="x_Reason"
+        name="x_Reason"
+        class="form-select ew-select@(trRequestEdit.Reason.IsInvalidClass)"
+        data-select2-id="ftr_requestedit_x_Reason"
+        data-table="tr_request"
+        data-field="x_Reason"
+        data-page="1"
+        data-value-separator="@(trRequestEdit.Reason.DisplayValueSeparatorAttribute)"
+        data-placeholder="@(HtmlEncode(trRequestEdit.Reason.PlaceHolder))"
+        @Html.Raw(trRequestEdit.Reason.EditAttributes)>
+        @(trRequestEdit.Reason.SelectOptionListHtml("x_Reason"))
+    </select>
+    @Html.Raw(trRequestEdit.Reason.GetCustomMessage)
+    <div class="invalid-feedback">@Html.Raw(trRequestEdit.Reason.GetErrorMessage())</div>
+@Html.Raw(trRequestEdit.Reason.Lookup.GetParamTag(trRequestEdit, "p_x_Reason"))
+<script>
+loadjs.ready("ftr_requestedit", function() {
+    var options = { name: "x_Reason", selectId: "ftr_requestedit_x_Reason" },
+        el = document.querySelector("select[data-select2-id='" + options.selectId + "']");
+    if (!el)
+        return;
+    options.closeOnSelect = !options.multiple;
+    options.dropdownParent = el.closest("#ew-modal-dialog, #ew-add-opt-dialog");
+    if (ftr_requestedit.lists.Reason?.lookupOptions.length) {
+        options.data = { id: "x_Reason", form: "ftr_requestedit" };
+    } else {
+        options.ajax = { id: "x_Reason", form: "ftr_requestedit", limit: 5 };
+    }
+    options.minimumResultsForSearch = Infinity;
+    options = Object.assign({}, ew.selectOptions, options, ew.vars.tables.tr_request.fields.Reason.selectOptions);
+    ew.createSelect(options);
+});
+</script>
+</span>
+</div></div>
+    </div>
+} @* trRequestEdit.Reason.Visible (end) *@
+@if (trRequestEdit.Customer_ID.Visible) { // trRequestEdit.Customer_ID.Visible (begin)
+    <div id="r_Customer_ID" @Html.Raw(trRequestEdit.Customer_ID.RowAttributes)>
+        <label id="elh_tr_request_Customer_ID" for="x_Customer_ID" class="@(trRequestEdit.LeftColumnClass)">@Html.Raw(trRequestEdit.Customer_ID.Caption)@Html.Raw(trRequestEdit.Customer_ID.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestEdit.RightColumnClass)"><div @Html.Raw(trRequestEdit.Customer_ID.CellAttributes)>
+<span id="el_tr_request_Customer_ID">
+<input type="@(trRequestEdit.Customer_ID.InputTextType)" name="x_Customer_ID" id="x_Customer_ID" data-table="tr_request" data-field="x_Customer_ID" value="@Html.Raw(trRequestEdit.Customer_ID.EditValue)" data-page="1" size="30" maxlength="20" placeholder="@Html.Raw(HtmlEncode(trRequestEdit.Customer_ID.PlaceHolder))" data-format-pattern="@(trRequestEdit.Customer_ID.FormatPattern)"@Html.Raw(trRequestEdit.Customer_ID.EditAttributes) aria-describedby="x_Customer_ID_help">
+@Html.Raw(trRequestEdit.Customer_ID.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestEdit.Customer_ID.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestEdit.Customer_ID.Visible (end) *@
+@if (trRequestEdit.Customer_Name.Visible) { // trRequestEdit.Customer_Name.Visible (begin)
+    <div id="r_Customer_Name" @Html.Raw(trRequestEdit.Customer_Name.RowAttributes)>
+        <label id="elh_tr_request_Customer_Name" for="x_Customer_Name" class="@(trRequestEdit.LeftColumnClass)">@Html.Raw(trRequestEdit.Customer_Name.Caption)@Html.Raw(trRequestEdit.Customer_Name.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestEdit.RightColumnClass)"><div @Html.Raw(trRequestEdit.Customer_Name.CellAttributes)>
+<span id="el_tr_request_Customer_Name">
+<input type="@(trRequestEdit.Customer_Name.InputTextType)" name="x_Customer_Name" id="x_Customer_Name" data-table="tr_request" data-field="x_Customer_Name" value="@Html.Raw(trRequestEdit.Customer_Name.EditValue)" data-page="1" size="30" maxlength="200" placeholder="@Html.Raw(HtmlEncode(trRequestEdit.Customer_Name.PlaceHolder))" data-format-pattern="@(trRequestEdit.Customer_Name.FormatPattern)"@Html.Raw(trRequestEdit.Customer_Name.EditAttributes) aria-describedby="x_Customer_Name_help">
+@Html.Raw(trRequestEdit.Customer_Name.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestEdit.Customer_Name.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestEdit.Customer_Name.Visible (end) *@
+@if (trRequestEdit.SAP_Total.Visible) { // trRequestEdit.SAP_Total.Visible (begin)
+    <div id="r_SAP_Total" @Html.Raw(trRequestEdit.SAP_Total.RowAttributes)>
+        <label id="elh_tr_request_SAP_Total" for="x_SAP_Total" class="@(trRequestEdit.LeftColumnClass)">@Html.Raw(trRequestEdit.SAP_Total.Caption)@Html.Raw(trRequestEdit.SAP_Total.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestEdit.RightColumnClass)"><div @Html.Raw(trRequestEdit.SAP_Total.CellAttributes)>
+<span id="el_tr_request_SAP_Total">
+<input type="@(trRequestEdit.SAP_Total.InputTextType)" name="x_SAP_Total" id="x_SAP_Total" data-table="tr_request" data-field="x_SAP_Total" value="@Html.Raw(trRequestEdit.SAP_Total.EditValue)" data-page="1" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestEdit.SAP_Total.PlaceHolder))" data-format-pattern="@(trRequestEdit.SAP_Total.FormatPattern)"@Html.Raw(trRequestEdit.SAP_Total.EditAttributes) aria-describedby="x_SAP_Total_help">
+@Html.Raw(trRequestEdit.SAP_Total.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestEdit.SAP_Total.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestEdit.SAP_Total.Visible (end) *@
+@if (trRequestEdit.Override_Total.Visible) { // trRequestEdit.Override_Total.Visible (begin)
+    <div id="r_Override_Total" @Html.Raw(trRequestEdit.Override_Total.RowAttributes)>
+        <label id="elh_tr_request_Override_Total" for="x_Override_Total" class="@(trRequestEdit.LeftColumnClass)">@Html.Raw(trRequestEdit.Override_Total.Caption)@Html.Raw(trRequestEdit.Override_Total.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestEdit.RightColumnClass)"><div @Html.Raw(trRequestEdit.Override_Total.CellAttributes)>
+<span id="el_tr_request_Override_Total">
+<input type="@(trRequestEdit.Override_Total.InputTextType)" name="x_Override_Total" id="x_Override_Total" data-table="tr_request" data-field="x_Override_Total" value="@Html.Raw(trRequestEdit.Override_Total.EditValue)" data-page="1" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestEdit.Override_Total.PlaceHolder))" data-format-pattern="@(trRequestEdit.Override_Total.FormatPattern)"@Html.Raw(trRequestEdit.Override_Total.EditAttributes) aria-describedby="x_Override_Total_help">
+@Html.Raw(trRequestEdit.Override_Total.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestEdit.Override_Total.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestEdit.Override_Total.Visible (end) *@
+@if (trRequestEdit.Variance_Total.Visible) { // trRequestEdit.Variance_Total.Visible (begin)
+    <div id="r_Variance_Total" @Html.Raw(trRequestEdit.Variance_Total.RowAttributes)>
+        <label id="elh_tr_request_Variance_Total" for="x_Variance_Total" class="@(trRequestEdit.LeftColumnClass)">@Html.Raw(trRequestEdit.Variance_Total.Caption)@Html.Raw(trRequestEdit.Variance_Total.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestEdit.RightColumnClass)"><div @Html.Raw(trRequestEdit.Variance_Total.CellAttributes)>
+<span id="el_tr_request_Variance_Total">
+<input type="@(trRequestEdit.Variance_Total.InputTextType)" name="x_Variance_Total" id="x_Variance_Total" data-table="tr_request" data-field="x_Variance_Total" value="@Html.Raw(trRequestEdit.Variance_Total.EditValue)" data-page="1" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestEdit.Variance_Total.PlaceHolder))" data-format-pattern="@(trRequestEdit.Variance_Total.FormatPattern)"@Html.Raw(trRequestEdit.Variance_Total.EditAttributes) aria-describedby="x_Variance_Total_help">
+@Html.Raw(trRequestEdit.Variance_Total.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestEdit.Variance_Total.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestEdit.Variance_Total.Visible (end) *@
+@if (trRequestEdit.Variance_Percent.Visible) { // trRequestEdit.Variance_Percent.Visible (begin)
+    <div id="r_Variance_Percent" @Html.Raw(trRequestEdit.Variance_Percent.RowAttributes)>
+        <label id="elh_tr_request_Variance_Percent" for="x_Variance_Percent" class="@(trRequestEdit.LeftColumnClass)">@Html.Raw(trRequestEdit.Variance_Percent.Caption)@Html.Raw(trRequestEdit.Variance_Percent.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestEdit.RightColumnClass)"><div @Html.Raw(trRequestEdit.Variance_Percent.CellAttributes)>
+<span id="el_tr_request_Variance_Percent">
+<input type="@(trRequestEdit.Variance_Percent.InputTextType)" name="x_Variance_Percent" id="x_Variance_Percent" data-table="tr_request" data-field="x_Variance_Percent" value="@Html.Raw(trRequestEdit.Variance_Percent.EditValue)" data-page="1" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestEdit.Variance_Percent.PlaceHolder))" data-format-pattern="@(trRequestEdit.Variance_Percent.FormatPattern)"@Html.Raw(trRequestEdit.Variance_Percent.EditAttributes) aria-describedby="x_Variance_Percent_help">
+@Html.Raw(trRequestEdit.Variance_Percent.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestEdit.Variance_Percent.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestEdit.Variance_Percent.Visible (end) *@
+@if (trRequestEdit.Notes.Visible) { // trRequestEdit.Notes.Visible (begin)
+    <div id="r_Notes" @Html.Raw(trRequestEdit.Notes.RowAttributes)>
+        <label id="elh_tr_request_Notes" for="x_Notes" class="@(trRequestEdit.LeftColumnClass)">@Html.Raw(trRequestEdit.Notes.Caption)@Html.Raw(trRequestEdit.Notes.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestEdit.RightColumnClass)"><div @Html.Raw(trRequestEdit.Notes.CellAttributes)>
+<span id="el_tr_request_Notes">
+<textarea data-table="tr_request" data-field="x_Notes" data-page="1" name="x_Notes" id="x_Notes" cols="35" rows="4" placeholder="@Html.Raw(HtmlEncode(trRequestEdit.Notes.PlaceHolder))"@Html.Raw(trRequestEdit.Notes.EditAttributes) aria-describedby="x_Notes_help">@(trRequestEdit.Notes.EditValue)</textarea>
+@Html.Raw(trRequestEdit.Notes.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestEdit.Notes.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestEdit.Notes.Visible (end) *@
+@if (trRequestEdit.Next_Approver.Visible) { // trRequestEdit.Next_Approver.Visible (begin)
+    <div id="r_Next_Approver" @Html.Raw(trRequestEdit.Next_Approver.RowAttributes)>
+        <label id="elh_tr_request_Next_Approver" for="x_Next_Approver" class="@(trRequestEdit.LeftColumnClass)">@Html.Raw(trRequestEdit.Next_Approver.Caption)@Html.Raw(trRequestEdit.Next_Approver.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestEdit.RightColumnClass)"><div @Html.Raw(trRequestEdit.Next_Approver.CellAttributes)>
+<span id="el_tr_request_Next_Approver">
+<input type="@(trRequestEdit.Next_Approver.InputTextType)" name="x_Next_Approver" id="x_Next_Approver" data-table="tr_request" data-field="x_Next_Approver" value="@Html.Raw(trRequestEdit.Next_Approver.EditValue)" data-page="1" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(trRequestEdit.Next_Approver.PlaceHolder))" data-format-pattern="@(trRequestEdit.Next_Approver.FormatPattern)"@Html.Raw(trRequestEdit.Next_Approver.EditAttributes) aria-describedby="x_Next_Approver_help">
+@Html.Raw(trRequestEdit.Next_Approver.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestEdit.Next_Approver.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestEdit.Next_Approver.Visible (end) *@
+@if (trRequestEdit.Request_Currency.Visible) { // trRequestEdit.Request_Currency.Visible (begin)
+    <div id="r_Request_Currency" @Html.Raw(trRequestEdit.Request_Currency.RowAttributes)>
+        <label id="elh_tr_request_Request_Currency" for="x_Request_Currency" class="@(trRequestEdit.LeftColumnClass)">@Html.Raw(trRequestEdit.Request_Currency.Caption)@Html.Raw(trRequestEdit.Request_Currency.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestEdit.RightColumnClass)"><div @Html.Raw(trRequestEdit.Request_Currency.CellAttributes)>
+<span id="el_tr_request_Request_Currency">
+<input type="@(trRequestEdit.Request_Currency.InputTextType)" name="x_Request_Currency" id="x_Request_Currency" data-table="tr_request" data-field="x_Request_Currency" value="@Html.Raw(trRequestEdit.Request_Currency.EditValue)" data-page="1" size="30" maxlength="10" placeholder="@Html.Raw(HtmlEncode(trRequestEdit.Request_Currency.PlaceHolder))" data-format-pattern="@(trRequestEdit.Request_Currency.FormatPattern)"@Html.Raw(trRequestEdit.Request_Currency.EditAttributes) aria-describedby="x_Request_Currency_help">
+@Html.Raw(trRequestEdit.Request_Currency.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestEdit.Request_Currency.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestEdit.Request_Currency.Visible (end) *@
+</div><!-- /page* -->
+        </div><!-- /multi-page .tab-pane -->
+        <div class="@(trRequestEdit.MultiPages.TabPaneClasses(2))" id="tab_tr_request2" role="tabpanel"><!-- multi-page .tab-pane -->
+<div class="ew-edit-div"><!-- page* -->
+@if (trRequestEdit.Request_By_Branch.Visible) { // trRequestEdit.Request_By_Branch.Visible (begin)
+    <div id="r_Request_By_Branch" @Html.Raw(trRequestEdit.Request_By_Branch.RowAttributes)>
+        <label id="elh_tr_request_Request_By_Branch" for="x_Request_By_Branch" class="@(trRequestEdit.LeftColumnClass)">@Html.Raw(trRequestEdit.Request_By_Branch.Caption)@Html.Raw(trRequestEdit.Request_By_Branch.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestEdit.RightColumnClass)"><div @Html.Raw(trRequestEdit.Request_By_Branch.CellAttributes)>
+<span id="el_tr_request_Request_By_Branch">
+<input type="@(trRequestEdit.Request_By_Branch.InputTextType)" name="x_Request_By_Branch" id="x_Request_By_Branch" data-table="tr_request" data-field="x_Request_By_Branch" value="@Html.Raw(trRequestEdit.Request_By_Branch.EditValue)" data-page="2" size="30" maxlength="50" placeholder="@Html.Raw(HtmlEncode(trRequestEdit.Request_By_Branch.PlaceHolder))" data-format-pattern="@(trRequestEdit.Request_By_Branch.FormatPattern)"@Html.Raw(trRequestEdit.Request_By_Branch.EditAttributes) aria-describedby="x_Request_By_Branch_help">
+@Html.Raw(trRequestEdit.Request_By_Branch.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestEdit.Request_By_Branch.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestEdit.Request_By_Branch.Visible (end) *@
+@if (trRequestEdit.Request_By_Region.Visible) { // trRequestEdit.Request_By_Region.Visible (begin)
+    <div id="r_Request_By_Region" @Html.Raw(trRequestEdit.Request_By_Region.RowAttributes)>
+        <label id="elh_tr_request_Request_By_Region" for="x_Request_By_Region" class="@(trRequestEdit.LeftColumnClass)">@Html.Raw(trRequestEdit.Request_By_Region.Caption)@Html.Raw(trRequestEdit.Request_By_Region.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestEdit.RightColumnClass)"><div @Html.Raw(trRequestEdit.Request_By_Region.CellAttributes)>
+<span id="el_tr_request_Request_By_Region">
+<input type="@(trRequestEdit.Request_By_Region.InputTextType)" name="x_Request_By_Region" id="x_Request_By_Region" data-table="tr_request" data-field="x_Request_By_Region" value="@Html.Raw(trRequestEdit.Request_By_Region.EditValue)" data-page="2" size="30" maxlength="50" placeholder="@Html.Raw(HtmlEncode(trRequestEdit.Request_By_Region.PlaceHolder))" data-format-pattern="@(trRequestEdit.Request_By_Region.FormatPattern)"@Html.Raw(trRequestEdit.Request_By_Region.EditAttributes) aria-describedby="x_Request_By_Region_help">
+@Html.Raw(trRequestEdit.Request_By_Region.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestEdit.Request_By_Region.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestEdit.Request_By_Region.Visible (end) *@
+@if (trRequestEdit.Request_Industry.Visible) { // trRequestEdit.Request_Industry.Visible (begin)
+    <div id="r_Request_Industry" @Html.Raw(trRequestEdit.Request_Industry.RowAttributes)>
+        <label id="elh_tr_request_Request_Industry" for="x_Request_Industry" class="@(trRequestEdit.LeftColumnClass)">@Html.Raw(trRequestEdit.Request_Industry.Caption)@Html.Raw(trRequestEdit.Request_Industry.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestEdit.RightColumnClass)"><div @Html.Raw(trRequestEdit.Request_Industry.CellAttributes)>
+<span id="el_tr_request_Request_Industry">
+<input type="@(trRequestEdit.Request_Industry.InputTextType)" name="x_Request_Industry" id="x_Request_Industry" data-table="tr_request" data-field="x_Request_Industry" value="@Html.Raw(trRequestEdit.Request_Industry.EditValue)" data-page="2" size="30" maxlength="50" placeholder="@Html.Raw(HtmlEncode(trRequestEdit.Request_Industry.PlaceHolder))" data-format-pattern="@(trRequestEdit.Request_Industry.FormatPattern)"@Html.Raw(trRequestEdit.Request_Industry.EditAttributes) aria-describedby="x_Request_Industry_help">
+@Html.Raw(trRequestEdit.Request_Industry.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestEdit.Request_Industry.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestEdit.Request_Industry.Visible (end) *@
+@if (trRequestEdit.Request_PIC.Visible) { // trRequestEdit.Request_PIC.Visible (begin)
+    <div id="r_Request_PIC" @Html.Raw(trRequestEdit.Request_PIC.RowAttributes)>
+        <label id="elh_tr_request_Request_PIC" for="x_Request_PIC" class="@(trRequestEdit.LeftColumnClass)">@Html.Raw(trRequestEdit.Request_PIC.Caption)@Html.Raw(trRequestEdit.Request_PIC.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestEdit.RightColumnClass)"><div @Html.Raw(trRequestEdit.Request_PIC.CellAttributes)>
+<span id="el_tr_request_Request_PIC">
+<input type="@(trRequestEdit.Request_PIC.InputTextType)" name="x_Request_PIC" id="x_Request_PIC" data-table="tr_request" data-field="x_Request_PIC" value="@Html.Raw(trRequestEdit.Request_PIC.EditValue)" data-page="2" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(trRequestEdit.Request_PIC.PlaceHolder))" data-format-pattern="@(trRequestEdit.Request_PIC.FormatPattern)"@Html.Raw(trRequestEdit.Request_PIC.EditAttributes) aria-describedby="x_Request_PIC_help">
+@Html.Raw(trRequestEdit.Request_PIC.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestEdit.Request_PIC.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestEdit.Request_PIC.Visible (end) *@
+@if (trRequestEdit.Request_Status.Visible) { // trRequestEdit.Request_Status.Visible (begin)
+    <div id="r_Request_Status" @Html.Raw(trRequestEdit.Request_Status.RowAttributes)>
+        <label id="elh_tr_request_Request_Status" for="x_Request_Status" class="@(trRequestEdit.LeftColumnClass)">@Html.Raw(trRequestEdit.Request_Status.Caption)@Html.Raw(trRequestEdit.Request_Status.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestEdit.RightColumnClass)"><div @Html.Raw(trRequestEdit.Request_Status.CellAttributes)>
+<span id="el_tr_request_Request_Status">
+    <select
+        id="x_Request_Status"
+        name="x_Request_Status"
+        class="form-select ew-select@(trRequestEdit.Request_Status.IsInvalidClass)"
+        data-select2-id="ftr_requestedit_x_Request_Status"
+        data-table="tr_request"
+        data-field="x_Request_Status"
+        data-page="2"
+        data-value-separator="@(trRequestEdit.Request_Status.DisplayValueSeparatorAttribute)"
+        data-placeholder="@(HtmlEncode(trRequestEdit.Request_Status.PlaceHolder))"
+        @Html.Raw(trRequestEdit.Request_Status.EditAttributes)>
+        @(trRequestEdit.Request_Status.SelectOptionListHtml("x_Request_Status"))
+    </select>
+    @Html.Raw(trRequestEdit.Request_Status.GetCustomMessage)
+    <div class="invalid-feedback">@Html.Raw(trRequestEdit.Request_Status.GetErrorMessage())</div>
+<script>
+loadjs.ready("ftr_requestedit", function() {
+    var options = { name: "x_Request_Status", selectId: "ftr_requestedit_x_Request_Status" },
+        el = document.querySelector("select[data-select2-id='" + options.selectId + "']");
+    if (!el)
+        return;
+    options.closeOnSelect = !options.multiple;
+    options.dropdownParent = el.closest("#ew-modal-dialog, #ew-add-opt-dialog");
+    if (ftr_requestedit.lists.Request_Status?.lookupOptions.length) {
+        options.data = { id: "x_Request_Status", form: "ftr_requestedit" };
+    } else {
+        options.ajax = { id: "x_Request_Status", form: "ftr_requestedit", limit: ew.LOOKUP_PAGE_SIZE };
+    }
+    options.minimumResultsForSearch = Infinity;
+    options = Object.assign({}, ew.selectOptions, options, ew.vars.tables.tr_request.fields.Request_Status.selectOptions);
+    ew.createSelect(options);
+});
+</script>
+</span>
+</div></div>
+    </div>
+} @* trRequestEdit.Request_Status.Visible (end) *@
+@if (trRequestEdit.List_Approver.Visible) { // trRequestEdit.List_Approver.Visible (begin)
+    <div id="r_List_Approver" @Html.Raw(trRequestEdit.List_Approver.RowAttributes)>
+        <label id="elh_tr_request_List_Approver" for="x_List_Approver" class="@(trRequestEdit.LeftColumnClass)">@Html.Raw(trRequestEdit.List_Approver.Caption)@Html.Raw(trRequestEdit.List_Approver.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestEdit.RightColumnClass)"><div @Html.Raw(trRequestEdit.List_Approver.CellAttributes)>
+<span id="el_tr_request_List_Approver">
+<input type="@(trRequestEdit.List_Approver.InputTextType)" name="x_List_Approver" id="x_List_Approver" data-table="tr_request" data-field="x_List_Approver" value="@Html.Raw(trRequestEdit.List_Approver.EditValue)" data-page="2" size="30" maxlength="500" placeholder="@Html.Raw(HtmlEncode(trRequestEdit.List_Approver.PlaceHolder))" data-format-pattern="@(trRequestEdit.List_Approver.FormatPattern)"@Html.Raw(trRequestEdit.List_Approver.EditAttributes) aria-describedby="x_List_Approver_help">
+@Html.Raw(trRequestEdit.List_Approver.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestEdit.List_Approver.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestEdit.List_Approver.Visible (end) *@
+</div><!-- /page* -->
+        </div><!-- /multi-page .tab-pane -->
+    </div><!-- /multi-page tabs .tab-content -->
+</div><!-- /multi-page tabs -->
+</div><!-- /multi-page -->
+@{ trRequestEdit.CloseRecordset(); }
+@if (!Empty(trRequestEdit.CurrentDetailTable)) {
+    trRequestEdit.DetailPages.ValidKeys = trRequestEdit.CurrentDetailTables;
+<div class="ew-detail-pages"><!-- detail-pages -->
+<div class="ew-nav@(trRequestEdit.DetailPages.ContainerClasses)" id="details_trRequestEdit"><!-- tabs -->
+    <ul class="@(trRequestEdit.DetailPages.NavClasses)" role="tablist"><!-- .nav -->
+@if (trRequestEdit.CurrentDetailTables.Contains("tr_request_detail") && trRequestDetail.DetailEdit) {
+        <li class="nav-item"><button class="@(trRequestEdit.DetailPages.NavLinkClasses("tr_request_detail"))@(trRequestEdit.DetailPages.ActiveClasses("tr_request_detail"))" data-bs-target="#tab_tr_request_detail" data-bs-toggle="tab" type="button" role="tab" aria-controls="tab_tr_request_detail" aria-selected="@(ConvertToJson(trRequestEdit.DetailPages.IsActive("tr_request_detail")))">@Html.Raw(Language.TablePhrase("tr_request_detail", "TblCaption"))</button></li>
+}
+@if (trRequestEdit.CurrentDetailTables.Contains("tr_request_approver") && trRequestApprover.DetailEdit) {
+        <li class="nav-item"><button class="@(trRequestEdit.DetailPages.NavLinkClasses("tr_request_approver"))@(trRequestEdit.DetailPages.ActiveClasses("tr_request_approver"))" data-bs-target="#tab_tr_request_approver" data-bs-toggle="tab" type="button" role="tab" aria-controls="tab_tr_request_approver" aria-selected="@(ConvertToJson(trRequestEdit.DetailPages.IsActive("tr_request_approver")))">@Html.Raw(Language.TablePhrase("tr_request_approver", "TblCaption"))</button></li>
+}
+@if (trRequestEdit.CurrentDetailTables.Contains("tr_request_approval_history") && trRequestApprovalHistory.DetailEdit) {
+        <li class="nav-item"><button class="@(trRequestEdit.DetailPages.NavLinkClasses("tr_request_approval_history"))@(trRequestEdit.DetailPages.ActiveClasses("tr_request_approval_history"))" data-bs-target="#tab_tr_request_approval_history" data-bs-toggle="tab" type="button" role="tab" aria-controls="tab_tr_request_approval_history" aria-selected="@(ConvertToJson(trRequestEdit.DetailPages.IsActive("tr_request_approval_history")))">@Html.Raw(Language.TablePhrase("tr_request_approval_history", "TblCaption"))</button></li>
+}
+    </ul><!-- /.nav -->
+    <div class="@(trRequestEdit.DetailPages.TabContentClasses)"><!-- .tab-content -->
+@if (trRequestEdit.CurrentDetailTables.Contains("tr_request_detail") && trRequestDetail.DetailEdit) {
+        <div class="@Html.Raw(trRequestEdit.DetailPages.TabPaneClasses("tr_request_detail"))@(trRequestEdit.DetailPages.ActiveClasses("tr_request_detail"))" id="tab_tr_request_detail" role="tabpanel"><!-- page* -->
+        @await Html.PartialAsync("TrRequestDetailGrid")
+        </div><!-- /page* -->
+    View = this;
+}
+@if (trRequestEdit.CurrentDetailTables.Contains("tr_request_approver") && trRequestApprover.DetailEdit) {
+        <div class="@Html.Raw(trRequestEdit.DetailPages.TabPaneClasses("tr_request_approver"))@(trRequestEdit.DetailPages.ActiveClasses("tr_request_approver"))" id="tab_tr_request_approver" role="tabpanel"><!-- page* -->
+        @await Html.PartialAsync("TrRequestApproverGrid")
+        </div><!-- /page* -->
+    View = this;
+}
+@if (trRequestEdit.CurrentDetailTables.Contains("tr_request_approval_history") && trRequestApprovalHistory.DetailEdit) {
+        <div class="@Html.Raw(trRequestEdit.DetailPages.TabPaneClasses("tr_request_approval_history"))@(trRequestEdit.DetailPages.ActiveClasses("tr_request_approval_history"))" id="tab_tr_request_approval_history" role="tabpanel"><!-- page* -->
+        @await Html.PartialAsync("TrRequestApprovalHistoryGrid")
+        </div><!-- /page* -->
+    View = this;
+}
+    </div><!-- /.tab-content -->
+</div><!-- /tabs -->
+</div><!-- /detail-pages -->
+}
+@Html.Raw(trRequestEdit.IsModal ? "<template class=\"ew-modal-buttons\">" : "<div class=\"row ew-buttons\">")<!-- buttons .row -->
+    <div class="@(trRequestEdit.OffsetColumnClass)"><!-- buttons offset -->
+    <button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit" form="ftr_requestedit">@Html.Raw(Language.Phrase("SaveBtn"))</button>
+@if (IsJsonResponse()) {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-bs-dismiss="modal">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+} else {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="ftr_requestedit" data-href="@AppPath(trRequestEdit.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+}
+    </div><!-- /buttons offset -->
+@Html.Raw(trRequestEdit.IsModal ? "</template>" : "</div>")<!-- /buttons .row -->
+</form>
+</main>
+@trRequestEdit.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("tr_request");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

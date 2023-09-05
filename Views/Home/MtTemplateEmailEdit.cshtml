@@ -1,0 +1,180 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (mtTemplateEmailEdit.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!mtTemplateEmailEdit.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@mtTemplateEmailEdit.ShowPageHeader()
+@mtTemplateEmailEdit.ShowMessages()
+<main class="edit">
+<form name="fmt_template_emailedit" id="fmt_template_emailedit" class="@(mtTemplateEmailEdit.FormClassName)" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtTemplateEmailEdit.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_template_email: currentTable } });
+var currentPageID = ew.PAGE_ID = "edit";
+var currentForm;
+var fmt_template_emailedit;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fmt_template_emailedit")
+        .setPageId("edit")
+
+        // Add fields
+        .setFields([
+
+            ["id", [fields.id.visible && fields.id.required ? ew.Validators.required(fields.id.caption) : null, ew.Validators.integer], fields.id.isInvalid],
+            ["Template_Type", [fields.Template_Type.visible && fields.Template_Type.required ? ew.Validators.required(fields.Template_Type.caption) : null], fields.Template_Type.isInvalid],
+            ["Template_Name", [fields.Template_Name.visible && fields.Template_Name.required ? ew.Validators.required(fields.Template_Name.caption) : null], fields.Template_Name.isInvalid],
+            ["Template_Body", [fields.Template_Body.visible && fields.Template_Body.required ? ew.Validators.required(fields.Template_Body.caption) : null], fields.Template_Body.isInvalid],
+            ["Template_Description", [fields.Template_Description.visible && fields.Template_Description.required ? ew.Validators.required(fields.Template_Description.caption) : null], fields.Template_Description.isInvalid]
+        ])
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+        })
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="update">
+<input type="hidden" name="modal" value="@ConvertToInt(mtTemplateEmailEdit.IsModal)">
+@if (IsJsonResponse()) {
+<input type="hidden" name="json" value="1">
+}
+<input type="hidden" name="@(mtTemplateEmailEdit.OldKeyName)" value="@Html.Raw(mtTemplateEmailEdit.OldKey)">
+<div class="ew-edit-div"><!-- page* -->
+@if (mtTemplateEmailEdit.id.Visible) { // mtTemplateEmailEdit.id.Visible (begin)
+    <div id="r_id" @Html.Raw(mtTemplateEmailEdit.id.RowAttributes)>
+        <label id="elh_mt_template_email_id" for="x_id" class="@(mtTemplateEmailEdit.LeftColumnClass)">@Html.Raw(mtTemplateEmailEdit.id.Caption)@Html.Raw(mtTemplateEmailEdit.id.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtTemplateEmailEdit.RightColumnClass)"><div @Html.Raw(mtTemplateEmailEdit.id.CellAttributes)>
+<span id="el_mt_template_email_id">
+<input type="@(mtTemplateEmailEdit.id.InputTextType)" name="x_id" id="x_id" data-table="mt_template_email" data-field="x_id" value="@Html.Raw(mtTemplateEmailEdit.id.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(mtTemplateEmailEdit.id.PlaceHolder))" data-format-pattern="@(mtTemplateEmailEdit.id.FormatPattern)"@Html.Raw(mtTemplateEmailEdit.id.EditAttributes) aria-describedby="x_id_help">
+@Html.Raw(mtTemplateEmailEdit.id.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtTemplateEmailEdit.id.GetErrorMessage())</div>
+<input type="hidden" data-table="mt_template_email" data-field="x_id" data-hidden="1" data-old name="o_id" id="o_id" value="@Html.Raw(HtmlEncode(mtTemplateEmailEdit.id.OldValue ?? mtTemplateEmailEdit.id.CurrentValue))">
+</span>
+</div></div>
+    </div>
+} @* mtTemplateEmailEdit.id.Visible (end) *@
+@if (mtTemplateEmailEdit.Template_Type.Visible) { // mtTemplateEmailEdit.Template_Type.Visible (begin)
+    <div id="r_Template_Type" @Html.Raw(mtTemplateEmailEdit.Template_Type.RowAttributes)>
+        <label id="elh_mt_template_email_Template_Type" for="x_Template_Type" class="@(mtTemplateEmailEdit.LeftColumnClass)">@Html.Raw(mtTemplateEmailEdit.Template_Type.Caption)@Html.Raw(mtTemplateEmailEdit.Template_Type.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtTemplateEmailEdit.RightColumnClass)"><div @Html.Raw(mtTemplateEmailEdit.Template_Type.CellAttributes)>
+<span id="el_mt_template_email_Template_Type">
+<input type="@(mtTemplateEmailEdit.Template_Type.InputTextType)" name="x_Template_Type" id="x_Template_Type" data-table="mt_template_email" data-field="x_Template_Type" value="@Html.Raw(mtTemplateEmailEdit.Template_Type.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(mtTemplateEmailEdit.Template_Type.PlaceHolder))" data-format-pattern="@(mtTemplateEmailEdit.Template_Type.FormatPattern)"@Html.Raw(mtTemplateEmailEdit.Template_Type.EditAttributes) aria-describedby="x_Template_Type_help">
+@Html.Raw(mtTemplateEmailEdit.Template_Type.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtTemplateEmailEdit.Template_Type.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtTemplateEmailEdit.Template_Type.Visible (end) *@
+@if (mtTemplateEmailEdit.Template_Name.Visible) { // mtTemplateEmailEdit.Template_Name.Visible (begin)
+    <div id="r_Template_Name" @Html.Raw(mtTemplateEmailEdit.Template_Name.RowAttributes)>
+        <label id="elh_mt_template_email_Template_Name" for="x_Template_Name" class="@(mtTemplateEmailEdit.LeftColumnClass)">@Html.Raw(mtTemplateEmailEdit.Template_Name.Caption)@Html.Raw(mtTemplateEmailEdit.Template_Name.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtTemplateEmailEdit.RightColumnClass)"><div @Html.Raw(mtTemplateEmailEdit.Template_Name.CellAttributes)>
+<span id="el_mt_template_email_Template_Name">
+<input type="@(mtTemplateEmailEdit.Template_Name.InputTextType)" name="x_Template_Name" id="x_Template_Name" data-table="mt_template_email" data-field="x_Template_Name" value="@Html.Raw(mtTemplateEmailEdit.Template_Name.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(mtTemplateEmailEdit.Template_Name.PlaceHolder))" data-format-pattern="@(mtTemplateEmailEdit.Template_Name.FormatPattern)"@Html.Raw(mtTemplateEmailEdit.Template_Name.EditAttributes) aria-describedby="x_Template_Name_help">
+@Html.Raw(mtTemplateEmailEdit.Template_Name.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtTemplateEmailEdit.Template_Name.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtTemplateEmailEdit.Template_Name.Visible (end) *@
+@if (mtTemplateEmailEdit.Template_Body.Visible) { // mtTemplateEmailEdit.Template_Body.Visible (begin)
+    <div id="r_Template_Body" @Html.Raw(mtTemplateEmailEdit.Template_Body.RowAttributes)>
+        <label id="elh_mt_template_email_Template_Body" for="x_Template_Body" class="@(mtTemplateEmailEdit.LeftColumnClass)">@Html.Raw(mtTemplateEmailEdit.Template_Body.Caption)@Html.Raw(mtTemplateEmailEdit.Template_Body.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtTemplateEmailEdit.RightColumnClass)"><div @Html.Raw(mtTemplateEmailEdit.Template_Body.CellAttributes)>
+<span id="el_mt_template_email_Template_Body">
+<textarea data-table="mt_template_email" data-field="x_Template_Body" name="x_Template_Body" id="x_Template_Body" cols="35" rows="4" placeholder="@Html.Raw(HtmlEncode(mtTemplateEmailEdit.Template_Body.PlaceHolder))"@Html.Raw(mtTemplateEmailEdit.Template_Body.EditAttributes) aria-describedby="x_Template_Body_help">@(mtTemplateEmailEdit.Template_Body.EditValue)</textarea>
+@Html.Raw(mtTemplateEmailEdit.Template_Body.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtTemplateEmailEdit.Template_Body.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtTemplateEmailEdit.Template_Body.Visible (end) *@
+@if (mtTemplateEmailEdit.Template_Description.Visible) { // mtTemplateEmailEdit.Template_Description.Visible (begin)
+    <div id="r_Template_Description" @Html.Raw(mtTemplateEmailEdit.Template_Description.RowAttributes)>
+        <label id="elh_mt_template_email_Template_Description" for="x_Template_Description" class="@(mtTemplateEmailEdit.LeftColumnClass)">@Html.Raw(mtTemplateEmailEdit.Template_Description.Caption)@Html.Raw(mtTemplateEmailEdit.Template_Description.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtTemplateEmailEdit.RightColumnClass)"><div @Html.Raw(mtTemplateEmailEdit.Template_Description.CellAttributes)>
+<span id="el_mt_template_email_Template_Description">
+<input type="@(mtTemplateEmailEdit.Template_Description.InputTextType)" name="x_Template_Description" id="x_Template_Description" data-table="mt_template_email" data-field="x_Template_Description" value="@Html.Raw(mtTemplateEmailEdit.Template_Description.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(mtTemplateEmailEdit.Template_Description.PlaceHolder))" data-format-pattern="@(mtTemplateEmailEdit.Template_Description.FormatPattern)"@Html.Raw(mtTemplateEmailEdit.Template_Description.EditAttributes) aria-describedby="x_Template_Description_help">
+@Html.Raw(mtTemplateEmailEdit.Template_Description.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtTemplateEmailEdit.Template_Description.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtTemplateEmailEdit.Template_Description.Visible (end) *@
+</div><!-- /page* -->
+@{ mtTemplateEmailEdit.CloseRecordset(); }
+@Html.Raw(mtTemplateEmailEdit.IsModal ? "<template class=\"ew-modal-buttons\">" : "<div class=\"row ew-buttons\">")<!-- buttons .row -->
+    <div class="@(mtTemplateEmailEdit.OffsetColumnClass)"><!-- buttons offset -->
+    <button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit" form="fmt_template_emailedit">@Html.Raw(Language.Phrase("SaveBtn"))</button>
+@if (IsJsonResponse()) {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-bs-dismiss="modal">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+} else {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="fmt_template_emailedit" data-href="@AppPath(mtTemplateEmailEdit.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+}
+    </div><!-- /buttons offset -->
+@Html.Raw(mtTemplateEmailEdit.IsModal ? "</template>" : "</div>")<!-- /buttons .row -->
+</form>
+</main>
+@mtTemplateEmailEdit.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("mt_template_email");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

@@ -1,0 +1,193 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (logEmailEdit.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!logEmailEdit.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@logEmailEdit.ShowPageHeader()
+@logEmailEdit.ShowMessages()
+<main class="edit">
+<form name="flog_emailedit" id="flog_emailedit" class="@(logEmailEdit.FormClassName)" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+<script>
+var currentTable = @Html.Raw(ConvertToJson(logEmailEdit.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { log_email: currentTable } });
+var currentPageID = ew.PAGE_ID = "edit";
+var currentForm;
+var flog_emailedit;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("flog_emailedit")
+        .setPageId("edit")
+
+        // Add fields
+        .setFields([
+
+            ["id", [fields.id.visible && fields.id.required ? ew.Validators.required(fields.id.caption) : null, ew.Validators.integer], fields.id.isInvalid],
+            ["Email_Type", [fields.Email_Type.visible && fields.Email_Type.required ? ew.Validators.required(fields.Email_Type.caption) : null], fields.Email_Type.isInvalid],
+            ["Email_To", [fields.Email_To.visible && fields.Email_To.required ? ew.Validators.required(fields.Email_To.caption) : null], fields.Email_To.isInvalid],
+            ["Email_Cc", [fields.Email_Cc.visible && fields.Email_Cc.required ? ew.Validators.required(fields.Email_Cc.caption) : null], fields.Email_Cc.isInvalid],
+            ["Email_Subject", [fields.Email_Subject.visible && fields.Email_Subject.required ? ew.Validators.required(fields.Email_Subject.caption) : null], fields.Email_Subject.isInvalid],
+            ["Email_Body", [fields.Email_Body.visible && fields.Email_Body.required ? ew.Validators.required(fields.Email_Body.caption) : null], fields.Email_Body.isInvalid]
+        ])
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+        })
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="update">
+<input type="hidden" name="modal" value="@ConvertToInt(logEmailEdit.IsModal)">
+@if (IsJsonResponse()) {
+<input type="hidden" name="json" value="1">
+}
+<input type="hidden" name="@(logEmailEdit.OldKeyName)" value="@Html.Raw(logEmailEdit.OldKey)">
+<div class="ew-edit-div"><!-- page* -->
+@if (logEmailEdit.id.Visible) { // logEmailEdit.id.Visible (begin)
+    <div id="r_id" @Html.Raw(logEmailEdit.id.RowAttributes)>
+        <label id="elh_log_email_id" for="x_id" class="@(logEmailEdit.LeftColumnClass)">@Html.Raw(logEmailEdit.id.Caption)@Html.Raw(logEmailEdit.id.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(logEmailEdit.RightColumnClass)"><div @Html.Raw(logEmailEdit.id.CellAttributes)>
+<span id="el_log_email_id">
+<input type="@(logEmailEdit.id.InputTextType)" name="x_id" id="x_id" data-table="log_email" data-field="x_id" value="@Html.Raw(logEmailEdit.id.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(logEmailEdit.id.PlaceHolder))" data-format-pattern="@(logEmailEdit.id.FormatPattern)"@Html.Raw(logEmailEdit.id.EditAttributes) aria-describedby="x_id_help">
+@Html.Raw(logEmailEdit.id.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(logEmailEdit.id.GetErrorMessage())</div>
+<input type="hidden" data-table="log_email" data-field="x_id" data-hidden="1" data-old name="o_id" id="o_id" value="@Html.Raw(HtmlEncode(logEmailEdit.id.OldValue ?? logEmailEdit.id.CurrentValue))">
+</span>
+</div></div>
+    </div>
+} @* logEmailEdit.id.Visible (end) *@
+@if (logEmailEdit.Email_Type.Visible) { // logEmailEdit.Email_Type.Visible (begin)
+    <div id="r_Email_Type" @Html.Raw(logEmailEdit.Email_Type.RowAttributes)>
+        <label id="elh_log_email_Email_Type" for="x_Email_Type" class="@(logEmailEdit.LeftColumnClass)">@Html.Raw(logEmailEdit.Email_Type.Caption)@Html.Raw(logEmailEdit.Email_Type.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(logEmailEdit.RightColumnClass)"><div @Html.Raw(logEmailEdit.Email_Type.CellAttributes)>
+<span id="el_log_email_Email_Type">
+<input type="@(logEmailEdit.Email_Type.InputTextType)" name="x_Email_Type" id="x_Email_Type" data-table="log_email" data-field="x_Email_Type" value="@Html.Raw(logEmailEdit.Email_Type.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(logEmailEdit.Email_Type.PlaceHolder))" data-format-pattern="@(logEmailEdit.Email_Type.FormatPattern)"@Html.Raw(logEmailEdit.Email_Type.EditAttributes) aria-describedby="x_Email_Type_help">
+@Html.Raw(logEmailEdit.Email_Type.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(logEmailEdit.Email_Type.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* logEmailEdit.Email_Type.Visible (end) *@
+@if (logEmailEdit.Email_To.Visible) { // logEmailEdit.Email_To.Visible (begin)
+    <div id="r_Email_To" @Html.Raw(logEmailEdit.Email_To.RowAttributes)>
+        <label id="elh_log_email_Email_To" for="x_Email_To" class="@(logEmailEdit.LeftColumnClass)">@Html.Raw(logEmailEdit.Email_To.Caption)@Html.Raw(logEmailEdit.Email_To.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(logEmailEdit.RightColumnClass)"><div @Html.Raw(logEmailEdit.Email_To.CellAttributes)>
+<span id="el_log_email_Email_To">
+<input type="@(logEmailEdit.Email_To.InputTextType)" name="x_Email_To" id="x_Email_To" data-table="log_email" data-field="x_Email_To" value="@Html.Raw(logEmailEdit.Email_To.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(logEmailEdit.Email_To.PlaceHolder))" data-format-pattern="@(logEmailEdit.Email_To.FormatPattern)"@Html.Raw(logEmailEdit.Email_To.EditAttributes) aria-describedby="x_Email_To_help">
+@Html.Raw(logEmailEdit.Email_To.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(logEmailEdit.Email_To.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* logEmailEdit.Email_To.Visible (end) *@
+@if (logEmailEdit.Email_Cc.Visible) { // logEmailEdit.Email_Cc.Visible (begin)
+    <div id="r_Email_Cc" @Html.Raw(logEmailEdit.Email_Cc.RowAttributes)>
+        <label id="elh_log_email_Email_Cc" for="x_Email_Cc" class="@(logEmailEdit.LeftColumnClass)">@Html.Raw(logEmailEdit.Email_Cc.Caption)@Html.Raw(logEmailEdit.Email_Cc.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(logEmailEdit.RightColumnClass)"><div @Html.Raw(logEmailEdit.Email_Cc.CellAttributes)>
+<span id="el_log_email_Email_Cc">
+<input type="@(logEmailEdit.Email_Cc.InputTextType)" name="x_Email_Cc" id="x_Email_Cc" data-table="log_email" data-field="x_Email_Cc" value="@Html.Raw(logEmailEdit.Email_Cc.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(logEmailEdit.Email_Cc.PlaceHolder))" data-format-pattern="@(logEmailEdit.Email_Cc.FormatPattern)"@Html.Raw(logEmailEdit.Email_Cc.EditAttributes) aria-describedby="x_Email_Cc_help">
+@Html.Raw(logEmailEdit.Email_Cc.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(logEmailEdit.Email_Cc.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* logEmailEdit.Email_Cc.Visible (end) *@
+@if (logEmailEdit.Email_Subject.Visible) { // logEmailEdit.Email_Subject.Visible (begin)
+    <div id="r_Email_Subject" @Html.Raw(logEmailEdit.Email_Subject.RowAttributes)>
+        <label id="elh_log_email_Email_Subject" for="x_Email_Subject" class="@(logEmailEdit.LeftColumnClass)">@Html.Raw(logEmailEdit.Email_Subject.Caption)@Html.Raw(logEmailEdit.Email_Subject.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(logEmailEdit.RightColumnClass)"><div @Html.Raw(logEmailEdit.Email_Subject.CellAttributes)>
+<span id="el_log_email_Email_Subject">
+<input type="@(logEmailEdit.Email_Subject.InputTextType)" name="x_Email_Subject" id="x_Email_Subject" data-table="log_email" data-field="x_Email_Subject" value="@Html.Raw(logEmailEdit.Email_Subject.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(logEmailEdit.Email_Subject.PlaceHolder))" data-format-pattern="@(logEmailEdit.Email_Subject.FormatPattern)"@Html.Raw(logEmailEdit.Email_Subject.EditAttributes) aria-describedby="x_Email_Subject_help">
+@Html.Raw(logEmailEdit.Email_Subject.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(logEmailEdit.Email_Subject.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* logEmailEdit.Email_Subject.Visible (end) *@
+@if (logEmailEdit.Email_Body.Visible) { // logEmailEdit.Email_Body.Visible (begin)
+    <div id="r_Email_Body" @Html.Raw(logEmailEdit.Email_Body.RowAttributes)>
+        <label id="elh_log_email_Email_Body" for="x_Email_Body" class="@(logEmailEdit.LeftColumnClass)">@Html.Raw(logEmailEdit.Email_Body.Caption)@Html.Raw(logEmailEdit.Email_Body.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(logEmailEdit.RightColumnClass)"><div @Html.Raw(logEmailEdit.Email_Body.CellAttributes)>
+<span id="el_log_email_Email_Body">
+<input type="@(logEmailEdit.Email_Body.InputTextType)" name="x_Email_Body" id="x_Email_Body" data-table="log_email" data-field="x_Email_Body" value="@Html.Raw(logEmailEdit.Email_Body.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(logEmailEdit.Email_Body.PlaceHolder))" data-format-pattern="@(logEmailEdit.Email_Body.FormatPattern)"@Html.Raw(logEmailEdit.Email_Body.EditAttributes) aria-describedby="x_Email_Body_help">
+@Html.Raw(logEmailEdit.Email_Body.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(logEmailEdit.Email_Body.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* logEmailEdit.Email_Body.Visible (end) *@
+</div><!-- /page* -->
+@{ logEmailEdit.CloseRecordset(); }
+@Html.Raw(logEmailEdit.IsModal ? "<template class=\"ew-modal-buttons\">" : "<div class=\"row ew-buttons\">")<!-- buttons .row -->
+    <div class="@(logEmailEdit.OffsetColumnClass)"><!-- buttons offset -->
+    <button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit" form="flog_emailedit">@Html.Raw(Language.Phrase("SaveBtn"))</button>
+@if (IsJsonResponse()) {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-bs-dismiss="modal">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+} else {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="flog_emailedit" data-href="@AppPath(logEmailEdit.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+}
+    </div><!-- /buttons offset -->
+@Html.Raw(logEmailEdit.IsModal ? "</template>" : "</div>")<!-- /buttons .row -->
+</form>
+</main>
+@logEmailEdit.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("log_email");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

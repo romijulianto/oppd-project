@@ -1,0 +1,373 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (vTrRequestView.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!vTrRequestView.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!vTrRequestView.IsExport()) {
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!vTrRequestView.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+    @vTrRequestView.ExportOptions.RenderBody()
+    @vTrRequestView.OtherOptions.RenderBody()
+</div>
+}
+@vTrRequestView.ShowPageHeader()
+@vTrRequestView.ShowMessages()
+<main class="view">
+<form name="fv_tr_requestview" id="fv_tr_requestview" class="ew-form ew-view-form overlay-wrapper" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (!vTrRequestView.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(vTrRequestView.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { v_tr_request: currentTable } });
+var currentPageID = ew.PAGE_ID = "view";
+var currentForm;
+var fv_tr_requestview;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fv_tr_requestview")
+        .setPageId("view")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+}
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="modal" value="@ConvertToInt(vTrRequestView.IsModal)">
+<table class="@(vTrRequestView.TableClass)">
+@if (vTrRequestView.id.Visible) { // vTrRequestView.id.Visible (begin)
+    <tr id="r_id" @Html.Raw(vTrRequestView.id.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_id">@Html.Raw(vTrRequestView.id.Caption)</span></td>
+        <td data-name="id" @Html.Raw(vTrRequestView.id.CellAttributes)>
+<span id="el_v_tr_request_id">
+<span @Html.Raw(vTrRequestView.id.ViewAttributes)>
+@Html.Raw(vTrRequestView.id.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.id.Visible (end) *@
+@if (vTrRequestView.Request_No.Visible) { // vTrRequestView.Request_No.Visible (begin)
+    <tr id="r_Request_No" @Html.Raw(vTrRequestView.Request_No.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Request_No">@Html.Raw(vTrRequestView.Request_No.Caption)</span></td>
+        <td data-name="Request_No" @Html.Raw(vTrRequestView.Request_No.CellAttributes)>
+<span id="el_v_tr_request_Request_No">
+<span @Html.Raw(vTrRequestView.Request_No.ViewAttributes)>
+@Html.Raw(vTrRequestView.Request_No.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Request_No.Visible (end) *@
+@if (vTrRequestView.Reference_Doc.Visible) { // vTrRequestView.Reference_Doc.Visible (begin)
+    <tr id="r_Reference_Doc" @Html.Raw(vTrRequestView.Reference_Doc.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Reference_Doc">@Html.Raw(vTrRequestView.Reference_Doc.Caption)</span></td>
+        <td data-name="Reference_Doc" @Html.Raw(vTrRequestView.Reference_Doc.CellAttributes)>
+<span id="el_v_tr_request_Reference_Doc">
+<span @Html.Raw(vTrRequestView.Reference_Doc.ViewAttributes)>
+@Html.Raw(vTrRequestView.Reference_Doc.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Reference_Doc.Visible (end) *@
+@if (vTrRequestView.Reason.Visible) { // vTrRequestView.Reason.Visible (begin)
+    <tr id="r_Reason" @Html.Raw(vTrRequestView.Reason.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Reason">@Html.Raw(vTrRequestView.Reason.Caption)</span></td>
+        <td data-name="Reason" @Html.Raw(vTrRequestView.Reason.CellAttributes)>
+<span id="el_v_tr_request_Reason">
+<span @Html.Raw(vTrRequestView.Reason.ViewAttributes)>
+@Html.Raw(vTrRequestView.Reason.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Reason.Visible (end) *@
+@if (vTrRequestView.Request_By.Visible) { // vTrRequestView.Request_By.Visible (begin)
+    <tr id="r_Request_By" @Html.Raw(vTrRequestView.Request_By.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Request_By">@Html.Raw(vTrRequestView.Request_By.Caption)</span></td>
+        <td data-name="Request_By" @Html.Raw(vTrRequestView.Request_By.CellAttributes)>
+<span id="el_v_tr_request_Request_By">
+<span @Html.Raw(vTrRequestView.Request_By.ViewAttributes)>
+@Html.Raw(vTrRequestView.Request_By.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Request_By.Visible (end) *@
+@if (vTrRequestView.Request_By_Name.Visible) { // vTrRequestView.Request_By_Name.Visible (begin)
+    <tr id="r_Request_By_Name" @Html.Raw(vTrRequestView.Request_By_Name.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Request_By_Name">@Html.Raw(vTrRequestView.Request_By_Name.Caption)</span></td>
+        <td data-name="Request_By_Name" @Html.Raw(vTrRequestView.Request_By_Name.CellAttributes)>
+<span id="el_v_tr_request_Request_By_Name">
+<span @Html.Raw(vTrRequestView.Request_By_Name.ViewAttributes)>
+@Html.Raw(vTrRequestView.Request_By_Name.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Request_By_Name.Visible (end) *@
+@if (vTrRequestView.Request_By_Position.Visible) { // vTrRequestView.Request_By_Position.Visible (begin)
+    <tr id="r_Request_By_Position" @Html.Raw(vTrRequestView.Request_By_Position.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Request_By_Position">@Html.Raw(vTrRequestView.Request_By_Position.Caption)</span></td>
+        <td data-name="Request_By_Position" @Html.Raw(vTrRequestView.Request_By_Position.CellAttributes)>
+<span id="el_v_tr_request_Request_By_Position">
+<span @Html.Raw(vTrRequestView.Request_By_Position.ViewAttributes)>
+@Html.Raw(vTrRequestView.Request_By_Position.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Request_By_Position.Visible (end) *@
+@if (vTrRequestView.Request_By_Branch.Visible) { // vTrRequestView.Request_By_Branch.Visible (begin)
+    <tr id="r_Request_By_Branch" @Html.Raw(vTrRequestView.Request_By_Branch.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Request_By_Branch">@Html.Raw(vTrRequestView.Request_By_Branch.Caption)</span></td>
+        <td data-name="Request_By_Branch" @Html.Raw(vTrRequestView.Request_By_Branch.CellAttributes)>
+<span id="el_v_tr_request_Request_By_Branch">
+<span @Html.Raw(vTrRequestView.Request_By_Branch.ViewAttributes)>
+@Html.Raw(vTrRequestView.Request_By_Branch.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Request_By_Branch.Visible (end) *@
+@if (vTrRequestView.Request_By_Region.Visible) { // vTrRequestView.Request_By_Region.Visible (begin)
+    <tr id="r_Request_By_Region" @Html.Raw(vTrRequestView.Request_By_Region.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Request_By_Region">@Html.Raw(vTrRequestView.Request_By_Region.Caption)</span></td>
+        <td data-name="Request_By_Region" @Html.Raw(vTrRequestView.Request_By_Region.CellAttributes)>
+<span id="el_v_tr_request_Request_By_Region">
+<span @Html.Raw(vTrRequestView.Request_By_Region.ViewAttributes)>
+@Html.Raw(vTrRequestView.Request_By_Region.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Request_By_Region.Visible (end) *@
+@if (vTrRequestView.Request_Industry.Visible) { // vTrRequestView.Request_Industry.Visible (begin)
+    <tr id="r_Request_Industry" @Html.Raw(vTrRequestView.Request_Industry.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Request_Industry">@Html.Raw(vTrRequestView.Request_Industry.Caption)</span></td>
+        <td data-name="Request_Industry" @Html.Raw(vTrRequestView.Request_Industry.CellAttributes)>
+<span id="el_v_tr_request_Request_Industry">
+<span @Html.Raw(vTrRequestView.Request_Industry.ViewAttributes)>
+@Html.Raw(vTrRequestView.Request_Industry.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Request_Industry.Visible (end) *@
+@if (vTrRequestView.Customer_ID.Visible) { // vTrRequestView.Customer_ID.Visible (begin)
+    <tr id="r_Customer_ID" @Html.Raw(vTrRequestView.Customer_ID.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Customer_ID">@Html.Raw(vTrRequestView.Customer_ID.Caption)</span></td>
+        <td data-name="Customer_ID" @Html.Raw(vTrRequestView.Customer_ID.CellAttributes)>
+<span id="el_v_tr_request_Customer_ID">
+<span @Html.Raw(vTrRequestView.Customer_ID.ViewAttributes)>
+@Html.Raw(vTrRequestView.Customer_ID.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Customer_ID.Visible (end) *@
+@if (vTrRequestView.Customer_Name.Visible) { // vTrRequestView.Customer_Name.Visible (begin)
+    <tr id="r_Customer_Name" @Html.Raw(vTrRequestView.Customer_Name.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Customer_Name">@Html.Raw(vTrRequestView.Customer_Name.Caption)</span></td>
+        <td data-name="Customer_Name" @Html.Raw(vTrRequestView.Customer_Name.CellAttributes)>
+<span id="el_v_tr_request_Customer_Name">
+<span @Html.Raw(vTrRequestView.Customer_Name.ViewAttributes)>
+@Html.Raw(vTrRequestView.Customer_Name.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Customer_Name.Visible (end) *@
+@if (vTrRequestView.SAP_Total.Visible) { // vTrRequestView.SAP_Total.Visible (begin)
+    <tr id="r_SAP_Total" @Html.Raw(vTrRequestView.SAP_Total.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_SAP_Total">@Html.Raw(vTrRequestView.SAP_Total.Caption)</span></td>
+        <td data-name="SAP_Total" @Html.Raw(vTrRequestView.SAP_Total.CellAttributes)>
+<span id="el_v_tr_request_SAP_Total">
+<span @Html.Raw(vTrRequestView.SAP_Total.ViewAttributes)>
+@Html.Raw(vTrRequestView.SAP_Total.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.SAP_Total.Visible (end) *@
+@if (vTrRequestView.Override_Total.Visible) { // vTrRequestView.Override_Total.Visible (begin)
+    <tr id="r_Override_Total" @Html.Raw(vTrRequestView.Override_Total.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Override_Total">@Html.Raw(vTrRequestView.Override_Total.Caption)</span></td>
+        <td data-name="Override_Total" @Html.Raw(vTrRequestView.Override_Total.CellAttributes)>
+<span id="el_v_tr_request_Override_Total">
+<span @Html.Raw(vTrRequestView.Override_Total.ViewAttributes)>
+@Html.Raw(vTrRequestView.Override_Total.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Override_Total.Visible (end) *@
+@if (vTrRequestView.Variance_Total.Visible) { // vTrRequestView.Variance_Total.Visible (begin)
+    <tr id="r_Variance_Total" @Html.Raw(vTrRequestView.Variance_Total.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Variance_Total">@Html.Raw(vTrRequestView.Variance_Total.Caption)</span></td>
+        <td data-name="Variance_Total" @Html.Raw(vTrRequestView.Variance_Total.CellAttributes)>
+<span id="el_v_tr_request_Variance_Total">
+<span @Html.Raw(vTrRequestView.Variance_Total.ViewAttributes)>
+@Html.Raw(vTrRequestView.Variance_Total.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Variance_Total.Visible (end) *@
+@if (vTrRequestView.Variance_Percent.Visible) { // vTrRequestView.Variance_Percent.Visible (begin)
+    <tr id="r_Variance_Percent" @Html.Raw(vTrRequestView.Variance_Percent.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Variance_Percent">@Html.Raw(vTrRequestView.Variance_Percent.Caption)</span></td>
+        <td data-name="Variance_Percent" @Html.Raw(vTrRequestView.Variance_Percent.CellAttributes)>
+<span id="el_v_tr_request_Variance_Percent">
+<span @Html.Raw(vTrRequestView.Variance_Percent.ViewAttributes)>
+@Html.Raw(vTrRequestView.Variance_Percent.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Variance_Percent.Visible (end) *@
+@if (vTrRequestView.Notes.Visible) { // vTrRequestView.Notes.Visible (begin)
+    <tr id="r_Notes" @Html.Raw(vTrRequestView.Notes.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Notes">@Html.Raw(vTrRequestView.Notes.Caption)</span></td>
+        <td data-name="Notes" @Html.Raw(vTrRequestView.Notes.CellAttributes)>
+<span id="el_v_tr_request_Notes">
+<span @Html.Raw(vTrRequestView.Notes.ViewAttributes)>
+@Html.Raw(vTrRequestView.Notes.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Notes.Visible (end) *@
+@if (vTrRequestView.Next_Approver.Visible) { // vTrRequestView.Next_Approver.Visible (begin)
+    <tr id="r_Next_Approver" @Html.Raw(vTrRequestView.Next_Approver.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Next_Approver">@Html.Raw(vTrRequestView.Next_Approver.Caption)</span></td>
+        <td data-name="Next_Approver" @Html.Raw(vTrRequestView.Next_Approver.CellAttributes)>
+<span id="el_v_tr_request_Next_Approver">
+<span @Html.Raw(vTrRequestView.Next_Approver.ViewAttributes)>
+@Html.Raw(vTrRequestView.Next_Approver.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Next_Approver.Visible (end) *@
+@if (vTrRequestView.List_Approver.Visible) { // vTrRequestView.List_Approver.Visible (begin)
+    <tr id="r_List_Approver" @Html.Raw(vTrRequestView.List_Approver.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_List_Approver">@Html.Raw(vTrRequestView.List_Approver.Caption)</span></td>
+        <td data-name="List_Approver" @Html.Raw(vTrRequestView.List_Approver.CellAttributes)>
+<span id="el_v_tr_request_List_Approver">
+<span @Html.Raw(vTrRequestView.List_Approver.ViewAttributes)>
+@Html.Raw(vTrRequestView.List_Approver.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.List_Approver.Visible (end) *@
+@if (vTrRequestView.Last_Update_By.Visible) { // vTrRequestView.Last_Update_By.Visible (begin)
+    <tr id="r_Last_Update_By" @Html.Raw(vTrRequestView.Last_Update_By.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Last_Update_By">@Html.Raw(vTrRequestView.Last_Update_By.Caption)</span></td>
+        <td data-name="Last_Update_By" @Html.Raw(vTrRequestView.Last_Update_By.CellAttributes)>
+<span id="el_v_tr_request_Last_Update_By">
+<span @Html.Raw(vTrRequestView.Last_Update_By.ViewAttributes)>
+@Html.Raw(vTrRequestView.Last_Update_By.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Last_Update_By.Visible (end) *@
+@if (vTrRequestView.Created_By.Visible) { // vTrRequestView.Created_By.Visible (begin)
+    <tr id="r_Created_By" @Html.Raw(vTrRequestView.Created_By.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Created_By">@Html.Raw(vTrRequestView.Created_By.Caption)</span></td>
+        <td data-name="Created_By" @Html.Raw(vTrRequestView.Created_By.CellAttributes)>
+<span id="el_v_tr_request_Created_By">
+<span @Html.Raw(vTrRequestView.Created_By.ViewAttributes)>
+@Html.Raw(vTrRequestView.Created_By.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Created_By.Visible (end) *@
+@if (vTrRequestView.Created_Date.Visible) { // vTrRequestView.Created_Date.Visible (begin)
+    <tr id="r_Created_Date" @Html.Raw(vTrRequestView.Created_Date.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Created_Date">@Html.Raw(vTrRequestView.Created_Date.Caption)</span></td>
+        <td data-name="Created_Date" @Html.Raw(vTrRequestView.Created_Date.CellAttributes)>
+<span id="el_v_tr_request_Created_Date">
+<span @Html.Raw(vTrRequestView.Created_Date.ViewAttributes)>
+@Html.Raw(vTrRequestView.Created_Date.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Created_Date.Visible (end) *@
+@if (vTrRequestView.ETL_Date.Visible) { // vTrRequestView.ETL_Date.Visible (begin)
+    <tr id="r_ETL_Date" @Html.Raw(vTrRequestView.ETL_Date.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_ETL_Date">@Html.Raw(vTrRequestView.ETL_Date.Caption)</span></td>
+        <td data-name="ETL_Date" @Html.Raw(vTrRequestView.ETL_Date.CellAttributes)>
+<span id="el_v_tr_request_ETL_Date">
+<span @Html.Raw(vTrRequestView.ETL_Date.ViewAttributes)>
+@Html.Raw(vTrRequestView.ETL_Date.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.ETL_Date.Visible (end) *@
+@if (vTrRequestView.Request_Status.Visible) { // vTrRequestView.Request_Status.Visible (begin)
+    <tr id="r_Request_Status" @Html.Raw(vTrRequestView.Request_Status.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Request_Status">@Html.Raw(vTrRequestView.Request_Status.Caption)</span></td>
+        <td data-name="Request_Status" @Html.Raw(vTrRequestView.Request_Status.CellAttributes)>
+<span id="el_v_tr_request_Request_Status">
+<span @Html.Raw(vTrRequestView.Request_Status.ViewAttributes)>
+@Html.Raw(vTrRequestView.Request_Status.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Request_Status.Visible (end) *@
+@if (vTrRequestView.Request_PIC.Visible) { // vTrRequestView.Request_PIC.Visible (begin)
+    <tr id="r_Request_PIC" @Html.Raw(vTrRequestView.Request_PIC.RowAttributes)>
+        <td class="@(vTrRequestView.TableLeftColumnClass)"><span id="elh_v_tr_request_Request_PIC">@Html.Raw(vTrRequestView.Request_PIC.Caption)</span></td>
+        <td data-name="Request_PIC" @Html.Raw(vTrRequestView.Request_PIC.CellAttributes)>
+<span id="el_v_tr_request_Request_PIC">
+<span @Html.Raw(vTrRequestView.Request_PIC.ViewAttributes)>
+@Html.Raw(vTrRequestView.Request_PIC.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* vTrRequestView.Request_PIC.Visible (end) *@
+</table>
+@{ vTrRequestView.CloseRecordset(); }
+@if (!Empty(vTrRequestView.CurrentDetailTable)) {
+    vTrRequestView.DetailPages.ValidKeys = vTrRequestView.CurrentDetailTables;
+<div class="ew-detail-pages"><!-- detail-pages -->
+<div class="ew-nav@(vTrRequestView.DetailPages.ContainerClasses)" id="details_vTrRequestView"><!-- tabs -->
+    <ul class="@(vTrRequestView.DetailPages.NavClasses)" role="tablist"><!-- .nav -->
+@if (vTrRequestView.CurrentDetailTables.Contains("tr_request_detail") && trRequestDetail.DetailView) {
+        <li class="nav-item"><button class="@(vTrRequestView.DetailPages.NavLinkClasses("tr_request_detail"))@(vTrRequestView.DetailPages.ActiveClasses("tr_request_detail"))" data-bs-target="#tab_tr_request_detail" data-bs-toggle="tab" type="button" role="tab" aria-controls="tab_tr_request_detail" aria-selected="@(ConvertToJson(vTrRequestView.DetailPages.IsActive("tr_request_detail")))">@Html.Raw(Language.TablePhrase("tr_request_detail", "TblCaption"))</button></li>
+}
+@if (vTrRequestView.CurrentDetailTables.Contains("tr_request_approver") && trRequestApprover.DetailView) {
+        <li class="nav-item"><button class="@(vTrRequestView.DetailPages.NavLinkClasses("tr_request_approver"))@(vTrRequestView.DetailPages.ActiveClasses("tr_request_approver"))" data-bs-target="#tab_tr_request_approver" data-bs-toggle="tab" type="button" role="tab" aria-controls="tab_tr_request_approver" aria-selected="@(ConvertToJson(vTrRequestView.DetailPages.IsActive("tr_request_approver")))">@Html.Raw(Language.TablePhrase("tr_request_approver", "TblCaption"))</button></li>
+}
+@if (vTrRequestView.CurrentDetailTables.Contains("tr_request_approval_history") && trRequestApprovalHistory.DetailView) {
+        <li class="nav-item"><button class="@(vTrRequestView.DetailPages.NavLinkClasses("tr_request_approval_history"))@(vTrRequestView.DetailPages.ActiveClasses("tr_request_approval_history"))" data-bs-target="#tab_tr_request_approval_history" data-bs-toggle="tab" type="button" role="tab" aria-controls="tab_tr_request_approval_history" aria-selected="@(ConvertToJson(vTrRequestView.DetailPages.IsActive("tr_request_approval_history")))">@Html.Raw(Language.TablePhrase("tr_request_approval_history", "TblCaption"))</button></li>
+}
+    </ul><!-- /.nav -->
+    <div class="@(vTrRequestView.DetailPages.TabContentClasses)"><!-- .tab-content -->
+@if (vTrRequestView.CurrentDetailTables.Contains("tr_request_detail") && trRequestDetail.DetailView) {
+        <div class="@Html.Raw(vTrRequestView.DetailPages.TabPaneClasses("tr_request_detail"))@(vTrRequestView.DetailPages.ActiveClasses("tr_request_detail"))" id="tab_tr_request_detail" role="tabpanel"><!-- page* -->
+        @await Html.PartialAsync("TrRequestDetailGrid")
+        </div><!-- /page* -->
+    View = this;
+}
+@if (vTrRequestView.CurrentDetailTables.Contains("tr_request_approver") && trRequestApprover.DetailView) {
+        <div class="@Html.Raw(vTrRequestView.DetailPages.TabPaneClasses("tr_request_approver"))@(vTrRequestView.DetailPages.ActiveClasses("tr_request_approver"))" id="tab_tr_request_approver" role="tabpanel"><!-- page* -->
+        @await Html.PartialAsync("TrRequestApproverGrid")
+        </div><!-- /page* -->
+    View = this;
+}
+@if (vTrRequestView.CurrentDetailTables.Contains("tr_request_approval_history") && trRequestApprovalHistory.DetailView) {
+        <div class="@Html.Raw(vTrRequestView.DetailPages.TabPaneClasses("tr_request_approval_history"))@(vTrRequestView.DetailPages.ActiveClasses("tr_request_approval_history"))" id="tab_tr_request_approval_history" role="tabpanel"><!-- page* -->
+        @await Html.PartialAsync("TrRequestApprovalHistoryGrid")
+        </div><!-- /page* -->
+    View = this;
+}
+    </div><!-- /.tab-content -->
+</div><!-- /tabs -->
+</div><!-- /detail-pages -->
+}
+</form>
+</main>
+@vTrRequestView.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!vTrRequestView.IsExport()) {
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

@@ -1,0 +1,316 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (logEmailList.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!logEmailList.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!logEmailList.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(logEmailList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { log_email: currentTable } });
+var currentPageID = ew.PAGE_ID = "list";
+var currentForm;
+var @(logEmailList.FormName);
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("@(logEmailList.FormName)")
+        .setPageId("list")
+        .setSubmitWithFetch(@(logEmailList.UseAjaxActions ? "true" : "false"))
+        .setFormKeyCountName("@(logEmailList.FormKeyCountName)")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+ew.PREVIEW_SELECTOR = ".ew-preview-btn";
+ew.PREVIEW_MODAL_CLASS = "modal modal-fullscreen-sm-down";
+ew.PREVIEW_ROW = true;
+ew.PREVIEW_SINGLE_ROW = false;
+ew.PREVIEW || ew.ready("head", ew.PATH_BASE + "js/preview.min.js?v=20.6.0", "preview");
+</script>
+<script>
+window.Tabulator || loadjs([
+    ew.PATH_BASE + "js/tabulator.min.js?v=20.6.3",
+    ew.PATH_BASE + "css/@CssFile("tabulator_bootstrap5.css", false)?v=20.6.3"
+], "import");
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!logEmailList.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+@if (logEmailList.TotalRecords > 0 && logEmailList.ExportOptions.Visible) {
+    logEmailList.ExportOptions.Render("body");
+}
+@if (logEmailList.ImportOptions.Visible) {
+    logEmailList.ImportOptions.Render("body");
+}
+@if (logEmailList.SearchOptions.Visible) {
+    logEmailList.SearchOptions.Render("body");
+}
+@if (logEmailList.FilterOptions.Visible) {
+    logEmailList.FilterOptions.Render("body");
+}
+</div>
+}
+@if (!logEmailList.IsModal) {
+<form name="flog_emailsrch" id="flog_emailsrch" class="ew-form ew-ext-search-form" action="@AppPath(CurrentPageName())" novalidate autocomplete="off">
+<div id="flog_emailsrch_search_panel" class="mb-2 mb-sm-0 @(logEmailList.SearchPanelClass)"><!-- .ew-search-panel -->
+<script>
+var currentTable = @Html.Raw(ConvertToJson(logEmailList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { log_email: currentTable } });
+var currentForm;
+var flog_emailsrch, currentSearchForm, currentAdvancedSearchForm;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery,
+        fields = currentTable.fields;
+
+    // Form object for search
+    let form = new ew.FormBuilder()
+        .setId("flog_emailsrch")
+        .setPageId("list")
+@if (logEmailList.UseAjaxActions) {
+        <text>.setSubmitWithFetch(true)</text>
+}
+
+        // Dynamic selection lists
+        .setLists({
+        })
+
+        // Filters
+        .setFilterList(@Html.Raw(await logEmailList.GetFilterList()))
+        .build();
+    window[form.id] = form;
+    currentSearchForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<input type="hidden" name="cmd" value="search">
+@if (Security.CanSearch) {
+if (!logEmailList.IsExport() && Empty(logEmailList.CurrentAction) && logEmailList.HasSearchFields()) { @* Show search form (begin) *@
+<div class="ew-extended-search container-fluid ps-2">
+<div class="row mb-0">
+    <div class="col-sm-auto px-0 pe-sm-2">
+        <div class="ew-basic-search input-group">
+            <input type="search" name="@(Config.TableBasicSearch)" id="@(Config.TableBasicSearch)" class="form-control ew-basic-search-keyword" value="@Html.Raw(HtmlEncode(logEmailList.BasicSearch.SessionKeyword))" placeholder="@(HtmlEncode(Language.Phrase("Search")))" aria-label="@(HtmlEncode(Language.Phrase("Search")))">
+            <input type="hidden" name="@(Config.TableBasicSearchType)" id="@(Config.TableBasicSearchType)" class="ew-basic-search-type" value="@(HtmlEncode(logEmailList.BasicSearch.SessionType))">
+            <button type="button" data-bs-toggle="dropdown" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" aria-haspopup="true" aria-expanded="false">
+                <span id="searchtype">@Html.Raw(logEmailList.BasicSearch.TypeNameShort)</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end">
+                <button type="button" class="dropdown-item@(logEmailList.BasicSearch.SessionType == "" ? " active" : "")" form="flog_emailsrch" data-ew-action="search-type">@Html.Raw(Language.Phrase("QuickSearchAuto"))</button>
+                <button type="button" class="dropdown-item@(logEmailList.BasicSearch.SessionType == "=" ? " active" : "")" form="flog_emailsrch" data-ew-action="search-type" data-search-type="=">@Html.Raw(Language.Phrase("QuickSearchExact"))</button>
+                <button type="button" class="dropdown-item@(logEmailList.BasicSearch.SessionType == "AND" ? " active" : "")" form="flog_emailsrch" data-ew-action="search-type" data-search-type="AND">@Html.Raw(Language.Phrase("QuickSearchAll"))</button>
+                <button type="button" class="dropdown-item@(logEmailList.BasicSearch.SessionType == "OR" ? " active" : "")" form="flog_emailsrch" data-ew-action="search-type" data-search-type="OR">@Html.Raw(Language.Phrase("QuickSearchAny"))</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-auto mb-3">
+        <button class="btn btn-primary" name="btn-submit" id="btn-submit" type="submit">@Html.Raw(Language.Phrase("SearchBtn"))</button>
+    </div>
+</div>
+</div><!-- /.ew-extended-search -->
+} @* Show search form (end) *@
+}
+</div><!-- /.ew-search-panel -->
+</form>
+}
+@logEmailList.ShowPageHeader()
+@logEmailList.ShowMessages()
+<main class="list @(logEmailList.TotalRecords == 0 && !logEmailList.IsAdd ? " ew-no-record" : "")">
+<div id="ew-list">
+@if (logEmailList.TotalRecords > 0 || !Empty(logEmailList.CurrentAction)) {
+<div class="card ew-card ew-grid@(logEmailList.IsAddOrEdit ? " ew-grid-add-edit" : "") @(logEmailList.TableGridClass)">
+<form name="@(logEmailList.FormName)" id="@(logEmailList.FormName)" class="ew-form ew-list-form" action="@AppPath(logEmailList.PageName)" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+@if (logEmailList.IsModal) {
+<input type="hidden" name="modal" value="1">
+}
+<div id="gmp_log_email" class="card-body ew-grid-middle-panel @(logEmailList.TableContainerClass)" style="@(logEmailList.TableContainerStyle)">
+@if (logEmailList.TotalRecords > 0 || logEmailList.IsGridEdit || logEmailList.IsMultiEdit) {
+<table id="tbl_log_emaillist" class="@(logEmailList.TableClass)"><!-- .ew-table -->
+<thead>
+    <tr class="ew-table-header">
+@{
+    // Header row
+    logEmailList.RowType = RowType.Header;
+
+    // Render list options
+    await logEmailList.RenderListOptions();
+}
+@* Render list options (header, left) *@
+@logEmailList.ListOptions.RenderHeader("left")
+@if (logEmailList.id.Visible) { // logEmailList.id.Visible (begin)
+        <th data-name="id" class="@(logEmailList.id.HeaderCellClass)"><div id="elh_log_email_id" class="log_email_id">@Html.Raw(logEmailList.RenderFieldHeader(logEmailList.id))</div></th>
+} @* logEmailList.id.Visible (end) *@
+@if (logEmailList.Email_Type.Visible) { // logEmailList.Email_Type.Visible (begin)
+        <th data-name="Email_Type" class="@(logEmailList.Email_Type.HeaderCellClass)"><div id="elh_log_email_Email_Type" class="log_email_Email_Type">@Html.Raw(logEmailList.RenderFieldHeader(logEmailList.Email_Type))</div></th>
+} @* logEmailList.Email_Type.Visible (end) *@
+@if (logEmailList.Email_To.Visible) { // logEmailList.Email_To.Visible (begin)
+        <th data-name="Email_To" class="@(logEmailList.Email_To.HeaderCellClass)"><div id="elh_log_email_Email_To" class="log_email_Email_To">@Html.Raw(logEmailList.RenderFieldHeader(logEmailList.Email_To))</div></th>
+} @* logEmailList.Email_To.Visible (end) *@
+@if (logEmailList.Email_Cc.Visible) { // logEmailList.Email_Cc.Visible (begin)
+        <th data-name="Email_Cc" class="@(logEmailList.Email_Cc.HeaderCellClass)"><div id="elh_log_email_Email_Cc" class="log_email_Email_Cc">@Html.Raw(logEmailList.RenderFieldHeader(logEmailList.Email_Cc))</div></th>
+} @* logEmailList.Email_Cc.Visible (end) *@
+@if (logEmailList.Email_Subject.Visible) { // logEmailList.Email_Subject.Visible (begin)
+        <th data-name="Email_Subject" class="@(logEmailList.Email_Subject.HeaderCellClass)"><div id="elh_log_email_Email_Subject" class="log_email_Email_Subject">@Html.Raw(logEmailList.RenderFieldHeader(logEmailList.Email_Subject))</div></th>
+} @* logEmailList.Email_Subject.Visible (end) *@
+@if (logEmailList.Email_Body.Visible) { // logEmailList.Email_Body.Visible (begin)
+        <th data-name="Email_Body" class="@(logEmailList.Email_Body.HeaderCellClass)"><div id="elh_log_email_Email_Body" class="log_email_Email_Body">@Html.Raw(logEmailList.RenderFieldHeader(logEmailList.Email_Body))</div></th>
+} @* logEmailList.Email_Body.Visible (end) *@
+@* Render list options (header, right) *@
+@logEmailList.ListOptions.RenderHeader("right")
+    </tr>
+</thead>
+<tbody data-page="@(logEmailList.PageNumber)">
+@{
+    await logEmailList.SetupGrid();
+    bool eof = logEmailList.Recordset == null; // DN
+}
+@while (logEmailList.RecordCount < logEmailList.StopRecord || SameString(logEmailList.RowIndex, "$rowindex$")) { // Begin While
+    if (!eof && !SameString(logEmailList.RowIndex, "$rowindex$") &&
+        (!logEmailList.IsGridAdd || logEmailList.CurrentMode == "copy") &&
+        (!((logEmailList.IsCopy || logEmailList.IsAdd) && logEmailList.RowIndex is int rowIndex && rowIndex == 0))) // DN
+        eof = !await logEmailList.Recordset.ReadAsync();
+    logEmailList.RecordCount++;
+    if (logEmailList.RecordCount >= logEmailList.StartRecord) {
+        await logEmailList.SetupRow();
+    <tr @Html.Raw(logEmailList.RowAttributes)>
+    @* Render list options (body, left) *@
+    @logEmailList.ListOptions.RenderBody("left", logEmailList.RowCount)
+    @if (logEmailList.id.Visible) { // logEmailList.id.Visible (begin)
+        <td data-name="id" @Html.Raw(logEmailList.id.CellAttributes)>
+<span id="el@(logEmailList.RowIndex == "$rowindex$" ? "$rowindex$" : logEmailList.RowCount)_log_email_id" class="el_log_email_id">
+<span @Html.Raw(logEmailList.id.ViewAttributes)>
+@Html.Raw(logEmailList.id.GetViewValue())</span>
+</span>
+</td>
+    } @* logEmailList.id.Visible (end) *@
+    @if (logEmailList.Email_Type.Visible) { // logEmailList.Email_Type.Visible (begin)
+        <td data-name="Email_Type" @Html.Raw(logEmailList.Email_Type.CellAttributes)>
+<span id="el@(logEmailList.RowIndex == "$rowindex$" ? "$rowindex$" : logEmailList.RowCount)_log_email_Email_Type" class="el_log_email_Email_Type">
+<span @Html.Raw(logEmailList.Email_Type.ViewAttributes)>
+@Html.Raw(logEmailList.Email_Type.GetViewValue())</span>
+</span>
+</td>
+    } @* logEmailList.Email_Type.Visible (end) *@
+    @if (logEmailList.Email_To.Visible) { // logEmailList.Email_To.Visible (begin)
+        <td data-name="Email_To" @Html.Raw(logEmailList.Email_To.CellAttributes)>
+<span id="el@(logEmailList.RowIndex == "$rowindex$" ? "$rowindex$" : logEmailList.RowCount)_log_email_Email_To" class="el_log_email_Email_To">
+<span @Html.Raw(logEmailList.Email_To.ViewAttributes)>
+@Html.Raw(logEmailList.Email_To.GetViewValue())</span>
+</span>
+</td>
+    } @* logEmailList.Email_To.Visible (end) *@
+    @if (logEmailList.Email_Cc.Visible) { // logEmailList.Email_Cc.Visible (begin)
+        <td data-name="Email_Cc" @Html.Raw(logEmailList.Email_Cc.CellAttributes)>
+<span id="el@(logEmailList.RowIndex == "$rowindex$" ? "$rowindex$" : logEmailList.RowCount)_log_email_Email_Cc" class="el_log_email_Email_Cc">
+<span @Html.Raw(logEmailList.Email_Cc.ViewAttributes)>
+@Html.Raw(logEmailList.Email_Cc.GetViewValue())</span>
+</span>
+</td>
+    } @* logEmailList.Email_Cc.Visible (end) *@
+    @if (logEmailList.Email_Subject.Visible) { // logEmailList.Email_Subject.Visible (begin)
+        <td data-name="Email_Subject" @Html.Raw(logEmailList.Email_Subject.CellAttributes)>
+<span id="el@(logEmailList.RowIndex == "$rowindex$" ? "$rowindex$" : logEmailList.RowCount)_log_email_Email_Subject" class="el_log_email_Email_Subject">
+<span @Html.Raw(logEmailList.Email_Subject.ViewAttributes)>
+@Html.Raw(logEmailList.Email_Subject.GetViewValue())</span>
+</span>
+</td>
+    } @* logEmailList.Email_Subject.Visible (end) *@
+    @if (logEmailList.Email_Body.Visible) { // logEmailList.Email_Body.Visible (begin)
+        <td data-name="Email_Body" @Html.Raw(logEmailList.Email_Body.CellAttributes)>
+<span id="el@(logEmailList.RowIndex == "$rowindex$" ? "$rowindex$" : logEmailList.RowCount)_log_email_Email_Body" class="el_log_email_Email_Body">
+<span @Html.Raw(logEmailList.Email_Body.ViewAttributes)>
+@Html.Raw(logEmailList.Email_Body.GetViewValue())</span>
+</span>
+</td>
+    } @* logEmailList.Email_Body.Visible (end) *@
+    @* Render list options (body, right) *@
+    @logEmailList.ListOptions.RenderBody("right", logEmailList.RowCount)
+    </tr>
+    } @* End if *@
+
+    // Reset for template row
+    if (SameString(logEmailList.RowIndex, "$rowindex$"))
+        logEmailList.RowIndex = 0;
+
+    // Reset inline add/copy row
+    if ((logEmailList.IsCopy || logEmailList.IsAdd) && logEmailList.RowIndex is int rowIndex2 && rowIndex2 == 0)
+        logEmailList.RowIndex = 1;
+} @* End While *@
+</tbody>
+</table><!-- /.ew-table -->
+} @* End If TotalRecords > 0 *@
+</div><!-- /.ew-grid-middle-panel -->
+@if (Empty(logEmailList.CurrentAction) && !logEmailList.UseAjaxActions) {
+<input type="hidden" name="action" id="action" value="">
+}
+</form><!-- /.ew-list-form -->
+@{ logEmailList.CloseRecordset(); }
+@if (!logEmailList.IsExport()) {
+<div class="card-footer ew-grid-lower-panel">
+@if (!logEmailList.IsGridAdd && !(logEmailList.IsGridEdit && logEmailList.ModalGridEdit) && !logEmailList.IsMultiEdit) {
+@Html.Raw(logEmailList.Pager.Render())
+}
+<div class="ew-list-other-options">
+@logEmailList.OtherOptions.RenderBody("bottom")
+</div>
+</div>
+}
+</div><!-- /.ew-grid -->
+} else { // Show other options
+<div class="ew-list-other-options">
+@logEmailList.OtherOptions.ForEach(opt => opt.ButtonClass = "").RenderBody()
+</div>
+}
+</div>
+</main>
+@logEmailList.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!logEmailList.IsExport()) {
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("log_email");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

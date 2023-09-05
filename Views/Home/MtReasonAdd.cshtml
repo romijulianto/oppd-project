@@ -1,0 +1,151 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (mtReasonAdd.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!mtReasonAdd.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtReasonAdd.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_reason: currentTable } });
+var currentPageID = ew.PAGE_ID = "add";
+var currentForm;
+var fmt_reasonadd;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fmt_reasonadd")
+        .setPageId("add")
+
+        // Add fields
+        .setFields([
+
+            ["id", [fields.id.visible && fields.id.required ? ew.Validators.required(fields.id.caption) : null, ew.Validators.integer], fields.id.isInvalid],
+            ["Reason_Type", [fields.Reason_Type.visible && fields.Reason_Type.required ? ew.Validators.required(fields.Reason_Type.caption) : null], fields.Reason_Type.isInvalid],
+            ["Reason_Description", [fields.Reason_Description.visible && fields.Reason_Description.required ? ew.Validators.required(fields.Reason_Description.caption) : null], fields.Reason_Description.isInvalid]
+        ])
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+        })
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@mtReasonAdd.ShowPageHeader()
+@mtReasonAdd.ShowMessages()
+<form name="fmt_reasonadd" id="fmt_reasonadd" class="@(mtReasonAdd.FormClassName)" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="insert">
+<input type="hidden" name="modal" value="@ConvertToInt(mtReasonAdd.IsModal)">
+@if (IsJsonResponse()) {
+<input type="hidden" name="json" value="1">
+}
+<input type="hidden" name="@(mtReasonAdd.OldKeyName)" value="@Html.Raw(mtReasonAdd.OldKey)">
+<div class="ew-add-div"><!-- page* -->
+@if (mtReasonAdd.id.Visible) { // mtReasonAdd.id.Visible (begin)
+    <div id="r_id" @Html.Raw(mtReasonAdd.id.RowAttributes)>
+        <label id="elh_mt_reason_id" for="x_id" class="@(mtReasonAdd.LeftColumnClass)">@Html.Raw(mtReasonAdd.id.Caption)@Html.Raw(mtReasonAdd.id.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtReasonAdd.RightColumnClass)"><div @Html.Raw(mtReasonAdd.id.CellAttributes)>
+<span id="el_mt_reason_id">
+<input type="@(mtReasonAdd.id.InputTextType)" name="x_id" id="x_id" data-table="mt_reason" data-field="x_id" value="@Html.Raw(mtReasonAdd.id.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(mtReasonAdd.id.PlaceHolder))" data-format-pattern="@(mtReasonAdd.id.FormatPattern)"@Html.Raw(mtReasonAdd.id.EditAttributes) aria-describedby="x_id_help">
+@Html.Raw(mtReasonAdd.id.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtReasonAdd.id.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtReasonAdd.id.Visible (end) *@
+@if (mtReasonAdd.Reason_Type.Visible) { // mtReasonAdd.Reason_Type.Visible (begin)
+    <div id="r_Reason_Type" @Html.Raw(mtReasonAdd.Reason_Type.RowAttributes)>
+        <label id="elh_mt_reason_Reason_Type" for="x_Reason_Type" class="@(mtReasonAdd.LeftColumnClass)">@Html.Raw(mtReasonAdd.Reason_Type.Caption)@Html.Raw(mtReasonAdd.Reason_Type.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtReasonAdd.RightColumnClass)"><div @Html.Raw(mtReasonAdd.Reason_Type.CellAttributes)>
+<span id="el_mt_reason_Reason_Type">
+<input type="@(mtReasonAdd.Reason_Type.InputTextType)" name="x_Reason_Type" id="x_Reason_Type" data-table="mt_reason" data-field="x_Reason_Type" value="@Html.Raw(mtReasonAdd.Reason_Type.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(mtReasonAdd.Reason_Type.PlaceHolder))" data-format-pattern="@(mtReasonAdd.Reason_Type.FormatPattern)"@Html.Raw(mtReasonAdd.Reason_Type.EditAttributes) aria-describedby="x_Reason_Type_help">
+@Html.Raw(mtReasonAdd.Reason_Type.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtReasonAdd.Reason_Type.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtReasonAdd.Reason_Type.Visible (end) *@
+@if (mtReasonAdd.Reason_Description.Visible) { // mtReasonAdd.Reason_Description.Visible (begin)
+    <div id="r_Reason_Description" @Html.Raw(mtReasonAdd.Reason_Description.RowAttributes)>
+        <label id="elh_mt_reason_Reason_Description" for="x_Reason_Description" class="@(mtReasonAdd.LeftColumnClass)">@Html.Raw(mtReasonAdd.Reason_Description.Caption)@Html.Raw(mtReasonAdd.Reason_Description.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtReasonAdd.RightColumnClass)"><div @Html.Raw(mtReasonAdd.Reason_Description.CellAttributes)>
+<span id="el_mt_reason_Reason_Description">
+<input type="@(mtReasonAdd.Reason_Description.InputTextType)" name="x_Reason_Description" id="x_Reason_Description" data-table="mt_reason" data-field="x_Reason_Description" value="@Html.Raw(mtReasonAdd.Reason_Description.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(mtReasonAdd.Reason_Description.PlaceHolder))" data-format-pattern="@(mtReasonAdd.Reason_Description.FormatPattern)"@Html.Raw(mtReasonAdd.Reason_Description.EditAttributes) aria-describedby="x_Reason_Description_help">
+@Html.Raw(mtReasonAdd.Reason_Description.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtReasonAdd.Reason_Description.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtReasonAdd.Reason_Description.Visible (end) *@
+</div><!-- /page* -->
+@{ mtReasonAdd.CloseRecordset(); }
+@Html.Raw(mtReasonAdd.IsModal ? "<template class=\"ew-modal-buttons\">" : "<div class=\"row ew-buttons\">")<!-- buttons .row -->
+    <div class="@(mtReasonAdd.OffsetColumnClass)"><!-- buttons offset -->
+    <button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit" form="fmt_reasonadd">@Html.Raw(Language.Phrase("AddBtn"))</button>
+@if (IsJsonResponse()) {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-bs-dismiss="modal">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+} else {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="fmt_reasonadd" data-href="@AppPath(mtReasonAdd.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+}
+    </div><!-- /buttons offset -->
+@Html.Raw(mtReasonAdd.IsModal ? "</template>" : "</div>")<!-- /buttons .row -->
+</form>
+@mtReasonAdd.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("mt_reason");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

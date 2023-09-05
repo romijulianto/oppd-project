@@ -1,0 +1,333 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (trRequestDetailPreview.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+ew.deepAssign(ew.vars, { tables: { tr_request_detail: @Html.Raw(ConvertToJson(trRequestDetailPreview.ToClientVar())) } });
+</script>
+@trRequestDetailPreview.ShowPageHeader()
+@if (trRequestDetailPreview.TotalRecords > 0) {
+<div class="card ew-grid @(trRequestDetailPreview.TableGridClass)"><!-- .card -->
+<div class="card-body ew-preview-middle-panel ew-grid-middle-panel @(trRequestDetailPreview.TableContainerClass)" style="@(trRequestDetailPreview.TableContainerStyle)"><!-- .card-body -->
+<table class="@(trRequestDetailPreview.TableClass)"><!-- .table -->
+    <thead><!-- Table header -->
+        <tr class="ew-table-header">
+@{
+    await trRequestDetailPreview.RenderListOptions(); // Render list options
+}
+@trRequestDetailPreview.ListOptions.RenderHeader("left")
+@if (trRequestDetailPreview.Item_No.Visible) { // trRequestDetailPreview.Item_No.Visible (begin)
+    if (Empty(trRequestDetailPreview.SortUrl(trRequestDetailPreview.Item_No))) {
+        <th class="@trRequestDetailPreview.Item_No.HeaderCellClass">@Html.Raw(trRequestDetailPreview.Item_No.Caption)</th>
+    } else {
+        <th class="@trRequestDetailPreview.Item_No.HeaderCellClass"><div role="button" data-table="tr_request_detail" data-sort="@trRequestDetailPreview.Item_No.Name" data-sort-type="1" data-sort-order="@trRequestDetailPreview.Item_No.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestDetailPreview.Item_No.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestDetailPreview.Item_No.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestDetailPreview.Item_No.Visible (end) *@
+@if (trRequestDetailPreview.Part_No.Visible) { // trRequestDetailPreview.Part_No.Visible (begin)
+    if (Empty(trRequestDetailPreview.SortUrl(trRequestDetailPreview.Part_No))) {
+        <th class="@trRequestDetailPreview.Part_No.HeaderCellClass">@Html.Raw(trRequestDetailPreview.Part_No.Caption)</th>
+    } else {
+        <th class="@trRequestDetailPreview.Part_No.HeaderCellClass"><div role="button" data-table="tr_request_detail" data-sort="@trRequestDetailPreview.Part_No.Name" data-sort-type="1" data-sort-order="@trRequestDetailPreview.Part_No.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestDetailPreview.Part_No.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestDetailPreview.Part_No.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestDetailPreview.Part_No.Visible (end) *@
+@if (trRequestDetailPreview.Part_Description.Visible) { // trRequestDetailPreview.Part_Description.Visible (begin)
+    if (Empty(trRequestDetailPreview.SortUrl(trRequestDetailPreview.Part_Description))) {
+        <th class="@trRequestDetailPreview.Part_Description.HeaderCellClass">@Html.Raw(trRequestDetailPreview.Part_Description.Caption)</th>
+    } else {
+        <th class="@trRequestDetailPreview.Part_Description.HeaderCellClass"><div role="button" data-table="tr_request_detail" data-sort="@trRequestDetailPreview.Part_Description.Name" data-sort-type="1" data-sort-order="@trRequestDetailPreview.Part_Description.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestDetailPreview.Part_Description.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestDetailPreview.Part_Description.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestDetailPreview.Part_Description.Visible (end) *@
+@if (trRequestDetailPreview.Qty.Visible) { // trRequestDetailPreview.Qty.Visible (begin)
+    if (Empty(trRequestDetailPreview.SortUrl(trRequestDetailPreview.Qty))) {
+        <th class="@trRequestDetailPreview.Qty.HeaderCellClass">@Html.Raw(trRequestDetailPreview.Qty.Caption)</th>
+    } else {
+        <th class="@trRequestDetailPreview.Qty.HeaderCellClass"><div role="button" data-table="tr_request_detail" data-sort="@trRequestDetailPreview.Qty.Name" data-sort-type="1" data-sort-order="@trRequestDetailPreview.Qty.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestDetailPreview.Qty.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestDetailPreview.Qty.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestDetailPreview.Qty.Visible (end) *@
+@if (trRequestDetailPreview.SAP_Unit_Price.Visible) { // trRequestDetailPreview.SAP_Unit_Price.Visible (begin)
+    if (Empty(trRequestDetailPreview.SortUrl(trRequestDetailPreview.SAP_Unit_Price))) {
+        <th class="@trRequestDetailPreview.SAP_Unit_Price.HeaderCellClass">@Html.Raw(trRequestDetailPreview.SAP_Unit_Price.Caption)</th>
+    } else {
+        <th class="@trRequestDetailPreview.SAP_Unit_Price.HeaderCellClass"><div role="button" data-table="tr_request_detail" data-sort="@trRequestDetailPreview.SAP_Unit_Price.Name" data-sort-type="1" data-sort-order="@trRequestDetailPreview.SAP_Unit_Price.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestDetailPreview.SAP_Unit_Price.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestDetailPreview.SAP_Unit_Price.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestDetailPreview.SAP_Unit_Price.Visible (end) *@
+@if (trRequestDetailPreview.Extd_SAP_Price.Visible) { // trRequestDetailPreview.Extd_SAP_Price.Visible (begin)
+    if (Empty(trRequestDetailPreview.SortUrl(trRequestDetailPreview.Extd_SAP_Price))) {
+        <th class="@trRequestDetailPreview.Extd_SAP_Price.HeaderCellClass">@Html.Raw(trRequestDetailPreview.Extd_SAP_Price.Caption)</th>
+    } else {
+        <th class="@trRequestDetailPreview.Extd_SAP_Price.HeaderCellClass"><div role="button" data-table="tr_request_detail" data-sort="@trRequestDetailPreview.Extd_SAP_Price.Name" data-sort-type="1" data-sort-order="@trRequestDetailPreview.Extd_SAP_Price.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestDetailPreview.Extd_SAP_Price.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestDetailPreview.Extd_SAP_Price.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestDetailPreview.Extd_SAP_Price.Visible (end) *@
+@if (trRequestDetailPreview.GP_SAP_Price.Visible) { // trRequestDetailPreview.GP_SAP_Price.Visible (begin)
+    if (Empty(trRequestDetailPreview.SortUrl(trRequestDetailPreview.GP_SAP_Price))) {
+        <th class="@trRequestDetailPreview.GP_SAP_Price.HeaderCellClass">@Html.Raw(trRequestDetailPreview.GP_SAP_Price.Caption)</th>
+    } else {
+        <th class="@trRequestDetailPreview.GP_SAP_Price.HeaderCellClass"><div role="button" data-table="tr_request_detail" data-sort="@trRequestDetailPreview.GP_SAP_Price.Name" data-sort-type="1" data-sort-order="@trRequestDetailPreview.GP_SAP_Price.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestDetailPreview.GP_SAP_Price.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestDetailPreview.GP_SAP_Price.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestDetailPreview.GP_SAP_Price.Visible (end) *@
+@if (trRequestDetailPreview.Override_Unit_Price.Visible) { // trRequestDetailPreview.Override_Unit_Price.Visible (begin)
+    if (Empty(trRequestDetailPreview.SortUrl(trRequestDetailPreview.Override_Unit_Price))) {
+        <th class="@trRequestDetailPreview.Override_Unit_Price.HeaderCellClass">@Html.Raw(trRequestDetailPreview.Override_Unit_Price.Caption)</th>
+    } else {
+        <th class="@trRequestDetailPreview.Override_Unit_Price.HeaderCellClass"><div role="button" data-table="tr_request_detail" data-sort="@trRequestDetailPreview.Override_Unit_Price.Name" data-sort-type="1" data-sort-order="@trRequestDetailPreview.Override_Unit_Price.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestDetailPreview.Override_Unit_Price.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestDetailPreview.Override_Unit_Price.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestDetailPreview.Override_Unit_Price.Visible (end) *@
+@if (trRequestDetailPreview.Extd_Override_Price.Visible) { // trRequestDetailPreview.Extd_Override_Price.Visible (begin)
+    if (Empty(trRequestDetailPreview.SortUrl(trRequestDetailPreview.Extd_Override_Price))) {
+        <th class="@trRequestDetailPreview.Extd_Override_Price.HeaderCellClass">@Html.Raw(trRequestDetailPreview.Extd_Override_Price.Caption)</th>
+    } else {
+        <th class="@trRequestDetailPreview.Extd_Override_Price.HeaderCellClass"><div role="button" data-table="tr_request_detail" data-sort="@trRequestDetailPreview.Extd_Override_Price.Name" data-sort-type="1" data-sort-order="@trRequestDetailPreview.Extd_Override_Price.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestDetailPreview.Extd_Override_Price.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestDetailPreview.Extd_Override_Price.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestDetailPreview.Extd_Override_Price.Visible (end) *@
+@if (trRequestDetailPreview.GP_Override_Price.Visible) { // trRequestDetailPreview.GP_Override_Price.Visible (begin)
+    if (Empty(trRequestDetailPreview.SortUrl(trRequestDetailPreview.GP_Override_Price))) {
+        <th class="@trRequestDetailPreview.GP_Override_Price.HeaderCellClass">@Html.Raw(trRequestDetailPreview.GP_Override_Price.Caption)</th>
+    } else {
+        <th class="@trRequestDetailPreview.GP_Override_Price.HeaderCellClass"><div role="button" data-table="tr_request_detail" data-sort="@trRequestDetailPreview.GP_Override_Price.Name" data-sort-type="1" data-sort-order="@trRequestDetailPreview.GP_Override_Price.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestDetailPreview.GP_Override_Price.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestDetailPreview.GP_Override_Price.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestDetailPreview.GP_Override_Price.Visible (end) *@
+@if (trRequestDetailPreview.Override_Core.Visible) { // trRequestDetailPreview.Override_Core.Visible (begin)
+    if (Empty(trRequestDetailPreview.SortUrl(trRequestDetailPreview.Override_Core))) {
+        <th class="@trRequestDetailPreview.Override_Core.HeaderCellClass">@Html.Raw(trRequestDetailPreview.Override_Core.Caption)</th>
+    } else {
+        <th class="@trRequestDetailPreview.Override_Core.HeaderCellClass"><div role="button" data-table="tr_request_detail" data-sort="@trRequestDetailPreview.Override_Core.Name" data-sort-type="1" data-sort-order="@trRequestDetailPreview.Override_Core.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestDetailPreview.Override_Core.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestDetailPreview.Override_Core.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestDetailPreview.Override_Core.Visible (end) *@
+@if (trRequestDetailPreview.Override_Percent.Visible) { // trRequestDetailPreview.Override_Percent.Visible (begin)
+    if (Empty(trRequestDetailPreview.SortUrl(trRequestDetailPreview.Override_Percent))) {
+        <th class="@trRequestDetailPreview.Override_Percent.HeaderCellClass">@Html.Raw(trRequestDetailPreview.Override_Percent.Caption)</th>
+    } else {
+        <th class="@trRequestDetailPreview.Override_Percent.HeaderCellClass"><div role="button" data-table="tr_request_detail" data-sort="@trRequestDetailPreview.Override_Percent.Name" data-sort-type="1" data-sort-order="@trRequestDetailPreview.Override_Percent.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestDetailPreview.Override_Percent.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestDetailPreview.Override_Percent.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestDetailPreview.Override_Percent.Visible (end) *@
+@if (trRequestDetailPreview.Core_Life_Ind.Visible) { // trRequestDetailPreview.Core_Life_Ind.Visible (begin)
+    if (Empty(trRequestDetailPreview.SortUrl(trRequestDetailPreview.Core_Life_Ind))) {
+        <th class="@trRequestDetailPreview.Core_Life_Ind.HeaderCellClass">@Html.Raw(trRequestDetailPreview.Core_Life_Ind.Caption)</th>
+    } else {
+        <th class="@trRequestDetailPreview.Core_Life_Ind.HeaderCellClass"><div role="button" data-table="tr_request_detail" data-sort="@trRequestDetailPreview.Core_Life_Ind.Name" data-sort-type="1" data-sort-order="@trRequestDetailPreview.Core_Life_Ind.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestDetailPreview.Core_Life_Ind.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestDetailPreview.Core_Life_Ind.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestDetailPreview.Core_Life_Ind.Visible (end) *@
+@if (trRequestDetailPreview.Notes.Visible) { // trRequestDetailPreview.Notes.Visible (begin)
+    if (Empty(trRequestDetailPreview.SortUrl(trRequestDetailPreview.Notes))) {
+        <th class="@trRequestDetailPreview.Notes.HeaderCellClass">@Html.Raw(trRequestDetailPreview.Notes.Caption)</th>
+    } else {
+        <th class="@trRequestDetailPreview.Notes.HeaderCellClass"><div role="button" data-table="tr_request_detail" data-sort="@trRequestDetailPreview.Notes.Name" data-sort-type="1" data-sort-order="@trRequestDetailPreview.Notes.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestDetailPreview.Notes.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestDetailPreview.Notes.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestDetailPreview.Notes.Visible (end) *@
+@trRequestDetailPreview.ListOptions.RenderHeader("right")
+        </tr>
+    </thead>
+    <tbody><!-- Table body -->
+@{
+    trRequestDetailPreview.RecordCount = 0;
+    trRequestDetailPreview.RowCount = 0;
+}
+@do {
+    // Init row class and style
+    trRequestDetailPreview.RecordCount++;
+    trRequestDetailPreview.RowCount++;
+    trRequestDetailPreview.CssStyle = "";
+    trRequestDetailPreview.LoadListRowValues(trRequestDetailPreview.Recordset);
+
+    // Render row
+    trRequestDetailPreview.RowType = RowType.Preview; // Preview record
+    trRequestDetailPreview.ResetAttributes();
+    await trRequestDetailPreview.RenderListRow();
+
+    // Render list options
+    await trRequestDetailPreview.RenderListOptions();
+    <tr @Html.Raw(trRequestDetailPreview.RowAttributes)>
+    @trRequestDetailPreview.ListOptions.RenderBody("left", trRequestDetailPreview.RowCount)
+    @if (trRequestDetailPreview.Item_No.Visible) { // trRequestDetailPreview.Item_No.Visible (begin)
+            <td @Html.Raw(trRequestDetailPreview.Item_No.CellAttributes)>
+<span @Html.Raw(trRequestDetailPreview.Item_No.ViewAttributes)>
+@Html.Raw(trRequestDetailPreview.Item_No.GetViewValue())</span>
+</td>
+    } @* trRequestDetailPreview.Item_No.Visible (end) *@
+    @if (trRequestDetailPreview.Part_No.Visible) { // trRequestDetailPreview.Part_No.Visible (begin)
+            <td @Html.Raw(trRequestDetailPreview.Part_No.CellAttributes)>
+<span @Html.Raw(trRequestDetailPreview.Part_No.ViewAttributes)>
+@Html.Raw(trRequestDetailPreview.Part_No.GetViewValue())</span>
+</td>
+    } @* trRequestDetailPreview.Part_No.Visible (end) *@
+    @if (trRequestDetailPreview.Part_Description.Visible) { // trRequestDetailPreview.Part_Description.Visible (begin)
+            <td @Html.Raw(trRequestDetailPreview.Part_Description.CellAttributes)>
+<span @Html.Raw(trRequestDetailPreview.Part_Description.ViewAttributes)>
+@Html.Raw(trRequestDetailPreview.Part_Description.GetViewValue())</span>
+</td>
+    } @* trRequestDetailPreview.Part_Description.Visible (end) *@
+    @if (trRequestDetailPreview.Qty.Visible) { // trRequestDetailPreview.Qty.Visible (begin)
+            <td @Html.Raw(trRequestDetailPreview.Qty.CellAttributes)>
+<span @Html.Raw(trRequestDetailPreview.Qty.ViewAttributes)>
+@Html.Raw(trRequestDetailPreview.Qty.GetViewValue())</span>
+</td>
+    } @* trRequestDetailPreview.Qty.Visible (end) *@
+    @if (trRequestDetailPreview.SAP_Unit_Price.Visible) { // trRequestDetailPreview.SAP_Unit_Price.Visible (begin)
+            <td @Html.Raw(trRequestDetailPreview.SAP_Unit_Price.CellAttributes)>
+<span @Html.Raw(trRequestDetailPreview.SAP_Unit_Price.ViewAttributes)>
+@Html.Raw(trRequestDetailPreview.SAP_Unit_Price.GetViewValue())</span>
+</td>
+    } @* trRequestDetailPreview.SAP_Unit_Price.Visible (end) *@
+    @if (trRequestDetailPreview.Extd_SAP_Price.Visible) { // trRequestDetailPreview.Extd_SAP_Price.Visible (begin)
+            <td @Html.Raw(trRequestDetailPreview.Extd_SAP_Price.CellAttributes)>
+<span @Html.Raw(trRequestDetailPreview.Extd_SAP_Price.ViewAttributes)>
+@Html.Raw(trRequestDetailPreview.Extd_SAP_Price.GetViewValue())</span>
+</td>
+    } @* trRequestDetailPreview.Extd_SAP_Price.Visible (end) *@
+    @if (trRequestDetailPreview.GP_SAP_Price.Visible) { // trRequestDetailPreview.GP_SAP_Price.Visible (begin)
+            <td @Html.Raw(trRequestDetailPreview.GP_SAP_Price.CellAttributes)>
+<span @Html.Raw(trRequestDetailPreview.GP_SAP_Price.ViewAttributes)>
+@Html.Raw(trRequestDetailPreview.GP_SAP_Price.GetViewValue())</span>
+</td>
+    } @* trRequestDetailPreview.GP_SAP_Price.Visible (end) *@
+    @if (trRequestDetailPreview.Override_Unit_Price.Visible) { // trRequestDetailPreview.Override_Unit_Price.Visible (begin)
+            <td @Html.Raw(trRequestDetailPreview.Override_Unit_Price.CellAttributes)>
+<span @Html.Raw(trRequestDetailPreview.Override_Unit_Price.ViewAttributes)>
+@Html.Raw(trRequestDetailPreview.Override_Unit_Price.GetViewValue())</span>
+</td>
+    } @* trRequestDetailPreview.Override_Unit_Price.Visible (end) *@
+    @if (trRequestDetailPreview.Extd_Override_Price.Visible) { // trRequestDetailPreview.Extd_Override_Price.Visible (begin)
+            <td @Html.Raw(trRequestDetailPreview.Extd_Override_Price.CellAttributes)>
+<span @Html.Raw(trRequestDetailPreview.Extd_Override_Price.ViewAttributes)>
+@Html.Raw(trRequestDetailPreview.Extd_Override_Price.GetViewValue())</span>
+</td>
+    } @* trRequestDetailPreview.Extd_Override_Price.Visible (end) *@
+    @if (trRequestDetailPreview.GP_Override_Price.Visible) { // trRequestDetailPreview.GP_Override_Price.Visible (begin)
+            <td @Html.Raw(trRequestDetailPreview.GP_Override_Price.CellAttributes)>
+<span @Html.Raw(trRequestDetailPreview.GP_Override_Price.ViewAttributes)>
+@Html.Raw(trRequestDetailPreview.GP_Override_Price.GetViewValue())</span>
+</td>
+    } @* trRequestDetailPreview.GP_Override_Price.Visible (end) *@
+    @if (trRequestDetailPreview.Override_Core.Visible) { // trRequestDetailPreview.Override_Core.Visible (begin)
+            <td @Html.Raw(trRequestDetailPreview.Override_Core.CellAttributes)>
+<span @Html.Raw(trRequestDetailPreview.Override_Core.ViewAttributes)>
+@Html.Raw(trRequestDetailPreview.Override_Core.GetViewValue())</span>
+</td>
+    } @* trRequestDetailPreview.Override_Core.Visible (end) *@
+    @if (trRequestDetailPreview.Override_Percent.Visible) { // trRequestDetailPreview.Override_Percent.Visible (begin)
+            <td @Html.Raw(trRequestDetailPreview.Override_Percent.CellAttributes)>
+<span @Html.Raw(trRequestDetailPreview.Override_Percent.ViewAttributes)>
+@Html.Raw(trRequestDetailPreview.Override_Percent.GetViewValue())</span>
+</td>
+    } @* trRequestDetailPreview.Override_Percent.Visible (end) *@
+    @if (trRequestDetailPreview.Core_Life_Ind.Visible) { // trRequestDetailPreview.Core_Life_Ind.Visible (begin)
+            <td @Html.Raw(trRequestDetailPreview.Core_Life_Ind.CellAttributes)>
+<span @Html.Raw(trRequestDetailPreview.Core_Life_Ind.ViewAttributes)>
+@Html.Raw(trRequestDetailPreview.Core_Life_Ind.GetViewValue())</span>
+</td>
+    } @* trRequestDetailPreview.Core_Life_Ind.Visible (end) *@
+    @if (trRequestDetailPreview.Notes.Visible) { // trRequestDetailPreview.Notes.Visible (begin)
+            <td @Html.Raw(trRequestDetailPreview.Notes.CellAttributes)>
+<span @Html.Raw(trRequestDetailPreview.Notes.ViewAttributes)>
+@Html.Raw(trRequestDetailPreview.Notes.GetViewValue())</span>
+</td>
+    } @* trRequestDetailPreview.Notes.Visible (end) *@
+    @trRequestDetailPreview.ListOptions.RenderBody("right", trRequestDetailPreview.RowCount)
+    </tr>
+} while (await trRequestDetailPreview.Recordset.ReadAsync());
+    </tbody>
+</table><!-- /.table -->
+</div><!-- /.card-body -->
+<div class="card-footer ew-grid-lower-panel ew-preview-lower-panel"><!-- .card-footer -->
+@Html.Raw(trRequestDetailPreview.Pager.Render())
+<div class="ew-preview-other-options">
+@trRequestDetailPreview.OtherOptions.RenderBody()
+</div>
+</div><!-- /.card-footer -->
+</div><!-- /.card -->
+} else { @* No record *@
+<div class="card border-0"><!-- .card -->
+<div class="ew-detail-count">@Html.Raw(Language.Phrase("NoRecord"))</div>
+<div class="ew-preview-other-options">
+@trRequestDetailPreview.OtherOptions.RenderBody()
+</div>
+</div><!-- /.card -->
+}
+@trRequestDetailPreview.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()

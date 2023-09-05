@@ -1,0 +1,294 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (mtTemplateEmailList.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!mtTemplateEmailList.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!mtTemplateEmailList.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtTemplateEmailList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_template_email: currentTable } });
+var currentPageID = ew.PAGE_ID = "list";
+var currentForm;
+var @(mtTemplateEmailList.FormName);
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("@(mtTemplateEmailList.FormName)")
+        .setPageId("list")
+        .setSubmitWithFetch(@(mtTemplateEmailList.UseAjaxActions ? "true" : "false"))
+        .setFormKeyCountName("@(mtTemplateEmailList.FormKeyCountName)")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+ew.PREVIEW_SELECTOR = ".ew-preview-btn";
+ew.PREVIEW_MODAL_CLASS = "modal modal-fullscreen-sm-down";
+ew.PREVIEW_ROW = true;
+ew.PREVIEW_SINGLE_ROW = false;
+ew.PREVIEW || ew.ready("head", ew.PATH_BASE + "js/preview.min.js?v=20.6.0", "preview");
+</script>
+<script>
+window.Tabulator || loadjs([
+    ew.PATH_BASE + "js/tabulator.min.js?v=20.6.3",
+    ew.PATH_BASE + "css/@CssFile("tabulator_bootstrap5.css", false)?v=20.6.3"
+], "import");
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!mtTemplateEmailList.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+@if (mtTemplateEmailList.TotalRecords > 0 && mtTemplateEmailList.ExportOptions.Visible) {
+    mtTemplateEmailList.ExportOptions.Render("body");
+}
+@if (mtTemplateEmailList.ImportOptions.Visible) {
+    mtTemplateEmailList.ImportOptions.Render("body");
+}
+@if (mtTemplateEmailList.SearchOptions.Visible) {
+    mtTemplateEmailList.SearchOptions.Render("body");
+}
+@if (mtTemplateEmailList.FilterOptions.Visible) {
+    mtTemplateEmailList.FilterOptions.Render("body");
+}
+</div>
+}
+@if (!mtTemplateEmailList.IsModal) {
+<form name="fmt_template_emailsrch" id="fmt_template_emailsrch" class="ew-form ew-ext-search-form" action="@AppPath(CurrentPageName())" novalidate autocomplete="off">
+<div id="fmt_template_emailsrch_search_panel" class="mb-2 mb-sm-0 @(mtTemplateEmailList.SearchPanelClass)"><!-- .ew-search-panel -->
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtTemplateEmailList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_template_email: currentTable } });
+var currentForm;
+var fmt_template_emailsrch, currentSearchForm, currentAdvancedSearchForm;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery,
+        fields = currentTable.fields;
+
+    // Form object for search
+    let form = new ew.FormBuilder()
+        .setId("fmt_template_emailsrch")
+        .setPageId("list")
+@if (mtTemplateEmailList.UseAjaxActions) {
+        <text>.setSubmitWithFetch(true)</text>
+}
+
+        // Dynamic selection lists
+        .setLists({
+        })
+
+        // Filters
+        .setFilterList(@Html.Raw(await mtTemplateEmailList.GetFilterList()))
+        .build();
+    window[form.id] = form;
+    currentSearchForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<input type="hidden" name="cmd" value="search">
+@if (Security.CanSearch) {
+if (!mtTemplateEmailList.IsExport() && Empty(mtTemplateEmailList.CurrentAction) && mtTemplateEmailList.HasSearchFields()) { @* Show search form (begin) *@
+<div class="ew-extended-search container-fluid ps-2">
+<div class="row mb-0">
+    <div class="col-sm-auto px-0 pe-sm-2">
+        <div class="ew-basic-search input-group">
+            <input type="search" name="@(Config.TableBasicSearch)" id="@(Config.TableBasicSearch)" class="form-control ew-basic-search-keyword" value="@Html.Raw(HtmlEncode(mtTemplateEmailList.BasicSearch.SessionKeyword))" placeholder="@(HtmlEncode(Language.Phrase("Search")))" aria-label="@(HtmlEncode(Language.Phrase("Search")))">
+            <input type="hidden" name="@(Config.TableBasicSearchType)" id="@(Config.TableBasicSearchType)" class="ew-basic-search-type" value="@(HtmlEncode(mtTemplateEmailList.BasicSearch.SessionType))">
+            <button type="button" data-bs-toggle="dropdown" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" aria-haspopup="true" aria-expanded="false">
+                <span id="searchtype">@Html.Raw(mtTemplateEmailList.BasicSearch.TypeNameShort)</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end">
+                <button type="button" class="dropdown-item@(mtTemplateEmailList.BasicSearch.SessionType == "" ? " active" : "")" form="fmt_template_emailsrch" data-ew-action="search-type">@Html.Raw(Language.Phrase("QuickSearchAuto"))</button>
+                <button type="button" class="dropdown-item@(mtTemplateEmailList.BasicSearch.SessionType == "=" ? " active" : "")" form="fmt_template_emailsrch" data-ew-action="search-type" data-search-type="=">@Html.Raw(Language.Phrase("QuickSearchExact"))</button>
+                <button type="button" class="dropdown-item@(mtTemplateEmailList.BasicSearch.SessionType == "AND" ? " active" : "")" form="fmt_template_emailsrch" data-ew-action="search-type" data-search-type="AND">@Html.Raw(Language.Phrase("QuickSearchAll"))</button>
+                <button type="button" class="dropdown-item@(mtTemplateEmailList.BasicSearch.SessionType == "OR" ? " active" : "")" form="fmt_template_emailsrch" data-ew-action="search-type" data-search-type="OR">@Html.Raw(Language.Phrase("QuickSearchAny"))</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-auto mb-3">
+        <button class="btn btn-primary" name="btn-submit" id="btn-submit" type="submit">@Html.Raw(Language.Phrase("SearchBtn"))</button>
+    </div>
+</div>
+</div><!-- /.ew-extended-search -->
+} @* Show search form (end) *@
+}
+</div><!-- /.ew-search-panel -->
+</form>
+}
+@mtTemplateEmailList.ShowPageHeader()
+@mtTemplateEmailList.ShowMessages()
+<main class="list @(mtTemplateEmailList.TotalRecords == 0 && !mtTemplateEmailList.IsAdd ? " ew-no-record" : "")">
+<div id="ew-list">
+@if (mtTemplateEmailList.TotalRecords > 0 || !Empty(mtTemplateEmailList.CurrentAction)) {
+<div class="card ew-card ew-grid@(mtTemplateEmailList.IsAddOrEdit ? " ew-grid-add-edit" : "") @(mtTemplateEmailList.TableGridClass)">
+<form name="@(mtTemplateEmailList.FormName)" id="@(mtTemplateEmailList.FormName)" class="ew-form ew-list-form" action="@AppPath(mtTemplateEmailList.PageName)" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+@if (mtTemplateEmailList.IsModal) {
+<input type="hidden" name="modal" value="1">
+}
+<div id="gmp_mt_template_email" class="card-body ew-grid-middle-panel @(mtTemplateEmailList.TableContainerClass)" style="@(mtTemplateEmailList.TableContainerStyle)">
+@if (mtTemplateEmailList.TotalRecords > 0 || mtTemplateEmailList.IsGridEdit || mtTemplateEmailList.IsMultiEdit) {
+<table id="tbl_mt_template_emaillist" class="@(mtTemplateEmailList.TableClass)"><!-- .ew-table -->
+<thead>
+    <tr class="ew-table-header">
+@{
+    // Header row
+    mtTemplateEmailList.RowType = RowType.Header;
+
+    // Render list options
+    await mtTemplateEmailList.RenderListOptions();
+}
+@* Render list options (header, left) *@
+@mtTemplateEmailList.ListOptions.RenderHeader("left")
+@if (mtTemplateEmailList.id.Visible) { // mtTemplateEmailList.id.Visible (begin)
+        <th data-name="id" class="@(mtTemplateEmailList.id.HeaderCellClass)"><div id="elh_mt_template_email_id" class="mt_template_email_id">@Html.Raw(mtTemplateEmailList.RenderFieldHeader(mtTemplateEmailList.id))</div></th>
+} @* mtTemplateEmailList.id.Visible (end) *@
+@if (mtTemplateEmailList.Template_Type.Visible) { // mtTemplateEmailList.Template_Type.Visible (begin)
+        <th data-name="Template_Type" class="@(mtTemplateEmailList.Template_Type.HeaderCellClass)"><div id="elh_mt_template_email_Template_Type" class="mt_template_email_Template_Type">@Html.Raw(mtTemplateEmailList.RenderFieldHeader(mtTemplateEmailList.Template_Type))</div></th>
+} @* mtTemplateEmailList.Template_Type.Visible (end) *@
+@if (mtTemplateEmailList.Template_Name.Visible) { // mtTemplateEmailList.Template_Name.Visible (begin)
+        <th data-name="Template_Name" class="@(mtTemplateEmailList.Template_Name.HeaderCellClass)"><div id="elh_mt_template_email_Template_Name" class="mt_template_email_Template_Name">@Html.Raw(mtTemplateEmailList.RenderFieldHeader(mtTemplateEmailList.Template_Name))</div></th>
+} @* mtTemplateEmailList.Template_Name.Visible (end) *@
+@if (mtTemplateEmailList.Template_Description.Visible) { // mtTemplateEmailList.Template_Description.Visible (begin)
+        <th data-name="Template_Description" class="@(mtTemplateEmailList.Template_Description.HeaderCellClass)"><div id="elh_mt_template_email_Template_Description" class="mt_template_email_Template_Description">@Html.Raw(mtTemplateEmailList.RenderFieldHeader(mtTemplateEmailList.Template_Description))</div></th>
+} @* mtTemplateEmailList.Template_Description.Visible (end) *@
+@* Render list options (header, right) *@
+@mtTemplateEmailList.ListOptions.RenderHeader("right")
+    </tr>
+</thead>
+<tbody data-page="@(mtTemplateEmailList.PageNumber)">
+@{
+    await mtTemplateEmailList.SetupGrid();
+    bool eof = mtTemplateEmailList.Recordset == null; // DN
+}
+@while (mtTemplateEmailList.RecordCount < mtTemplateEmailList.StopRecord || SameString(mtTemplateEmailList.RowIndex, "$rowindex$")) { // Begin While
+    if (!eof && !SameString(mtTemplateEmailList.RowIndex, "$rowindex$") &&
+        (!mtTemplateEmailList.IsGridAdd || mtTemplateEmailList.CurrentMode == "copy") &&
+        (!((mtTemplateEmailList.IsCopy || mtTemplateEmailList.IsAdd) && mtTemplateEmailList.RowIndex is int rowIndex && rowIndex == 0))) // DN
+        eof = !await mtTemplateEmailList.Recordset.ReadAsync();
+    mtTemplateEmailList.RecordCount++;
+    if (mtTemplateEmailList.RecordCount >= mtTemplateEmailList.StartRecord) {
+        await mtTemplateEmailList.SetupRow();
+    <tr @Html.Raw(mtTemplateEmailList.RowAttributes)>
+    @* Render list options (body, left) *@
+    @mtTemplateEmailList.ListOptions.RenderBody("left", mtTemplateEmailList.RowCount)
+    @if (mtTemplateEmailList.id.Visible) { // mtTemplateEmailList.id.Visible (begin)
+        <td data-name="id" @Html.Raw(mtTemplateEmailList.id.CellAttributes)>
+<span id="el@(mtTemplateEmailList.RowIndex == "$rowindex$" ? "$rowindex$" : mtTemplateEmailList.RowCount)_mt_template_email_id" class="el_mt_template_email_id">
+<span @Html.Raw(mtTemplateEmailList.id.ViewAttributes)>
+@Html.Raw(mtTemplateEmailList.id.GetViewValue())</span>
+</span>
+</td>
+    } @* mtTemplateEmailList.id.Visible (end) *@
+    @if (mtTemplateEmailList.Template_Type.Visible) { // mtTemplateEmailList.Template_Type.Visible (begin)
+        <td data-name="Template_Type" @Html.Raw(mtTemplateEmailList.Template_Type.CellAttributes)>
+<span id="el@(mtTemplateEmailList.RowIndex == "$rowindex$" ? "$rowindex$" : mtTemplateEmailList.RowCount)_mt_template_email_Template_Type" class="el_mt_template_email_Template_Type">
+<span @Html.Raw(mtTemplateEmailList.Template_Type.ViewAttributes)>
+@Html.Raw(mtTemplateEmailList.Template_Type.GetViewValue())</span>
+</span>
+</td>
+    } @* mtTemplateEmailList.Template_Type.Visible (end) *@
+    @if (mtTemplateEmailList.Template_Name.Visible) { // mtTemplateEmailList.Template_Name.Visible (begin)
+        <td data-name="Template_Name" @Html.Raw(mtTemplateEmailList.Template_Name.CellAttributes)>
+<span id="el@(mtTemplateEmailList.RowIndex == "$rowindex$" ? "$rowindex$" : mtTemplateEmailList.RowCount)_mt_template_email_Template_Name" class="el_mt_template_email_Template_Name">
+<span @Html.Raw(mtTemplateEmailList.Template_Name.ViewAttributes)>
+@Html.Raw(mtTemplateEmailList.Template_Name.GetViewValue())</span>
+</span>
+</td>
+    } @* mtTemplateEmailList.Template_Name.Visible (end) *@
+    @if (mtTemplateEmailList.Template_Description.Visible) { // mtTemplateEmailList.Template_Description.Visible (begin)
+        <td data-name="Template_Description" @Html.Raw(mtTemplateEmailList.Template_Description.CellAttributes)>
+<span id="el@(mtTemplateEmailList.RowIndex == "$rowindex$" ? "$rowindex$" : mtTemplateEmailList.RowCount)_mt_template_email_Template_Description" class="el_mt_template_email_Template_Description">
+<span @Html.Raw(mtTemplateEmailList.Template_Description.ViewAttributes)>
+@Html.Raw(mtTemplateEmailList.Template_Description.GetViewValue())</span>
+</span>
+</td>
+    } @* mtTemplateEmailList.Template_Description.Visible (end) *@
+    @* Render list options (body, right) *@
+    @mtTemplateEmailList.ListOptions.RenderBody("right", mtTemplateEmailList.RowCount)
+    </tr>
+    } @* End if *@
+
+    // Reset for template row
+    if (SameString(mtTemplateEmailList.RowIndex, "$rowindex$"))
+        mtTemplateEmailList.RowIndex = 0;
+
+    // Reset inline add/copy row
+    if ((mtTemplateEmailList.IsCopy || mtTemplateEmailList.IsAdd) && mtTemplateEmailList.RowIndex is int rowIndex2 && rowIndex2 == 0)
+        mtTemplateEmailList.RowIndex = 1;
+} @* End While *@
+</tbody>
+</table><!-- /.ew-table -->
+} @* End If TotalRecords > 0 *@
+</div><!-- /.ew-grid-middle-panel -->
+@if (Empty(mtTemplateEmailList.CurrentAction) && !mtTemplateEmailList.UseAjaxActions) {
+<input type="hidden" name="action" id="action" value="">
+}
+</form><!-- /.ew-list-form -->
+@{ mtTemplateEmailList.CloseRecordset(); }
+@if (!mtTemplateEmailList.IsExport()) {
+<div class="card-footer ew-grid-lower-panel">
+@if (!mtTemplateEmailList.IsGridAdd && !(mtTemplateEmailList.IsGridEdit && mtTemplateEmailList.ModalGridEdit) && !mtTemplateEmailList.IsMultiEdit) {
+@Html.Raw(mtTemplateEmailList.Pager.Render())
+}
+<div class="ew-list-other-options">
+@mtTemplateEmailList.OtherOptions.RenderBody("bottom")
+</div>
+</div>
+}
+</div><!-- /.ew-grid -->
+} else { // Show other options
+<div class="ew-list-other-options">
+@mtTemplateEmailList.OtherOptions.ForEach(opt => opt.ButtonClass = "").RenderBody()
+</div>
+}
+</div>
+</main>
+@mtTemplateEmailList.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!mtTemplateEmailList.IsExport()) {
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("mt_template_email");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

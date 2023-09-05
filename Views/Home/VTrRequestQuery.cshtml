@@ -1,0 +1,710 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (vTrRequestSearch.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!vTrRequestSearch.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(vTrRequestSearch.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { v_tr_request: currentTable } });
+var currentPageID = ew.PAGE_ID = "search";
+var currentForm;
+var fv_tr_requestsearch, currentSearchForm, currentAdvancedSearchForm;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery,
+        fields = currentTable.fields;
+
+    // Form object for search
+    let form = new ew.FormBuilder()
+        .setId("fv_tr_requestsearch")
+        .setPageId("search")
+@if (vTrRequestSearch.IsModal && vTrRequestSearch.UseAjaxActions) {
+        <text>.setSubmitWithFetch(true)</text>
+}
+
+        // Add fields
+        .setFields([
+
+            ["id", [ew.Validators.integer], fields.id.isInvalid],
+            ["Request_No", [], fields.Request_No.isInvalid],
+            ["Reference_Doc", [], fields.Reference_Doc.isInvalid],
+            ["Reason", [], fields.Reason.isInvalid],
+            ["Request_By", [], fields.Request_By.isInvalid],
+            ["Request_By_Name", [], fields.Request_By_Name.isInvalid],
+            ["Request_By_Position", [], fields.Request_By_Position.isInvalid],
+            ["Request_By_Branch", [], fields.Request_By_Branch.isInvalid],
+            ["Request_By_Region", [], fields.Request_By_Region.isInvalid],
+            ["Request_Industry", [], fields.Request_Industry.isInvalid],
+            ["Customer_ID", [], fields.Customer_ID.isInvalid],
+            ["Customer_Name", [], fields.Customer_Name.isInvalid],
+            ["SAP_Total", [ew.Validators.float], fields.SAP_Total.isInvalid],
+            ["Override_Total", [ew.Validators.float], fields.Override_Total.isInvalid],
+            ["Variance_Total", [ew.Validators.float], fields.Variance_Total.isInvalid],
+            ["Variance_Percent", [ew.Validators.float], fields.Variance_Percent.isInvalid],
+            ["Notes", [], fields.Notes.isInvalid],
+            ["Next_Approver", [], fields.Next_Approver.isInvalid],
+            ["List_Approver", [], fields.List_Approver.isInvalid],
+            ["Last_Update_By", [], fields.Last_Update_By.isInvalid],
+            ["Created_By", [], fields.Created_By.isInvalid],
+            ["Created_Date", [ew.Validators.datetime(fields.Created_Date.clientFormatPattern)], fields.Created_Date.isInvalid],
+            ["ETL_Date", [ew.Validators.datetime(fields.ETL_Date.clientFormatPattern)], fields.ETL_Date.isInvalid],
+            ["Request_Status", [], fields.Request_Status.isInvalid],
+            ["Request_PIC", [], fields.Request_PIC.isInvalid]
+        ])
+        // Validate form
+        .setValidate(
+            async function () {
+                if (!this.validateRequired)
+                    return true; // Ignore validation
+                let fobj = this.getForm();
+
+                // Validate fields
+                if (!this.validateFields())
+                    return false;
+
+                // Call Form_CustomValidate event
+                if (!(await this.customValidate?.(fobj) ?? true)) {
+                    this.focus();
+                    return false;
+                }
+                return true;
+            }
+        )
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setQueryBuilderLists({
+        })
+        .build();
+    window[form.id] = form;
+@if (vTrRequestSearch.IsModal) {
+    <text>currentAdvancedSearchForm = form;</text>
+} else {
+    <text>currentForm = form;</text>
+}
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@vTrRequestSearch.ShowPageHeader()
+@vTrRequestSearch.ShowMessages()
+<form name="fv_tr_requestsearch" id="fv_tr_requestsearch" class="@(vTrRequestSearch.FormClassName)" action="@AppPath("VTrRequestList")" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="search">
+@if (vTrRequestSearch.IsModal && vTrRequestSearch.UseAjaxActions) {
+<input type="hidden" name="modal" value="1">
+}
+<input type="hidden" name="rules" value="@Html.Raw(HtmlEncode(vTrRequestSearch.SessionRules))">
+<template id="tpx_v_tr_request_id" class="v_tr_requestsearch"><span id="el_v_tr_request_id" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.id.InputTextType)" name="x_id" id="x_id" data-table="v_tr_request" data-field="x_id" value="@Html.Raw(vTrRequestSearch.id.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.id.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.id.FormatPattern)"@Html.Raw(vTrRequestSearch.id.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.id.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Request_No" class="v_tr_requestsearch"><span id="el_v_tr_request_Request_No" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Request_No.InputTextType)" name="x_Request_No" id="x_Request_No" data-table="v_tr_request" data-field="x_Request_No" value="@Html.Raw(vTrRequestSearch.Request_No.EditValue)" size="30" maxlength="30" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Request_No.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Request_No.FormatPattern)"@Html.Raw(vTrRequestSearch.Request_No.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Request_No.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Reference_Doc" class="v_tr_requestsearch"><span id="el_v_tr_request_Reference_Doc" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Reference_Doc.InputTextType)" name="x_Reference_Doc" id="x_Reference_Doc" data-table="v_tr_request" data-field="x_Reference_Doc" value="@Html.Raw(vTrRequestSearch.Reference_Doc.EditValue)" size="30" maxlength="50" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Reference_Doc.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Reference_Doc.FormatPattern)"@Html.Raw(vTrRequestSearch.Reference_Doc.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Reference_Doc.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Reason" class="v_tr_requestsearch"><span id="el_v_tr_request_Reason" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Reason.InputTextType)" name="x_Reason" id="x_Reason" data-table="v_tr_request" data-field="x_Reason" value="@Html.Raw(vTrRequestSearch.Reason.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Reason.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Reason.FormatPattern)"@Html.Raw(vTrRequestSearch.Reason.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Reason.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Request_By" class="v_tr_requestsearch"><span id="el_v_tr_request_Request_By" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Request_By.InputTextType)" name="x_Request_By" id="x_Request_By" data-table="v_tr_request" data-field="x_Request_By" value="@Html.Raw(vTrRequestSearch.Request_By.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Request_By.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Request_By.FormatPattern)"@Html.Raw(vTrRequestSearch.Request_By.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Request_By.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Request_By_Name" class="v_tr_requestsearch"><span id="el_v_tr_request_Request_By_Name" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Request_By_Name.InputTextType)" name="x_Request_By_Name" id="x_Request_By_Name" data-table="v_tr_request" data-field="x_Request_By_Name" value="@Html.Raw(vTrRequestSearch.Request_By_Name.EditValue)" size="30" maxlength="200" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Request_By_Name.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Request_By_Name.FormatPattern)"@Html.Raw(vTrRequestSearch.Request_By_Name.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Request_By_Name.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Request_By_Position" class="v_tr_requestsearch"><span id="el_v_tr_request_Request_By_Position" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Request_By_Position.InputTextType)" name="x_Request_By_Position" id="x_Request_By_Position" data-table="v_tr_request" data-field="x_Request_By_Position" value="@Html.Raw(vTrRequestSearch.Request_By_Position.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Request_By_Position.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Request_By_Position.FormatPattern)"@Html.Raw(vTrRequestSearch.Request_By_Position.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Request_By_Position.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Request_By_Branch" class="v_tr_requestsearch"><span id="el_v_tr_request_Request_By_Branch" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Request_By_Branch.InputTextType)" name="x_Request_By_Branch" id="x_Request_By_Branch" data-table="v_tr_request" data-field="x_Request_By_Branch" value="@Html.Raw(vTrRequestSearch.Request_By_Branch.EditValue)" size="30" maxlength="50" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Request_By_Branch.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Request_By_Branch.FormatPattern)"@Html.Raw(vTrRequestSearch.Request_By_Branch.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Request_By_Branch.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Request_By_Region" class="v_tr_requestsearch"><span id="el_v_tr_request_Request_By_Region" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Request_By_Region.InputTextType)" name="x_Request_By_Region" id="x_Request_By_Region" data-table="v_tr_request" data-field="x_Request_By_Region" value="@Html.Raw(vTrRequestSearch.Request_By_Region.EditValue)" size="30" maxlength="50" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Request_By_Region.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Request_By_Region.FormatPattern)"@Html.Raw(vTrRequestSearch.Request_By_Region.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Request_By_Region.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Request_Industry" class="v_tr_requestsearch"><span id="el_v_tr_request_Request_Industry" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Request_Industry.InputTextType)" name="x_Request_Industry" id="x_Request_Industry" data-table="v_tr_request" data-field="x_Request_Industry" value="@Html.Raw(vTrRequestSearch.Request_Industry.EditValue)" size="30" maxlength="50" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Request_Industry.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Request_Industry.FormatPattern)"@Html.Raw(vTrRequestSearch.Request_Industry.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Request_Industry.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Customer_ID" class="v_tr_requestsearch"><span id="el_v_tr_request_Customer_ID" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Customer_ID.InputTextType)" name="x_Customer_ID" id="x_Customer_ID" data-table="v_tr_request" data-field="x_Customer_ID" value="@Html.Raw(vTrRequestSearch.Customer_ID.EditValue)" size="30" maxlength="20" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Customer_ID.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Customer_ID.FormatPattern)"@Html.Raw(vTrRequestSearch.Customer_ID.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Customer_ID.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Customer_Name" class="v_tr_requestsearch"><span id="el_v_tr_request_Customer_Name" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Customer_Name.InputTextType)" name="x_Customer_Name" id="x_Customer_Name" data-table="v_tr_request" data-field="x_Customer_Name" value="@Html.Raw(vTrRequestSearch.Customer_Name.EditValue)" size="30" maxlength="200" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Customer_Name.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Customer_Name.FormatPattern)"@Html.Raw(vTrRequestSearch.Customer_Name.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Customer_Name.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_SAP_Total" class="v_tr_requestsearch"><span id="el_v_tr_request_SAP_Total" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.SAP_Total.InputTextType)" name="x_SAP_Total" id="x_SAP_Total" data-table="v_tr_request" data-field="x_SAP_Total" value="@Html.Raw(vTrRequestSearch.SAP_Total.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.SAP_Total.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.SAP_Total.FormatPattern)"@Html.Raw(vTrRequestSearch.SAP_Total.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.SAP_Total.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Override_Total" class="v_tr_requestsearch"><span id="el_v_tr_request_Override_Total" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Override_Total.InputTextType)" name="x_Override_Total" id="x_Override_Total" data-table="v_tr_request" data-field="x_Override_Total" value="@Html.Raw(vTrRequestSearch.Override_Total.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Override_Total.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Override_Total.FormatPattern)"@Html.Raw(vTrRequestSearch.Override_Total.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Override_Total.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Variance_Total" class="v_tr_requestsearch"><span id="el_v_tr_request_Variance_Total" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Variance_Total.InputTextType)" name="x_Variance_Total" id="x_Variance_Total" data-table="v_tr_request" data-field="x_Variance_Total" value="@Html.Raw(vTrRequestSearch.Variance_Total.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Variance_Total.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Variance_Total.FormatPattern)"@Html.Raw(vTrRequestSearch.Variance_Total.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Variance_Total.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Variance_Percent" class="v_tr_requestsearch"><span id="el_v_tr_request_Variance_Percent" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Variance_Percent.InputTextType)" name="x_Variance_Percent" id="x_Variance_Percent" data-table="v_tr_request" data-field="x_Variance_Percent" value="@Html.Raw(vTrRequestSearch.Variance_Percent.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Variance_Percent.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Variance_Percent.FormatPattern)"@Html.Raw(vTrRequestSearch.Variance_Percent.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Variance_Percent.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Notes" class="v_tr_requestsearch"><span id="el_v_tr_request_Notes" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Notes.InputTextType)" name="x_Notes" id="x_Notes" data-table="v_tr_request" data-field="x_Notes" value="@Html.Raw(vTrRequestSearch.Notes.EditValue)" size="30" maxlength="200" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Notes.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Notes.FormatPattern)"@Html.Raw(vTrRequestSearch.Notes.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Notes.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Next_Approver" class="v_tr_requestsearch"><span id="el_v_tr_request_Next_Approver" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Next_Approver.InputTextType)" name="x_Next_Approver" id="x_Next_Approver" data-table="v_tr_request" data-field="x_Next_Approver" value="@Html.Raw(vTrRequestSearch.Next_Approver.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Next_Approver.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Next_Approver.FormatPattern)"@Html.Raw(vTrRequestSearch.Next_Approver.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Next_Approver.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_List_Approver" class="v_tr_requestsearch"><span id="el_v_tr_request_List_Approver" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.List_Approver.InputTextType)" name="x_List_Approver" id="x_List_Approver" data-table="v_tr_request" data-field="x_List_Approver" value="@Html.Raw(vTrRequestSearch.List_Approver.EditValue)" size="30" maxlength="500" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.List_Approver.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.List_Approver.FormatPattern)"@Html.Raw(vTrRequestSearch.List_Approver.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.List_Approver.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Last_Update_By" class="v_tr_requestsearch"><span id="el_v_tr_request_Last_Update_By" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Last_Update_By.InputTextType)" name="x_Last_Update_By" id="x_Last_Update_By" data-table="v_tr_request" data-field="x_Last_Update_By" value="@Html.Raw(vTrRequestSearch.Last_Update_By.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Last_Update_By.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Last_Update_By.FormatPattern)"@Html.Raw(vTrRequestSearch.Last_Update_By.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Last_Update_By.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Created_By" class="v_tr_requestsearch"><span id="el_v_tr_request_Created_By" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Created_By.InputTextType)" name="x_Created_By" id="x_Created_By" data-table="v_tr_request" data-field="x_Created_By" value="@Html.Raw(vTrRequestSearch.Created_By.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Created_By.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Created_By.FormatPattern)"@Html.Raw(vTrRequestSearch.Created_By.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Created_By.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Created_Date" class="v_tr_requestsearch"><span id="el_v_tr_request_Created_Date" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Created_Date.InputTextType)" name="x_Created_Date" id="x_Created_Date" data-table="v_tr_request" data-field="x_Created_Date" value="@Html.Raw(vTrRequestSearch.Created_Date.EditValue)" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Created_Date.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Created_Date.FormatPattern)"@Html.Raw(vTrRequestSearch.Created_Date.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Created_Date.GetErrorMessage(false))</div>
+@if (!vTrRequestSearch.Created_Date.ReadOnly && !vTrRequestSearch.Created_Date.Disabled && !vTrRequestSearch.Created_Date.EditAttrs.Is("readonly") && !vTrRequestSearch.Created_Date.EditAttrs.Is("disabled")) {
+<script>
+loadjs.ready(["fv_tr_requestsearch", "datetimepicker"], function () {
+    let format = "@Html.Raw(DateFormat(0))", // DN
+        options = {
+                localization: {
+                    locale: ew.LANGUAGE_ID + "-u-nu-" + ew.getNumberingSystem(),
+                    hourCycle: format.match(/H/) ? "h24" : "h12",
+                    format,
+                    ...ew.language.phrase("datetimepicker")
+                },
+                display: {
+                    icons: {
+                        previous: ew.IS_RTL ? "fa-solid fa-chevron-right" : "fa-solid fa-chevron-left",
+                        next: ew.IS_RTL ? "fa-solid fa-chevron-left" : "fa-solid fa-chevron-right"
+                    },
+                    components: {
+                        hours: !!format.match(/h/i),
+                        minutes: !!format.match(/m/),
+                        seconds: !!format.match(/s/i)
+                    },
+                    theme: ew.isDark() ? "dark" : "auto"
+                }
+            };
+    ew.createDateTimePicker("fv_tr_requestsearch", "x_Created_Date", ew.deepAssign({"useCurrent":false,"display":{"sideBySide":false}}, options));
+});
+</script>
+}
+</span></template>
+<template id="tpx_v_tr_request_ETL_Date" class="v_tr_requestsearch"><span id="el_v_tr_request_ETL_Date" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.ETL_Date.InputTextType)" name="x_ETL_Date" id="x_ETL_Date" data-table="v_tr_request" data-field="x_ETL_Date" value="@Html.Raw(vTrRequestSearch.ETL_Date.EditValue)" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.ETL_Date.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.ETL_Date.FormatPattern)"@Html.Raw(vTrRequestSearch.ETL_Date.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.ETL_Date.GetErrorMessage(false))</div>
+@if (!vTrRequestSearch.ETL_Date.ReadOnly && !vTrRequestSearch.ETL_Date.Disabled && !vTrRequestSearch.ETL_Date.EditAttrs.Is("readonly") && !vTrRequestSearch.ETL_Date.EditAttrs.Is("disabled")) {
+<script>
+loadjs.ready(["fv_tr_requestsearch", "datetimepicker"], function () {
+    let format = "@Html.Raw(DateFormat(0))", // DN
+        options = {
+                localization: {
+                    locale: ew.LANGUAGE_ID + "-u-nu-" + ew.getNumberingSystem(),
+                    hourCycle: format.match(/H/) ? "h24" : "h12",
+                    format,
+                    ...ew.language.phrase("datetimepicker")
+                },
+                display: {
+                    icons: {
+                        previous: ew.IS_RTL ? "fa-solid fa-chevron-right" : "fa-solid fa-chevron-left",
+                        next: ew.IS_RTL ? "fa-solid fa-chevron-left" : "fa-solid fa-chevron-right"
+                    },
+                    components: {
+                        hours: !!format.match(/h/i),
+                        minutes: !!format.match(/m/),
+                        seconds: !!format.match(/s/i)
+                    },
+                    theme: ew.isDark() ? "dark" : "auto"
+                }
+            };
+    ew.createDateTimePicker("fv_tr_requestsearch", "x_ETL_Date", ew.deepAssign({"useCurrent":false,"display":{"sideBySide":false}}, options));
+});
+</script>
+}
+</span></template>
+<template id="tpx_v_tr_request_Request_Status" class="v_tr_requestsearch"><span id="el_v_tr_request_Request_Status" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Request_Status.InputTextType)" name="x_Request_Status" id="x_Request_Status" data-table="v_tr_request" data-field="x_Request_Status" value="@Html.Raw(vTrRequestSearch.Request_Status.EditValue)" size="30" maxlength="30" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Request_Status.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Request_Status.FormatPattern)"@Html.Raw(vTrRequestSearch.Request_Status.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Request_Status.GetErrorMessage(false))</div>
+</span></template>
+<template id="tpx_v_tr_request_Request_PIC" class="v_tr_requestsearch"><span id="el_v_tr_request_Request_PIC" class="ew-search-field ew-search-field-single">
+<input type="@(vTrRequestSearch.Request_PIC.InputTextType)" name="x_Request_PIC" id="x_Request_PIC" data-table="v_tr_request" data-field="x_Request_PIC" value="@Html.Raw(vTrRequestSearch.Request_PIC.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(vTrRequestSearch.Request_PIC.PlaceHolder))" data-format-pattern="@(vTrRequestSearch.Request_PIC.FormatPattern)"@Html.Raw(vTrRequestSearch.Request_PIC.EditAttributes)>
+<div class="invalid-feedback">@Html.Raw(vTrRequestSearch.Request_PIC.GetErrorMessage(false))</div>
+</span></template>
+<div id="v_tr_request_query_builder" class="query-builder mb-3"></div>
+<div class="btn-group mb-3 query-btn-group"></div>
+<button type="button" id="btn-view-rules" class="btn btn-primary d-none disabled" title="@(HtmlEncode(Language.Phrase("View", true)))"><i class="fa-solid fa-eye ew-icon"></i></button>
+<button type="button" id="btn-clear-rules" class="btn btn-primary d-none disabled" title="@(HtmlEncode(Language.Phrase("Clear", true)))"><i class="fa-solid fa-xmark ew-icon"></i></button>
+<script>
+// Filter builder
+loadjs.ready(["wrapper", "head"], () => {
+    let filters = [
+            {
+                id: "id",
+                type: "integer",
+                label: currentTable.fields.id.caption,
+                operators: currentTable.fields.id.clientSearchOperators,
+                default_operator: "equal",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.id.validators),
+                data: {
+                    format: currentTable.fields.id.clientFormatPattern
+                }
+            },
+            {
+                id: "Request_No",
+                type: "string",
+                label: currentTable.fields.Request_No.caption,
+                operators: currentTable.fields.Request_No.clientSearchOperators,
+                default_operator: "contains",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Request_No.validators),
+                data: {
+                    format: currentTable.fields.Request_No.clientFormatPattern
+                }
+            },
+            {
+                id: "Reference_Doc",
+                type: "string",
+                label: currentTable.fields.Reference_Doc.caption,
+                operators: currentTable.fields.Reference_Doc.clientSearchOperators,
+                default_operator: "contains",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Reference_Doc.validators),
+                data: {
+                    format: currentTable.fields.Reference_Doc.clientFormatPattern
+                }
+            },
+            {
+                id: "Reason",
+                type: "string",
+                label: currentTable.fields.Reason.caption,
+                operators: currentTable.fields.Reason.clientSearchOperators,
+                default_operator: "contains",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Reason.validators),
+                data: {
+                    format: currentTable.fields.Reason.clientFormatPattern
+                }
+            },
+            {
+                id: "Request_By",
+                type: "string",
+                label: currentTable.fields.Request_By.caption,
+                operators: currentTable.fields.Request_By.clientSearchOperators,
+                default_operator: "contains",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Request_By.validators),
+                data: {
+                    format: currentTable.fields.Request_By.clientFormatPattern
+                }
+            },
+            {
+                id: "Request_By_Name",
+                type: "string",
+                label: currentTable.fields.Request_By_Name.caption,
+                operators: currentTable.fields.Request_By_Name.clientSearchOperators,
+                default_operator: "contains",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Request_By_Name.validators),
+                data: {
+                    format: currentTable.fields.Request_By_Name.clientFormatPattern
+                }
+            },
+            {
+                id: "Request_By_Position",
+                type: "string",
+                label: currentTable.fields.Request_By_Position.caption,
+                operators: currentTable.fields.Request_By_Position.clientSearchOperators,
+                default_operator: "contains",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Request_By_Position.validators),
+                data: {
+                    format: currentTable.fields.Request_By_Position.clientFormatPattern
+                }
+            },
+            {
+                id: "Request_By_Branch",
+                type: "string",
+                label: currentTable.fields.Request_By_Branch.caption,
+                operators: currentTable.fields.Request_By_Branch.clientSearchOperators,
+                default_operator: "contains",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Request_By_Branch.validators),
+                data: {
+                    format: currentTable.fields.Request_By_Branch.clientFormatPattern
+                }
+            },
+            {
+                id: "Request_By_Region",
+                type: "string",
+                label: currentTable.fields.Request_By_Region.caption,
+                operators: currentTable.fields.Request_By_Region.clientSearchOperators,
+                default_operator: "contains",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Request_By_Region.validators),
+                data: {
+                    format: currentTable.fields.Request_By_Region.clientFormatPattern
+                }
+            },
+            {
+                id: "Request_Industry",
+                type: "string",
+                label: currentTable.fields.Request_Industry.caption,
+                operators: currentTable.fields.Request_Industry.clientSearchOperators,
+                default_operator: "contains",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Request_Industry.validators),
+                data: {
+                    format: currentTable.fields.Request_Industry.clientFormatPattern
+                }
+            },
+            {
+                id: "Customer_ID",
+                type: "string",
+                label: currentTable.fields.Customer_ID.caption,
+                operators: currentTable.fields.Customer_ID.clientSearchOperators,
+                default_operator: "contains",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Customer_ID.validators),
+                data: {
+                    format: currentTable.fields.Customer_ID.clientFormatPattern
+                }
+            },
+            {
+                id: "Customer_Name",
+                type: "string",
+                label: currentTable.fields.Customer_Name.caption,
+                operators: currentTable.fields.Customer_Name.clientSearchOperators,
+                default_operator: "contains",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Customer_Name.validators),
+                data: {
+                    format: currentTable.fields.Customer_Name.clientFormatPattern
+                }
+            },
+            {
+                id: "SAP_Total",
+                type: "double",
+                label: currentTable.fields.SAP_Total.caption,
+                operators: currentTable.fields.SAP_Total.clientSearchOperators,
+                default_operator: "equal",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.SAP_Total.validators),
+                data: {
+                    format: currentTable.fields.SAP_Total.clientFormatPattern
+                }
+            },
+            {
+                id: "Override_Total",
+                type: "double",
+                label: currentTable.fields.Override_Total.caption,
+                operators: currentTable.fields.Override_Total.clientSearchOperators,
+                default_operator: "equal",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Override_Total.validators),
+                data: {
+                    format: currentTable.fields.Override_Total.clientFormatPattern
+                }
+            },
+            {
+                id: "Variance_Total",
+                type: "double",
+                label: currentTable.fields.Variance_Total.caption,
+                operators: currentTable.fields.Variance_Total.clientSearchOperators,
+                default_operator: "equal",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Variance_Total.validators),
+                data: {
+                    format: currentTable.fields.Variance_Total.clientFormatPattern
+                }
+            },
+            {
+                id: "Variance_Percent",
+                type: "double",
+                label: currentTable.fields.Variance_Percent.caption,
+                operators: currentTable.fields.Variance_Percent.clientSearchOperators,
+                default_operator: "equal",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Variance_Percent.validators),
+                data: {
+                    format: currentTable.fields.Variance_Percent.clientFormatPattern
+                }
+            },
+            {
+                id: "Notes",
+                type: "string",
+                label: currentTable.fields.Notes.caption,
+                operators: currentTable.fields.Notes.clientSearchOperators,
+                default_operator: "contains",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Notes.validators),
+                data: {
+                    format: currentTable.fields.Notes.clientFormatPattern
+                }
+            },
+            {
+                id: "Next_Approver",
+                type: "string",
+                label: currentTable.fields.Next_Approver.caption,
+                operators: currentTable.fields.Next_Approver.clientSearchOperators,
+                default_operator: "contains",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Next_Approver.validators),
+                data: {
+                    format: currentTable.fields.Next_Approver.clientFormatPattern
+                }
+            },
+            {
+                id: "List_Approver",
+                type: "string",
+                label: currentTable.fields.List_Approver.caption,
+                operators: currentTable.fields.List_Approver.clientSearchOperators,
+                default_operator: "contains",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.List_Approver.validators),
+                data: {
+                    format: currentTable.fields.List_Approver.clientFormatPattern
+                }
+            },
+            {
+                id: "Last_Update_By",
+                type: "string",
+                label: currentTable.fields.Last_Update_By.caption,
+                operators: currentTable.fields.Last_Update_By.clientSearchOperators,
+                default_operator: "contains",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Last_Update_By.validators),
+                data: {
+                    format: currentTable.fields.Last_Update_By.clientFormatPattern
+                }
+            },
+            {
+                id: "Created_By",
+                type: "string",
+                label: currentTable.fields.Created_By.caption,
+                operators: currentTable.fields.Created_By.clientSearchOperators,
+                default_operator: "contains",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Created_By.validators),
+                data: {
+                    format: currentTable.fields.Created_By.clientFormatPattern
+                }
+            },
+            {
+                id: "Created_Date",
+                type: "datetime",
+                label: currentTable.fields.Created_Date.caption,
+                operators: currentTable.fields.Created_Date.clientSearchOperators,
+                default_operator: "equal",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Created_Date.validators),
+                data: {
+                    format: currentTable.fields.Created_Date.clientFormatPattern
+                }
+            },
+            {
+                id: "ETL_Date",
+                type: "datetime",
+                label: currentTable.fields.ETL_Date.caption,
+                operators: currentTable.fields.ETL_Date.clientSearchOperators,
+                default_operator: "equal",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.ETL_Date.validators),
+                data: {
+                    format: currentTable.fields.ETL_Date.clientFormatPattern
+                }
+            },
+            {
+                id: "Request_Status",
+                type: "string",
+                label: currentTable.fields.Request_Status.caption,
+                operators: currentTable.fields.Request_Status.clientSearchOperators,
+                default_operator: "contains",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Request_Status.validators),
+                data: {
+                    format: currentTable.fields.Request_Status.clientFormatPattern
+                }
+            },
+            {
+                id: "Request_PIC",
+                type: "string",
+                label: currentTable.fields.Request_PIC.caption,
+                operators: currentTable.fields.Request_PIC.clientSearchOperators,
+                default_operator: "contains",
+                input: ew.getQueryBuilderFilterInput(),
+                value_separator: ew.IN_OPERATOR_VALUE_SEPARATOR,
+                validation: ew.getQueryBuilderFilterValidation(fv_tr_requestsearch.fields.Request_PIC.validators),
+                data: {
+                    format: currentTable.fields.Request_PIC.clientFormatPattern
+                }
+            },
+        ],
+        $ = jQuery,
+        $qb = $("#v_tr_request_query_builder"),
+        args = {},
+        rules = ew.parseJson($("#fv_tr_requestsearch input[name=rules]").val()),
+        queryBuilderOptions = Object.assign({}, ew.queryBuilderOptions),
+        allowViewRules = queryBuilderOptions.allowViewRules,
+        allowClearRules = queryBuilderOptions.allowClearRules,
+        hasRules = group => Array.isArray(group?.rules) && group.rules.length > 0,
+        getRules = () => $qb.queryBuilder("getRules", { skip_empty: true }),
+        getSql = () => $qb.queryBuilder("getSQL", false, false, rules)?.sql;
+    delete queryBuilderOptions.allowViewRules;
+    delete queryBuilderOptions.allowClearRules;
+    args.options = ew.deepAssign({
+        plugins: Object.assign({}, ew.queryBuilderPlugins),
+        lang: ew.language.phrase("querybuilderjs"),
+        select_placeholder: ew.language.phrase("PleaseSelect"),
+        inputs_separator: `<div class="d-inline-flex ms-2 me-2">${ew.language.phrase("AND")}</div>`, // For "between"
+        filters,
+        rules
+    }, queryBuilderOptions);
+    $qb.trigger("querybuilder", [args]);
+    $qb.queryBuilder(args.options).on("rulesChanged.queryBuilder", () => {
+        let rules = getRules();
+        !ew.DEBUG || console.log(rules, getSql());
+        $("#btn-reset, #btn-action, #btn-clear-rules, #btn-view-rules").toggleClass("disabled", !rules);
+    }).on("afterCreateRuleInput.queryBuilder", function(e, rule) {
+        let select = rule.$el.find(".rule-value-container").find("selection-list")[0];
+        if (select) { // Selection list
+            let id = select.dataset.field.replace("^x_", ""),
+                form = ew.forms.get(select);
+            form.updateList(select, undefined, undefined, true); // Update immediately
+        }
+    });
+    $("#fv_tr_requestsearch").on("beforesubmit", function () {
+        this.rules.value = JSON.stringify(getRules());
+    });
+    $("#btn-reset").toggleClass("d-none", false).on("click", () => {
+        hasRules(rules) ? $qb.queryBuilder("setRules", rules) : $qb.queryBuilder("reset");
+        return false;
+    });
+    $("#btn-action").toggleClass("d-none", false);
+    if (allowClearRules) {
+        $("#btn-clear-rules").appendTo(".query-btn-group").removeClass("d-none").on("click", () => $qb.queryBuilder("reset"));
+    }
+    if (allowViewRules) {
+        $("#btn-view-rules").appendTo(".query-btn-group").removeClass("d-none").on("click", () => {
+            let rules = getRules();
+            if (hasRules(rules)) {
+                let sql = getSql();
+                ew.alert(sql ? '<pre class="text-start fs-6">' + sql + '</pre>' : '', "dark");
+                !ew.DEBUG || console.log(rules, sql);
+            } else {
+                ew.alert(ew.language.phrase("EmptyLabel"));
+            }
+        });
+    }
+    if (hasRules(rules)) { // Enable buttons if rules exist initially
+        $("#btn-reset, #btn-action, #btn-clear-rules, #btn-view-rules").removeClass("disabled");
+    }
+});
+</script>
+@Html.Raw(vTrRequestSearch.IsModal ? Html.Raw("<template class=\"ew-modal-buttons\">") : Html.Raw("<div class=\"row ew-buttons\">"))<!-- buttons .row -->
+    <div class="@(vTrRequestSearch.OffsetColumnClass)"><!-- buttons offset -->
+        <button class="btn btn-primary ew-btn d-none disabled" name="btn-action" id="btn-action" type="submit" form="fv_tr_requestsearch" formaction="@AppPath("VTrRequestList")" data-ajax="@(vTrRequestSearch.UseAjaxActions ? "true" : "false")">@Html.Raw(Language.Phrase("Search"))</button>
+@if (vTrRequestSearch.IsModal) {
+        <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="fv_tr_requestsearch">@Html.Raw(Language.Phrase("Cancel"))</button>
+} else {
+        <button class="btn btn-default ew-btn d-none disabled" name="btn-reset" id="btn-reset" type="button" form="fv_tr_requestsearch" data-ew-action="reload">@Html.Raw(Language.Phrase("Reset"))</button>
+}
+    </div><!-- /buttons offset -->
+@Html.Raw(vTrRequestSearch.IsModal ? Html.Raw("</template>") : Html.Raw("</div>"))<!-- /buttons .row -->
+</form>
+@vTrRequestSearch.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("v_tr_request");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

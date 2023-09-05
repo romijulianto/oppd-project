@@ -1,0 +1,165 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (logEmailDelete.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!logEmailDelete.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(logEmailDelete.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { log_email: currentTable } });
+var currentPageID = ew.PAGE_ID = "delete";
+var currentForm;
+var flog_emaildelete;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("flog_emaildelete")
+        .setPageId("delete")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@logEmailDelete.ShowPageHeader()
+@logEmailDelete.ShowMessages()
+<form name="flog_emaildelete" id="flog_emaildelete" class="ew-form ew-delete-form" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="delete">
+@foreach (string key in logEmailDelete.RecordKeys) {
+<input type="hidden" name="key_m[]" value="@key">
+}
+<div class="card ew-card ew-grid @(logEmailDelete.TableGridClass)">
+<div class="card-body ew-grid-middle-panel @(logEmailDelete.TableContainerClass)" style="@(logEmailDelete.TableContainerStyle)">
+<table class="@(logEmailDelete.TableClass)">
+    <thead>
+    <tr class="ew-table-header">
+@if (logEmailDelete.id.Visible) { // logEmailDelete.id.Visible (begin)
+        <th class="@Html.Raw(logEmailDelete.id.HeaderCellClass)"><span id="elh_log_email_id" class="log_email_id">@Html.Raw(logEmailDelete.id.Caption)</span></th>
+} @* logEmailDelete.id.Visible (end) *@
+@if (logEmailDelete.Email_Type.Visible) { // logEmailDelete.Email_Type.Visible (begin)
+        <th class="@Html.Raw(logEmailDelete.Email_Type.HeaderCellClass)"><span id="elh_log_email_Email_Type" class="log_email_Email_Type">@Html.Raw(logEmailDelete.Email_Type.Caption)</span></th>
+} @* logEmailDelete.Email_Type.Visible (end) *@
+@if (logEmailDelete.Email_To.Visible) { // logEmailDelete.Email_To.Visible (begin)
+        <th class="@Html.Raw(logEmailDelete.Email_To.HeaderCellClass)"><span id="elh_log_email_Email_To" class="log_email_Email_To">@Html.Raw(logEmailDelete.Email_To.Caption)</span></th>
+} @* logEmailDelete.Email_To.Visible (end) *@
+@if (logEmailDelete.Email_Cc.Visible) { // logEmailDelete.Email_Cc.Visible (begin)
+        <th class="@Html.Raw(logEmailDelete.Email_Cc.HeaderCellClass)"><span id="elh_log_email_Email_Cc" class="log_email_Email_Cc">@Html.Raw(logEmailDelete.Email_Cc.Caption)</span></th>
+} @* logEmailDelete.Email_Cc.Visible (end) *@
+@if (logEmailDelete.Email_Subject.Visible) { // logEmailDelete.Email_Subject.Visible (begin)
+        <th class="@Html.Raw(logEmailDelete.Email_Subject.HeaderCellClass)"><span id="elh_log_email_Email_Subject" class="log_email_Email_Subject">@Html.Raw(logEmailDelete.Email_Subject.Caption)</span></th>
+} @* logEmailDelete.Email_Subject.Visible (end) *@
+@if (logEmailDelete.Email_Body.Visible) { // logEmailDelete.Email_Body.Visible (begin)
+        <th class="@Html.Raw(logEmailDelete.Email_Body.HeaderCellClass)"><span id="elh_log_email_Email_Body" class="log_email_Email_Body">@Html.Raw(logEmailDelete.Email_Body.Caption)</span></th>
+} @* logEmailDelete.Email_Body.Visible (end) *@
+    </tr>
+    </thead>
+    <tbody>
+@{ logEmailDelete.RecordCount = 0; }
+@while (logEmailDelete.Recordset != null && await logEmailDelete.Recordset.ReadAsync()) { // DN
+    logEmailDelete.RecordCount++;
+    logEmailDelete.RowCount++;
+
+    // Set row properties
+    logEmailDelete.ResetAttributes();
+    logEmailDelete.RowType = RowType.View; // View
+
+    // Get the field contents
+    await logEmailDelete.LoadRowValues(logEmailDelete.Recordset);
+
+    // Render row
+    await logEmailDelete.RenderRow();
+    <tr @Html.Raw(logEmailDelete.RowAttributes)>
+@if (logEmailDelete.id.Visible) { // logEmailDelete.id.Visible (begin)
+        <td @Html.Raw(logEmailDelete.id.CellAttributes)>
+<span id="">
+<span @Html.Raw(logEmailDelete.id.ViewAttributes)>
+@Html.Raw(logEmailDelete.id.GetViewValue())</span>
+</span></td>
+} @* logEmailDelete.id.Visible (end) *@
+@if (logEmailDelete.Email_Type.Visible) { // logEmailDelete.Email_Type.Visible (begin)
+        <td @Html.Raw(logEmailDelete.Email_Type.CellAttributes)>
+<span id="">
+<span @Html.Raw(logEmailDelete.Email_Type.ViewAttributes)>
+@Html.Raw(logEmailDelete.Email_Type.GetViewValue())</span>
+</span></td>
+} @* logEmailDelete.Email_Type.Visible (end) *@
+@if (logEmailDelete.Email_To.Visible) { // logEmailDelete.Email_To.Visible (begin)
+        <td @Html.Raw(logEmailDelete.Email_To.CellAttributes)>
+<span id="">
+<span @Html.Raw(logEmailDelete.Email_To.ViewAttributes)>
+@Html.Raw(logEmailDelete.Email_To.GetViewValue())</span>
+</span></td>
+} @* logEmailDelete.Email_To.Visible (end) *@
+@if (logEmailDelete.Email_Cc.Visible) { // logEmailDelete.Email_Cc.Visible (begin)
+        <td @Html.Raw(logEmailDelete.Email_Cc.CellAttributes)>
+<span id="">
+<span @Html.Raw(logEmailDelete.Email_Cc.ViewAttributes)>
+@Html.Raw(logEmailDelete.Email_Cc.GetViewValue())</span>
+</span></td>
+} @* logEmailDelete.Email_Cc.Visible (end) *@
+@if (logEmailDelete.Email_Subject.Visible) { // logEmailDelete.Email_Subject.Visible (begin)
+        <td @Html.Raw(logEmailDelete.Email_Subject.CellAttributes)>
+<span id="">
+<span @Html.Raw(logEmailDelete.Email_Subject.ViewAttributes)>
+@Html.Raw(logEmailDelete.Email_Subject.GetViewValue())</span>
+</span></td>
+} @* logEmailDelete.Email_Subject.Visible (end) *@
+@if (logEmailDelete.Email_Body.Visible) { // logEmailDelete.Email_Body.Visible (begin)
+        <td @Html.Raw(logEmailDelete.Email_Body.CellAttributes)>
+<span id="">
+<span @Html.Raw(logEmailDelete.Email_Body.ViewAttributes)>
+@Html.Raw(logEmailDelete.Email_Body.GetViewValue())</span>
+</span></td>
+} @* logEmailDelete.Email_Body.Visible (end) *@
+    </tr>
+}
+@{ logEmailDelete.CloseRecordset(); }
+</tbody>
+</table>
+</div>
+</div>
+<div class="ew-buttons ew-desktop-buttons">
+<button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit">@Html.Raw(Language.Phrase("DeleteBtn"))</button>
+<button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-href="@AppPath(logEmailDelete.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+</div>
+</form>
+@logEmailDelete.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

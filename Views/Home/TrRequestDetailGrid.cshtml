@@ -1,0 +1,720 @@
+@{
+    // View
+    View = this;
+
+    // Set up CurrentGrid
+    CurrentGrid = trRequestDetailGrid;
+
+    // Run
+    await trRequestDetailGrid.Run();
+
+    // Check action result
+    if (trRequestDetailGrid.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!trRequestDetailGrid.IsExport()) {
+<script>
+var ftr_request_detailgrid;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let currentTable = @Html.Raw(ConvertToJson(trRequestDetailGrid.ToClientVar()));
+    ew.deepAssign(ew.vars, { tables: { tr_request_detail: currentTable } });
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("ftr_request_detailgrid")
+        .setPageId("grid")
+        .setFormKeyCountName("@(trRequestDetailGrid.FormKeyCountName)")
+
+        // Add fields
+        .setFields([
+
+            ["Item_No", [fields.Item_No.visible && fields.Item_No.required ? ew.Validators.required(fields.Item_No.caption) : null], fields.Item_No.isInvalid],
+            ["Part_No", [fields.Part_No.visible && fields.Part_No.required ? ew.Validators.required(fields.Part_No.caption) : null], fields.Part_No.isInvalid],
+            ["Part_Description", [fields.Part_Description.visible && fields.Part_Description.required ? ew.Validators.required(fields.Part_Description.caption) : null], fields.Part_Description.isInvalid],
+            ["Qty", [fields.Qty.visible && fields.Qty.required ? ew.Validators.required(fields.Qty.caption) : null], fields.Qty.isInvalid],
+            ["SAP_Unit_Price", [fields.SAP_Unit_Price.visible && fields.SAP_Unit_Price.required ? ew.Validators.required(fields.SAP_Unit_Price.caption) : null], fields.SAP_Unit_Price.isInvalid],
+            ["Extd_SAP_Price", [fields.Extd_SAP_Price.visible && fields.Extd_SAP_Price.required ? ew.Validators.required(fields.Extd_SAP_Price.caption) : null], fields.Extd_SAP_Price.isInvalid],
+            ["GP_SAP_Price", [fields.GP_SAP_Price.visible && fields.GP_SAP_Price.required ? ew.Validators.required(fields.GP_SAP_Price.caption) : null], fields.GP_SAP_Price.isInvalid],
+            ["Override_Unit_Price", [fields.Override_Unit_Price.visible && fields.Override_Unit_Price.required ? ew.Validators.required(fields.Override_Unit_Price.caption) : null, ew.Validators.float], fields.Override_Unit_Price.isInvalid],
+            ["Extd_Override_Price", [fields.Extd_Override_Price.visible && fields.Extd_Override_Price.required ? ew.Validators.required(fields.Extd_Override_Price.caption) : null], fields.Extd_Override_Price.isInvalid],
+            ["GP_Override_Price", [fields.GP_Override_Price.visible && fields.GP_Override_Price.required ? ew.Validators.required(fields.GP_Override_Price.caption) : null], fields.GP_Override_Price.isInvalid],
+            ["Override_Core", [fields.Override_Core.visible && fields.Override_Core.required ? ew.Validators.required(fields.Override_Core.caption) : null], fields.Override_Core.isInvalid],
+            ["Override_Percent", [fields.Override_Percent.visible && fields.Override_Percent.required ? ew.Validators.required(fields.Override_Percent.caption) : null], fields.Override_Percent.isInvalid],
+            ["Core_Life_Ind", [fields.Core_Life_Ind.visible && fields.Core_Life_Ind.required ? ew.Validators.required(fields.Core_Life_Ind.caption) : null], fields.Core_Life_Ind.isInvalid],
+            ["Notes", [fields.Notes.visible && fields.Notes.required ? ew.Validators.required(fields.Notes.caption) : null], fields.Notes.isInvalid]
+        ])
+
+        // Check empty row
+        .setEmptyRow(
+            function (rowIndex) {
+                let fobj = this.getForm(),
+                    fields = [["Item_No",false],["Part_No",false],["Part_Description",false],["Qty",false],["SAP_Unit_Price",false],["Extd_SAP_Price",false],["GP_SAP_Price",false],["Override_Unit_Price",false],["Extd_Override_Price",false],["GP_Override_Price",false],["Override_Core",false],["Override_Percent",false],["Core_Life_Ind",false],["Notes",false]];
+                if (fields.some(field => ew.valueChanged(fobj, rowIndex, ...field)))
+                    return false;
+                return true;
+            }
+        )
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+        })
+        .build();
+    window[form.id] = form;
+    loadjs.done(form.id);
+});
+</script>
+}
+<main class="list">
+<div id="ew-list">
+@if (trRequestDetailGrid.TotalRecords > 0 || !Empty(trRequestDetailGrid.CurrentAction)) {
+<div class="card ew-card ew-grid@(trRequestDetailGrid.IsAddOrEdit ? " ew-grid-add-edit" : "") @(trRequestDetailGrid.TableGridClass)">
+<div id="ftr_request_detailgrid" class="ew-form ew-list-form">
+<div id="gmp_tr_request_detail" class="card-body ew-grid-middle-panel @(trRequestDetailGrid.TableContainerClass)" style="@(trRequestDetailGrid.TableContainerStyle)">
+<table id="tbl_tr_request_detailgrid" class="@(trRequestDetailGrid.TableClass)"><!-- .ew-table -->
+<thead>
+    <tr class="ew-table-header">
+@{
+    // Header row
+    trRequestDetailGrid.RowType = RowType.Header;
+
+    // Render list options
+    await trRequestDetailGrid.RenderListOptions();
+}
+@* Render list options (header, left) *@
+@trRequestDetailGrid.ListOptions.RenderHeader("left")
+@if (trRequestDetailGrid.Item_No.Visible) { // trRequestDetailGrid.Item_No.Visible (begin)
+        <th data-name="Item_No" class="@(trRequestDetailGrid.Item_No.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_tr_request_detail_Item_No" class="tr_request_detail_Item_No">@Html.Raw(trRequestDetailGrid.RenderFieldHeader(trRequestDetailGrid.Item_No))</div></th>
+} @* trRequestDetailGrid.Item_No.Visible (end) *@
+@if (trRequestDetailGrid.Part_No.Visible) { // trRequestDetailGrid.Part_No.Visible (begin)
+        <th data-name="Part_No" class="@(trRequestDetailGrid.Part_No.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_tr_request_detail_Part_No" class="tr_request_detail_Part_No">@Html.Raw(trRequestDetailGrid.RenderFieldHeader(trRequestDetailGrid.Part_No))</div></th>
+} @* trRequestDetailGrid.Part_No.Visible (end) *@
+@if (trRequestDetailGrid.Part_Description.Visible) { // trRequestDetailGrid.Part_Description.Visible (begin)
+        <th data-name="Part_Description" class="@(trRequestDetailGrid.Part_Description.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_tr_request_detail_Part_Description" class="tr_request_detail_Part_Description">@Html.Raw(trRequestDetailGrid.RenderFieldHeader(trRequestDetailGrid.Part_Description))</div></th>
+} @* trRequestDetailGrid.Part_Description.Visible (end) *@
+@if (trRequestDetailGrid.Qty.Visible) { // trRequestDetailGrid.Qty.Visible (begin)
+        <th data-name="Qty" class="@(trRequestDetailGrid.Qty.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_tr_request_detail_Qty" class="tr_request_detail_Qty">@Html.Raw(trRequestDetailGrid.RenderFieldHeader(trRequestDetailGrid.Qty))</div></th>
+} @* trRequestDetailGrid.Qty.Visible (end) *@
+@if (trRequestDetailGrid.SAP_Unit_Price.Visible) { // trRequestDetailGrid.SAP_Unit_Price.Visible (begin)
+        <th data-name="SAP_Unit_Price" class="@(trRequestDetailGrid.SAP_Unit_Price.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_tr_request_detail_SAP_Unit_Price" class="tr_request_detail_SAP_Unit_Price">@Html.Raw(trRequestDetailGrid.RenderFieldHeader(trRequestDetailGrid.SAP_Unit_Price))</div></th>
+} @* trRequestDetailGrid.SAP_Unit_Price.Visible (end) *@
+@if (trRequestDetailGrid.Extd_SAP_Price.Visible) { // trRequestDetailGrid.Extd_SAP_Price.Visible (begin)
+        <th data-name="Extd_SAP_Price" class="@(trRequestDetailGrid.Extd_SAP_Price.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_tr_request_detail_Extd_SAP_Price" class="tr_request_detail_Extd_SAP_Price">@Html.Raw(trRequestDetailGrid.RenderFieldHeader(trRequestDetailGrid.Extd_SAP_Price))</div></th>
+} @* trRequestDetailGrid.Extd_SAP_Price.Visible (end) *@
+@if (trRequestDetailGrid.GP_SAP_Price.Visible) { // trRequestDetailGrid.GP_SAP_Price.Visible (begin)
+        <th data-name="GP_SAP_Price" class="@(trRequestDetailGrid.GP_SAP_Price.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_tr_request_detail_GP_SAP_Price" class="tr_request_detail_GP_SAP_Price">@Html.Raw(trRequestDetailGrid.RenderFieldHeader(trRequestDetailGrid.GP_SAP_Price))</div></th>
+} @* trRequestDetailGrid.GP_SAP_Price.Visible (end) *@
+@if (trRequestDetailGrid.Override_Unit_Price.Visible) { // trRequestDetailGrid.Override_Unit_Price.Visible (begin)
+        <th data-name="Override_Unit_Price" class="@(trRequestDetailGrid.Override_Unit_Price.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_tr_request_detail_Override_Unit_Price" class="tr_request_detail_Override_Unit_Price">@Html.Raw(trRequestDetailGrid.RenderFieldHeader(trRequestDetailGrid.Override_Unit_Price))</div></th>
+} @* trRequestDetailGrid.Override_Unit_Price.Visible (end) *@
+@if (trRequestDetailGrid.Extd_Override_Price.Visible) { // trRequestDetailGrid.Extd_Override_Price.Visible (begin)
+        <th data-name="Extd_Override_Price" class="@(trRequestDetailGrid.Extd_Override_Price.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_tr_request_detail_Extd_Override_Price" class="tr_request_detail_Extd_Override_Price">@Html.Raw(trRequestDetailGrid.RenderFieldHeader(trRequestDetailGrid.Extd_Override_Price))</div></th>
+} @* trRequestDetailGrid.Extd_Override_Price.Visible (end) *@
+@if (trRequestDetailGrid.GP_Override_Price.Visible) { // trRequestDetailGrid.GP_Override_Price.Visible (begin)
+        <th data-name="GP_Override_Price" class="@(trRequestDetailGrid.GP_Override_Price.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_tr_request_detail_GP_Override_Price" class="tr_request_detail_GP_Override_Price">@Html.Raw(trRequestDetailGrid.RenderFieldHeader(trRequestDetailGrid.GP_Override_Price))</div></th>
+} @* trRequestDetailGrid.GP_Override_Price.Visible (end) *@
+@if (trRequestDetailGrid.Override_Core.Visible) { // trRequestDetailGrid.Override_Core.Visible (begin)
+        <th data-name="Override_Core" class="@(trRequestDetailGrid.Override_Core.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_tr_request_detail_Override_Core" class="tr_request_detail_Override_Core">@Html.Raw(trRequestDetailGrid.RenderFieldHeader(trRequestDetailGrid.Override_Core))</div></th>
+} @* trRequestDetailGrid.Override_Core.Visible (end) *@
+@if (trRequestDetailGrid.Override_Percent.Visible) { // trRequestDetailGrid.Override_Percent.Visible (begin)
+        <th data-name="Override_Percent" class="@(trRequestDetailGrid.Override_Percent.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_tr_request_detail_Override_Percent" class="tr_request_detail_Override_Percent">@Html.Raw(trRequestDetailGrid.RenderFieldHeader(trRequestDetailGrid.Override_Percent))</div></th>
+} @* trRequestDetailGrid.Override_Percent.Visible (end) *@
+@if (trRequestDetailGrid.Core_Life_Ind.Visible) { // trRequestDetailGrid.Core_Life_Ind.Visible (begin)
+        <th data-name="Core_Life_Ind" class="@(trRequestDetailGrid.Core_Life_Ind.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_tr_request_detail_Core_Life_Ind" class="tr_request_detail_Core_Life_Ind">@Html.Raw(trRequestDetailGrid.RenderFieldHeader(trRequestDetailGrid.Core_Life_Ind))</div></th>
+} @* trRequestDetailGrid.Core_Life_Ind.Visible (end) *@
+@if (trRequestDetailGrid.Notes.Visible) { // trRequestDetailGrid.Notes.Visible (begin)
+        <th data-name="Notes" class="@(trRequestDetailGrid.Notes.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_tr_request_detail_Notes" class="tr_request_detail_Notes">@Html.Raw(trRequestDetailGrid.RenderFieldHeader(trRequestDetailGrid.Notes))</div></th>
+} @* trRequestDetailGrid.Notes.Visible (end) *@
+@* Render list options (header, right) *@
+@trRequestDetailGrid.ListOptions.RenderHeader("right")
+    </tr>
+</thead>
+<tbody data-page="@(trRequestDetailGrid.PageNumber)">
+@{
+    await trRequestDetailGrid.SetupGrid();
+    bool eof = trRequestDetailGrid.Recordset == null; // DN
+}
+@while (trRequestDetailGrid.RecordCount < trRequestDetailGrid.StopRecord || SameString(trRequestDetailGrid.RowIndex, "$rowindex$")) { // Begin While
+    if (!eof && !SameString(trRequestDetailGrid.RowIndex, "$rowindex$") &&
+        (!trRequestDetailGrid.IsGridAdd || trRequestDetailGrid.CurrentMode == "copy") &&
+        (!((trRequestDetailGrid.IsCopy || trRequestDetailGrid.IsAdd) && trRequestDetailGrid.RowIndex is int rowIndex && rowIndex == 0))) // DN
+        eof = !await trRequestDetailGrid.Recordset.ReadAsync();
+    trRequestDetailGrid.RecordCount++;
+    if (trRequestDetailGrid.RecordCount >= trRequestDetailGrid.StartRecord) {
+        await trRequestDetailGrid.SetupRow();
+
+        // Skip 1) delete row / empty row for confirm page, 2) hidden row
+        if (trRequestDetailGrid.RowAction != "delete" &&
+            trRequestDetailGrid.RowAction != "insertdelete" &&
+            !(trRequestDetailGrid.RowAction == "insert" && trRequestDetailGrid.IsConfirm && trRequestDetailGrid.EmptyRow()) &&
+            trRequestDetailGrid.RowAction != "hide") {
+    <tr @Html.Raw(trRequestDetailGrid.RowAttributes)>
+    @* Render list options (body, left) *@
+    @trRequestDetailGrid.ListOptions.RenderBody("left", trRequestDetailGrid.RowCount)
+    @if (trRequestDetailGrid.Item_No.Visible) { // trRequestDetailGrid.Item_No.Visible (begin)
+        <td data-name="Item_No" @Html.Raw(trRequestDetailGrid.Item_No.CellAttributes)>
+@if (trRequestDetailGrid.RowType == RowType.Add) { // Add (begin)
+    @* Item_No (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Item_No" class="el_tr_request_detail_Item_No">
+    <input type="@(trRequestDetailGrid.Item_No.InputTextType)" name="x@(trRequestDetailGrid.RowIndex)_Item_No" id="x@(trRequestDetailGrid.RowIndex)_Item_No" data-table="tr_request_detail" data-field="x_Item_No" value="@Html.Raw(trRequestDetailGrid.Item_No.EditValue)" size="30" maxlength="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailGrid.Item_No.PlaceHolder))" data-format-pattern="@(trRequestDetailGrid.Item_No.FormatPattern)"@Html.Raw(trRequestDetailGrid.Item_No.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestDetailGrid.Item_No.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Item_No" data-hidden="1" data-old name="o@(trRequestDetailGrid.RowIndex)_Item_No" id="o@(trRequestDetailGrid.RowIndex)_Item_No" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Item_No.OldValue))">
+    @* Item_No (end) *@
+} @* Add (end) *@
+@if (trRequestDetailGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* Item_No (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Item_No" class="el_tr_request_detail_Item_No">
+    <span @Html.Raw(trRequestDetailGrid.Item_No.ViewAttributes)>
+    <input type="text" readonly class="form-control-plaintext" value="@Html.Raw(RemoveHtml(ConvertToString(trRequestDetailGrid.Item_No.EditValue)))"></span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Item_No" data-hidden="1" name="x@(trRequestDetailGrid.RowIndex)_Item_No" id="x@(trRequestDetailGrid.RowIndex)_Item_No" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Item_No.CurrentValue))">
+    </span>
+    @* Item_No (end) *@
+} @* Edit (end) *@
+@if (trRequestDetailGrid.RowType == RowType.View) { // View (begin)
+    @* Item_No (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Item_No" class="el_tr_request_detail_Item_No">
+    <span @Html.Raw(trRequestDetailGrid.Item_No.ViewAttributes)>
+    @Html.Raw(trRequestDetailGrid.Item_No.GetViewValue())</span>
+    </span>
+    if (trRequestDetailGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Item_No" data-hidden="1" name="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Item_No" id="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Item_No" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Item_No.FormValue))">
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Item_No" data-hidden="1" data-old name="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Item_No" id="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Item_No" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Item_No.OldValue))">
+    }
+    @* Item_No (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestDetailGrid.Item_No.Visible (end) *@
+    @if (trRequestDetailGrid.Part_No.Visible) { // trRequestDetailGrid.Part_No.Visible (begin)
+        <td data-name="Part_No" @Html.Raw(trRequestDetailGrid.Part_No.CellAttributes)>
+@if (trRequestDetailGrid.RowType == RowType.Add) { // Add (begin)
+    @* Part_No (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Part_No" class="el_tr_request_detail_Part_No">
+    <input type="@(trRequestDetailGrid.Part_No.InputTextType)" name="x@(trRequestDetailGrid.RowIndex)_Part_No" id="x@(trRequestDetailGrid.RowIndex)_Part_No" data-table="tr_request_detail" data-field="x_Part_No" value="@Html.Raw(trRequestDetailGrid.Part_No.EditValue)" size="30" maxlength="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailGrid.Part_No.PlaceHolder))" data-format-pattern="@(trRequestDetailGrid.Part_No.FormatPattern)"@Html.Raw(trRequestDetailGrid.Part_No.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestDetailGrid.Part_No.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Part_No" data-hidden="1" data-old name="o@(trRequestDetailGrid.RowIndex)_Part_No" id="o@(trRequestDetailGrid.RowIndex)_Part_No" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Part_No.OldValue))">
+    @* Part_No (end) *@
+} @* Add (end) *@
+@if (trRequestDetailGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* Part_No (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Part_No" class="el_tr_request_detail_Part_No">
+    <span @Html.Raw(trRequestDetailGrid.Part_No.ViewAttributes)>
+    <input type="text" readonly class="form-control-plaintext" value="@Html.Raw(RemoveHtml(ConvertToString(trRequestDetailGrid.Part_No.EditValue)))"></span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Part_No" data-hidden="1" name="x@(trRequestDetailGrid.RowIndex)_Part_No" id="x@(trRequestDetailGrid.RowIndex)_Part_No" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Part_No.CurrentValue))">
+    </span>
+    @* Part_No (end) *@
+} @* Edit (end) *@
+@if (trRequestDetailGrid.RowType == RowType.View) { // View (begin)
+    @* Part_No (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Part_No" class="el_tr_request_detail_Part_No">
+    <span @Html.Raw(trRequestDetailGrid.Part_No.ViewAttributes)>
+    @Html.Raw(trRequestDetailGrid.Part_No.GetViewValue())</span>
+    </span>
+    if (trRequestDetailGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Part_No" data-hidden="1" name="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Part_No" id="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Part_No" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Part_No.FormValue))">
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Part_No" data-hidden="1" data-old name="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Part_No" id="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Part_No" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Part_No.OldValue))">
+    }
+    @* Part_No (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestDetailGrid.Part_No.Visible (end) *@
+    @if (trRequestDetailGrid.Part_Description.Visible) { // trRequestDetailGrid.Part_Description.Visible (begin)
+        <td data-name="Part_Description" @Html.Raw(trRequestDetailGrid.Part_Description.CellAttributes)>
+@if (trRequestDetailGrid.RowType == RowType.Add) { // Add (begin)
+    @* Part_Description (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Part_Description" class="el_tr_request_detail_Part_Description">
+    <input type="@(trRequestDetailGrid.Part_Description.InputTextType)" name="x@(trRequestDetailGrid.RowIndex)_Part_Description" id="x@(trRequestDetailGrid.RowIndex)_Part_Description" data-table="tr_request_detail" data-field="x_Part_Description" value="@Html.Raw(trRequestDetailGrid.Part_Description.EditValue)" size="30" maxlength="200" placeholder="@Html.Raw(HtmlEncode(trRequestDetailGrid.Part_Description.PlaceHolder))" data-format-pattern="@(trRequestDetailGrid.Part_Description.FormatPattern)"@Html.Raw(trRequestDetailGrid.Part_Description.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestDetailGrid.Part_Description.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Part_Description" data-hidden="1" data-old name="o@(trRequestDetailGrid.RowIndex)_Part_Description" id="o@(trRequestDetailGrid.RowIndex)_Part_Description" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Part_Description.OldValue))">
+    @* Part_Description (end) *@
+} @* Add (end) *@
+@if (trRequestDetailGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* Part_Description (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Part_Description" class="el_tr_request_detail_Part_Description">
+    <span @Html.Raw(trRequestDetailGrid.Part_Description.ViewAttributes)>
+    <input type="text" readonly class="form-control-plaintext" value="@Html.Raw(RemoveHtml(ConvertToString(trRequestDetailGrid.Part_Description.EditValue)))"></span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Part_Description" data-hidden="1" name="x@(trRequestDetailGrid.RowIndex)_Part_Description" id="x@(trRequestDetailGrid.RowIndex)_Part_Description" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Part_Description.CurrentValue))">
+    </span>
+    @* Part_Description (end) *@
+} @* Edit (end) *@
+@if (trRequestDetailGrid.RowType == RowType.View) { // View (begin)
+    @* Part_Description (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Part_Description" class="el_tr_request_detail_Part_Description">
+    <span @Html.Raw(trRequestDetailGrid.Part_Description.ViewAttributes)>
+    @Html.Raw(trRequestDetailGrid.Part_Description.GetViewValue())</span>
+    </span>
+    if (trRequestDetailGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Part_Description" data-hidden="1" name="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Part_Description" id="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Part_Description" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Part_Description.FormValue))">
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Part_Description" data-hidden="1" data-old name="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Part_Description" id="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Part_Description" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Part_Description.OldValue))">
+    }
+    @* Part_Description (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestDetailGrid.Part_Description.Visible (end) *@
+    @if (trRequestDetailGrid.Qty.Visible) { // trRequestDetailGrid.Qty.Visible (begin)
+        <td data-name="Qty" @Html.Raw(trRequestDetailGrid.Qty.CellAttributes)>
+@if (trRequestDetailGrid.RowType == RowType.Add) { // Add (begin)
+    @* Qty (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Qty" class="el_tr_request_detail_Qty">
+    <input type="@(trRequestDetailGrid.Qty.InputTextType)" name="x@(trRequestDetailGrid.RowIndex)_Qty" id="x@(trRequestDetailGrid.RowIndex)_Qty" data-table="tr_request_detail" data-field="x_Qty" value="@Html.Raw(trRequestDetailGrid.Qty.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailGrid.Qty.PlaceHolder))" data-format-pattern="@(trRequestDetailGrid.Qty.FormatPattern)"@Html.Raw(trRequestDetailGrid.Qty.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestDetailGrid.Qty.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Qty" data-hidden="1" data-old name="o@(trRequestDetailGrid.RowIndex)_Qty" id="o@(trRequestDetailGrid.RowIndex)_Qty" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Qty.OldValue))">
+    @* Qty (end) *@
+} @* Add (end) *@
+@if (trRequestDetailGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* Qty (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Qty" class="el_tr_request_detail_Qty">
+    <span @Html.Raw(trRequestDetailGrid.Qty.ViewAttributes)>
+    <input type="text" readonly class="form-control-plaintext" value="@Html.Raw(RemoveHtml(ConvertToString(trRequestDetailGrid.Qty.EditValue)))"></span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Qty" data-hidden="1" name="x@(trRequestDetailGrid.RowIndex)_Qty" id="x@(trRequestDetailGrid.RowIndex)_Qty" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Qty.CurrentValue))">
+    </span>
+    @* Qty (end) *@
+} @* Edit (end) *@
+@if (trRequestDetailGrid.RowType == RowType.View) { // View (begin)
+    @* Qty (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Qty" class="el_tr_request_detail_Qty">
+    <span @Html.Raw(trRequestDetailGrid.Qty.ViewAttributes)>
+    @Html.Raw(trRequestDetailGrid.Qty.GetViewValue())</span>
+    </span>
+    if (trRequestDetailGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Qty" data-hidden="1" name="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Qty" id="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Qty" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Qty.FormValue))">
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Qty" data-hidden="1" data-old name="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Qty" id="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Qty" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Qty.OldValue))">
+    }
+    @* Qty (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestDetailGrid.Qty.Visible (end) *@
+    @if (trRequestDetailGrid.SAP_Unit_Price.Visible) { // trRequestDetailGrid.SAP_Unit_Price.Visible (begin)
+        <td data-name="SAP_Unit_Price" @Html.Raw(trRequestDetailGrid.SAP_Unit_Price.CellAttributes)>
+@if (trRequestDetailGrid.RowType == RowType.Add) { // Add (begin)
+    @* SAP_Unit_Price (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_SAP_Unit_Price" class="el_tr_request_detail_SAP_Unit_Price">
+    <input type="@(trRequestDetailGrid.SAP_Unit_Price.InputTextType)" name="x@(trRequestDetailGrid.RowIndex)_SAP_Unit_Price" id="x@(trRequestDetailGrid.RowIndex)_SAP_Unit_Price" data-table="tr_request_detail" data-field="x_SAP_Unit_Price" value="@Html.Raw(trRequestDetailGrid.SAP_Unit_Price.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailGrid.SAP_Unit_Price.PlaceHolder))" data-format-pattern="@(trRequestDetailGrid.SAP_Unit_Price.FormatPattern)"@Html.Raw(trRequestDetailGrid.SAP_Unit_Price.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestDetailGrid.SAP_Unit_Price.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_SAP_Unit_Price" data-hidden="1" data-old name="o@(trRequestDetailGrid.RowIndex)_SAP_Unit_Price" id="o@(trRequestDetailGrid.RowIndex)_SAP_Unit_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.SAP_Unit_Price.OldValue))">
+    @* SAP_Unit_Price (end) *@
+} @* Add (end) *@
+@if (trRequestDetailGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* SAP_Unit_Price (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_SAP_Unit_Price" class="el_tr_request_detail_SAP_Unit_Price">
+    <span @Html.Raw(trRequestDetailGrid.SAP_Unit_Price.ViewAttributes)>
+    <input type="text" readonly class="form-control-plaintext" value="@Html.Raw(RemoveHtml(ConvertToString(trRequestDetailGrid.SAP_Unit_Price.EditValue)))"></span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_SAP_Unit_Price" data-hidden="1" name="x@(trRequestDetailGrid.RowIndex)_SAP_Unit_Price" id="x@(trRequestDetailGrid.RowIndex)_SAP_Unit_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.SAP_Unit_Price.CurrentValue))">
+    </span>
+    @* SAP_Unit_Price (end) *@
+} @* Edit (end) *@
+@if (trRequestDetailGrid.RowType == RowType.View) { // View (begin)
+    @* SAP_Unit_Price (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_SAP_Unit_Price" class="el_tr_request_detail_SAP_Unit_Price">
+    <span @Html.Raw(trRequestDetailGrid.SAP_Unit_Price.ViewAttributes)>
+    @Html.Raw(trRequestDetailGrid.SAP_Unit_Price.GetViewValue())</span>
+    </span>
+    if (trRequestDetailGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_detail" data-field="x_SAP_Unit_Price" data-hidden="1" name="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_SAP_Unit_Price" id="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_SAP_Unit_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.SAP_Unit_Price.FormValue))">
+    <input type="hidden" data-table="tr_request_detail" data-field="x_SAP_Unit_Price" data-hidden="1" data-old name="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_SAP_Unit_Price" id="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_SAP_Unit_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.SAP_Unit_Price.OldValue))">
+    }
+    @* SAP_Unit_Price (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestDetailGrid.SAP_Unit_Price.Visible (end) *@
+    @if (trRequestDetailGrid.Extd_SAP_Price.Visible) { // trRequestDetailGrid.Extd_SAP_Price.Visible (begin)
+        <td data-name="Extd_SAP_Price" @Html.Raw(trRequestDetailGrid.Extd_SAP_Price.CellAttributes)>
+@if (trRequestDetailGrid.RowType == RowType.Add) { // Add (begin)
+    @* Extd_SAP_Price (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Extd_SAP_Price" class="el_tr_request_detail_Extd_SAP_Price">
+    <input type="@(trRequestDetailGrid.Extd_SAP_Price.InputTextType)" name="x@(trRequestDetailGrid.RowIndex)_Extd_SAP_Price" id="x@(trRequestDetailGrid.RowIndex)_Extd_SAP_Price" data-table="tr_request_detail" data-field="x_Extd_SAP_Price" value="@Html.Raw(trRequestDetailGrid.Extd_SAP_Price.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailGrid.Extd_SAP_Price.PlaceHolder))" data-format-pattern="@(trRequestDetailGrid.Extd_SAP_Price.FormatPattern)"@Html.Raw(trRequestDetailGrid.Extd_SAP_Price.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestDetailGrid.Extd_SAP_Price.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Extd_SAP_Price" data-hidden="1" data-old name="o@(trRequestDetailGrid.RowIndex)_Extd_SAP_Price" id="o@(trRequestDetailGrid.RowIndex)_Extd_SAP_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Extd_SAP_Price.OldValue))">
+    @* Extd_SAP_Price (end) *@
+} @* Add (end) *@
+@if (trRequestDetailGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* Extd_SAP_Price (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Extd_SAP_Price" class="el_tr_request_detail_Extd_SAP_Price">
+    <span @Html.Raw(trRequestDetailGrid.Extd_SAP_Price.ViewAttributes)>
+    <input type="text" readonly class="form-control-plaintext" value="@Html.Raw(RemoveHtml(ConvertToString(trRequestDetailGrid.Extd_SAP_Price.EditValue)))"></span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Extd_SAP_Price" data-hidden="1" name="x@(trRequestDetailGrid.RowIndex)_Extd_SAP_Price" id="x@(trRequestDetailGrid.RowIndex)_Extd_SAP_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Extd_SAP_Price.CurrentValue))">
+    </span>
+    @* Extd_SAP_Price (end) *@
+} @* Edit (end) *@
+@if (trRequestDetailGrid.RowType == RowType.View) { // View (begin)
+    @* Extd_SAP_Price (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Extd_SAP_Price" class="el_tr_request_detail_Extd_SAP_Price">
+    <span @Html.Raw(trRequestDetailGrid.Extd_SAP_Price.ViewAttributes)>
+    @Html.Raw(trRequestDetailGrid.Extd_SAP_Price.GetViewValue())</span>
+    </span>
+    if (trRequestDetailGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Extd_SAP_Price" data-hidden="1" name="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Extd_SAP_Price" id="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Extd_SAP_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Extd_SAP_Price.FormValue))">
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Extd_SAP_Price" data-hidden="1" data-old name="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Extd_SAP_Price" id="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Extd_SAP_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Extd_SAP_Price.OldValue))">
+    }
+    @* Extd_SAP_Price (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestDetailGrid.Extd_SAP_Price.Visible (end) *@
+    @if (trRequestDetailGrid.GP_SAP_Price.Visible) { // trRequestDetailGrid.GP_SAP_Price.Visible (begin)
+        <td data-name="GP_SAP_Price" @Html.Raw(trRequestDetailGrid.GP_SAP_Price.CellAttributes)>
+@if (trRequestDetailGrid.RowType == RowType.Add) { // Add (begin)
+    @* GP_SAP_Price (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_GP_SAP_Price" class="el_tr_request_detail_GP_SAP_Price">
+    <input type="@(trRequestDetailGrid.GP_SAP_Price.InputTextType)" name="x@(trRequestDetailGrid.RowIndex)_GP_SAP_Price" id="x@(trRequestDetailGrid.RowIndex)_GP_SAP_Price" data-table="tr_request_detail" data-field="x_GP_SAP_Price" value="@Html.Raw(trRequestDetailGrid.GP_SAP_Price.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailGrid.GP_SAP_Price.PlaceHolder))" data-format-pattern="@(trRequestDetailGrid.GP_SAP_Price.FormatPattern)"@Html.Raw(trRequestDetailGrid.GP_SAP_Price.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestDetailGrid.GP_SAP_Price.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_GP_SAP_Price" data-hidden="1" data-old name="o@(trRequestDetailGrid.RowIndex)_GP_SAP_Price" id="o@(trRequestDetailGrid.RowIndex)_GP_SAP_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.GP_SAP_Price.OldValue))">
+    @* GP_SAP_Price (end) *@
+} @* Add (end) *@
+@if (trRequestDetailGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* GP_SAP_Price (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_GP_SAP_Price" class="el_tr_request_detail_GP_SAP_Price">
+    <span @Html.Raw(trRequestDetailGrid.GP_SAP_Price.ViewAttributes)>
+    <input type="text" readonly class="form-control-plaintext" value="@Html.Raw(RemoveHtml(ConvertToString(trRequestDetailGrid.GP_SAP_Price.EditValue)))"></span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_GP_SAP_Price" data-hidden="1" name="x@(trRequestDetailGrid.RowIndex)_GP_SAP_Price" id="x@(trRequestDetailGrid.RowIndex)_GP_SAP_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.GP_SAP_Price.CurrentValue))">
+    </span>
+    @* GP_SAP_Price (end) *@
+} @* Edit (end) *@
+@if (trRequestDetailGrid.RowType == RowType.View) { // View (begin)
+    @* GP_SAP_Price (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_GP_SAP_Price" class="el_tr_request_detail_GP_SAP_Price">
+    <span @Html.Raw(trRequestDetailGrid.GP_SAP_Price.ViewAttributes)>
+    @Html.Raw(trRequestDetailGrid.GP_SAP_Price.GetViewValue())</span>
+    </span>
+    if (trRequestDetailGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_detail" data-field="x_GP_SAP_Price" data-hidden="1" name="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_GP_SAP_Price" id="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_GP_SAP_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.GP_SAP_Price.FormValue))">
+    <input type="hidden" data-table="tr_request_detail" data-field="x_GP_SAP_Price" data-hidden="1" data-old name="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_GP_SAP_Price" id="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_GP_SAP_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.GP_SAP_Price.OldValue))">
+    }
+    @* GP_SAP_Price (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestDetailGrid.GP_SAP_Price.Visible (end) *@
+    @if (trRequestDetailGrid.Override_Unit_Price.Visible) { // trRequestDetailGrid.Override_Unit_Price.Visible (begin)
+        <td data-name="Override_Unit_Price" @Html.Raw(trRequestDetailGrid.Override_Unit_Price.CellAttributes)>
+@if (trRequestDetailGrid.RowType == RowType.Add) { // Add (begin)
+    @* Override_Unit_Price (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Override_Unit_Price" class="el_tr_request_detail_Override_Unit_Price">
+    <input type="@(trRequestDetailGrid.Override_Unit_Price.InputTextType)" name="x@(trRequestDetailGrid.RowIndex)_Override_Unit_Price" id="x@(trRequestDetailGrid.RowIndex)_Override_Unit_Price" data-table="tr_request_detail" data-field="x_Override_Unit_Price" value="@Html.Raw(trRequestDetailGrid.Override_Unit_Price.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailGrid.Override_Unit_Price.PlaceHolder))" data-format-pattern="@(trRequestDetailGrid.Override_Unit_Price.FormatPattern)"@Html.Raw(trRequestDetailGrid.Override_Unit_Price.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestDetailGrid.Override_Unit_Price.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Override_Unit_Price" data-hidden="1" data-old name="o@(trRequestDetailGrid.RowIndex)_Override_Unit_Price" id="o@(trRequestDetailGrid.RowIndex)_Override_Unit_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Override_Unit_Price.OldValue))">
+    @* Override_Unit_Price (end) *@
+} @* Add (end) *@
+@if (trRequestDetailGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* Override_Unit_Price (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Override_Unit_Price" class="el_tr_request_detail_Override_Unit_Price">
+    <input type="@(trRequestDetailGrid.Override_Unit_Price.InputTextType)" name="x@(trRequestDetailGrid.RowIndex)_Override_Unit_Price" id="x@(trRequestDetailGrid.RowIndex)_Override_Unit_Price" data-table="tr_request_detail" data-field="x_Override_Unit_Price" value="@Html.Raw(trRequestDetailGrid.Override_Unit_Price.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailGrid.Override_Unit_Price.PlaceHolder))" data-format-pattern="@(trRequestDetailGrid.Override_Unit_Price.FormatPattern)"@Html.Raw(trRequestDetailGrid.Override_Unit_Price.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestDetailGrid.Override_Unit_Price.GetErrorMessage())</div>
+    </span>
+    @* Override_Unit_Price (end) *@
+} @* Edit (end) *@
+@if (trRequestDetailGrid.RowType == RowType.View) { // View (begin)
+    @* Override_Unit_Price (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Override_Unit_Price" class="el_tr_request_detail_Override_Unit_Price">
+    <span @Html.Raw(trRequestDetailGrid.Override_Unit_Price.ViewAttributes)>
+    @Html.Raw(trRequestDetailGrid.Override_Unit_Price.GetViewValue())</span>
+    </span>
+    if (trRequestDetailGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Override_Unit_Price" data-hidden="1" name="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Override_Unit_Price" id="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Override_Unit_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Override_Unit_Price.FormValue))">
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Override_Unit_Price" data-hidden="1" data-old name="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Override_Unit_Price" id="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Override_Unit_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Override_Unit_Price.OldValue))">
+    }
+    @* Override_Unit_Price (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestDetailGrid.Override_Unit_Price.Visible (end) *@
+    @if (trRequestDetailGrid.Extd_Override_Price.Visible) { // trRequestDetailGrid.Extd_Override_Price.Visible (begin)
+        <td data-name="Extd_Override_Price" @Html.Raw(trRequestDetailGrid.Extd_Override_Price.CellAttributes)>
+@if (trRequestDetailGrid.RowType == RowType.Add) { // Add (begin)
+    @* Extd_Override_Price (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Extd_Override_Price" class="el_tr_request_detail_Extd_Override_Price">
+    <input type="@(trRequestDetailGrid.Extd_Override_Price.InputTextType)" name="x@(trRequestDetailGrid.RowIndex)_Extd_Override_Price" id="x@(trRequestDetailGrid.RowIndex)_Extd_Override_Price" data-table="tr_request_detail" data-field="x_Extd_Override_Price" value="@Html.Raw(trRequestDetailGrid.Extd_Override_Price.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailGrid.Extd_Override_Price.PlaceHolder))" data-format-pattern="@(trRequestDetailGrid.Extd_Override_Price.FormatPattern)"@Html.Raw(trRequestDetailGrid.Extd_Override_Price.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestDetailGrid.Extd_Override_Price.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Extd_Override_Price" data-hidden="1" data-old name="o@(trRequestDetailGrid.RowIndex)_Extd_Override_Price" id="o@(trRequestDetailGrid.RowIndex)_Extd_Override_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Extd_Override_Price.OldValue))">
+    @* Extd_Override_Price (end) *@
+} @* Add (end) *@
+@if (trRequestDetailGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* Extd_Override_Price (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Extd_Override_Price" class="el_tr_request_detail_Extd_Override_Price">
+    <span @Html.Raw(trRequestDetailGrid.Extd_Override_Price.ViewAttributes)>
+    <input type="text" readonly class="form-control-plaintext" value="@Html.Raw(RemoveHtml(ConvertToString(trRequestDetailGrid.Extd_Override_Price.EditValue)))"></span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Extd_Override_Price" data-hidden="1" name="x@(trRequestDetailGrid.RowIndex)_Extd_Override_Price" id="x@(trRequestDetailGrid.RowIndex)_Extd_Override_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Extd_Override_Price.CurrentValue))">
+    </span>
+    @* Extd_Override_Price (end) *@
+} @* Edit (end) *@
+@if (trRequestDetailGrid.RowType == RowType.View) { // View (begin)
+    @* Extd_Override_Price (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Extd_Override_Price" class="el_tr_request_detail_Extd_Override_Price">
+    <span @Html.Raw(trRequestDetailGrid.Extd_Override_Price.ViewAttributes)>
+    @Html.Raw(trRequestDetailGrid.Extd_Override_Price.GetViewValue())</span>
+    </span>
+    if (trRequestDetailGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Extd_Override_Price" data-hidden="1" name="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Extd_Override_Price" id="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Extd_Override_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Extd_Override_Price.FormValue))">
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Extd_Override_Price" data-hidden="1" data-old name="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Extd_Override_Price" id="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Extd_Override_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Extd_Override_Price.OldValue))">
+    }
+    @* Extd_Override_Price (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestDetailGrid.Extd_Override_Price.Visible (end) *@
+    @if (trRequestDetailGrid.GP_Override_Price.Visible) { // trRequestDetailGrid.GP_Override_Price.Visible (begin)
+        <td data-name="GP_Override_Price" @Html.Raw(trRequestDetailGrid.GP_Override_Price.CellAttributes)>
+@if (trRequestDetailGrid.RowType == RowType.Add) { // Add (begin)
+    @* GP_Override_Price (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_GP_Override_Price" class="el_tr_request_detail_GP_Override_Price">
+    <input type="@(trRequestDetailGrid.GP_Override_Price.InputTextType)" name="x@(trRequestDetailGrid.RowIndex)_GP_Override_Price" id="x@(trRequestDetailGrid.RowIndex)_GP_Override_Price" data-table="tr_request_detail" data-field="x_GP_Override_Price" value="@Html.Raw(trRequestDetailGrid.GP_Override_Price.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailGrid.GP_Override_Price.PlaceHolder))" data-format-pattern="@(trRequestDetailGrid.GP_Override_Price.FormatPattern)"@Html.Raw(trRequestDetailGrid.GP_Override_Price.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestDetailGrid.GP_Override_Price.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_GP_Override_Price" data-hidden="1" data-old name="o@(trRequestDetailGrid.RowIndex)_GP_Override_Price" id="o@(trRequestDetailGrid.RowIndex)_GP_Override_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.GP_Override_Price.OldValue))">
+    @* GP_Override_Price (end) *@
+} @* Add (end) *@
+@if (trRequestDetailGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* GP_Override_Price (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_GP_Override_Price" class="el_tr_request_detail_GP_Override_Price">
+    <span @Html.Raw(trRequestDetailGrid.GP_Override_Price.ViewAttributes)>
+    <input type="text" readonly class="form-control-plaintext" value="@Html.Raw(RemoveHtml(ConvertToString(trRequestDetailGrid.GP_Override_Price.EditValue)))"></span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_GP_Override_Price" data-hidden="1" name="x@(trRequestDetailGrid.RowIndex)_GP_Override_Price" id="x@(trRequestDetailGrid.RowIndex)_GP_Override_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.GP_Override_Price.CurrentValue))">
+    </span>
+    @* GP_Override_Price (end) *@
+} @* Edit (end) *@
+@if (trRequestDetailGrid.RowType == RowType.View) { // View (begin)
+    @* GP_Override_Price (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_GP_Override_Price" class="el_tr_request_detail_GP_Override_Price">
+    <span @Html.Raw(trRequestDetailGrid.GP_Override_Price.ViewAttributes)>
+    @Html.Raw(trRequestDetailGrid.GP_Override_Price.GetViewValue())</span>
+    </span>
+    if (trRequestDetailGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_detail" data-field="x_GP_Override_Price" data-hidden="1" name="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_GP_Override_Price" id="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_GP_Override_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.GP_Override_Price.FormValue))">
+    <input type="hidden" data-table="tr_request_detail" data-field="x_GP_Override_Price" data-hidden="1" data-old name="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_GP_Override_Price" id="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_GP_Override_Price" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.GP_Override_Price.OldValue))">
+    }
+    @* GP_Override_Price (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestDetailGrid.GP_Override_Price.Visible (end) *@
+    @if (trRequestDetailGrid.Override_Core.Visible) { // trRequestDetailGrid.Override_Core.Visible (begin)
+        <td data-name="Override_Core" @Html.Raw(trRequestDetailGrid.Override_Core.CellAttributes)>
+@if (trRequestDetailGrid.RowType == RowType.Add) { // Add (begin)
+    @* Override_Core (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Override_Core" class="el_tr_request_detail_Override_Core">
+    <input type="@(trRequestDetailGrid.Override_Core.InputTextType)" name="x@(trRequestDetailGrid.RowIndex)_Override_Core" id="x@(trRequestDetailGrid.RowIndex)_Override_Core" data-table="tr_request_detail" data-field="x_Override_Core" value="@Html.Raw(trRequestDetailGrid.Override_Core.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailGrid.Override_Core.PlaceHolder))" data-format-pattern="@(trRequestDetailGrid.Override_Core.FormatPattern)"@Html.Raw(trRequestDetailGrid.Override_Core.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestDetailGrid.Override_Core.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Override_Core" data-hidden="1" data-old name="o@(trRequestDetailGrid.RowIndex)_Override_Core" id="o@(trRequestDetailGrid.RowIndex)_Override_Core" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Override_Core.OldValue))">
+    @* Override_Core (end) *@
+} @* Add (end) *@
+@if (trRequestDetailGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* Override_Core (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Override_Core" class="el_tr_request_detail_Override_Core">
+    <span @Html.Raw(trRequestDetailGrid.Override_Core.ViewAttributes)>
+    <input type="text" readonly class="form-control-plaintext" value="@Html.Raw(RemoveHtml(ConvertToString(trRequestDetailGrid.Override_Core.EditValue)))"></span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Override_Core" data-hidden="1" name="x@(trRequestDetailGrid.RowIndex)_Override_Core" id="x@(trRequestDetailGrid.RowIndex)_Override_Core" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Override_Core.CurrentValue))">
+    </span>
+    @* Override_Core (end) *@
+} @* Edit (end) *@
+@if (trRequestDetailGrid.RowType == RowType.View) { // View (begin)
+    @* Override_Core (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Override_Core" class="el_tr_request_detail_Override_Core">
+    <span @Html.Raw(trRequestDetailGrid.Override_Core.ViewAttributes)>
+    @Html.Raw(trRequestDetailGrid.Override_Core.GetViewValue())</span>
+    </span>
+    if (trRequestDetailGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Override_Core" data-hidden="1" name="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Override_Core" id="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Override_Core" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Override_Core.FormValue))">
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Override_Core" data-hidden="1" data-old name="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Override_Core" id="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Override_Core" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Override_Core.OldValue))">
+    }
+    @* Override_Core (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestDetailGrid.Override_Core.Visible (end) *@
+    @if (trRequestDetailGrid.Override_Percent.Visible) { // trRequestDetailGrid.Override_Percent.Visible (begin)
+        <td data-name="Override_Percent" @Html.Raw(trRequestDetailGrid.Override_Percent.CellAttributes)>
+@if (trRequestDetailGrid.RowType == RowType.Add) { // Add (begin)
+    @* Override_Percent (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Override_Percent" class="el_tr_request_detail_Override_Percent">
+    <input type="@(trRequestDetailGrid.Override_Percent.InputTextType)" name="x@(trRequestDetailGrid.RowIndex)_Override_Percent" id="x@(trRequestDetailGrid.RowIndex)_Override_Percent" data-table="tr_request_detail" data-field="x_Override_Percent" value="@Html.Raw(trRequestDetailGrid.Override_Percent.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailGrid.Override_Percent.PlaceHolder))" data-format-pattern="@(trRequestDetailGrid.Override_Percent.FormatPattern)"@Html.Raw(trRequestDetailGrid.Override_Percent.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestDetailGrid.Override_Percent.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Override_Percent" data-hidden="1" data-old name="o@(trRequestDetailGrid.RowIndex)_Override_Percent" id="o@(trRequestDetailGrid.RowIndex)_Override_Percent" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Override_Percent.OldValue))">
+    @* Override_Percent (end) *@
+} @* Add (end) *@
+@if (trRequestDetailGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* Override_Percent (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Override_Percent" class="el_tr_request_detail_Override_Percent">
+    <span @Html.Raw(trRequestDetailGrid.Override_Percent.ViewAttributes)>
+    <input type="text" readonly class="form-control-plaintext" value="@Html.Raw(RemoveHtml(ConvertToString(trRequestDetailGrid.Override_Percent.EditValue)))"></span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Override_Percent" data-hidden="1" name="x@(trRequestDetailGrid.RowIndex)_Override_Percent" id="x@(trRequestDetailGrid.RowIndex)_Override_Percent" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Override_Percent.CurrentValue))">
+    </span>
+    @* Override_Percent (end) *@
+} @* Edit (end) *@
+@if (trRequestDetailGrid.RowType == RowType.View) { // View (begin)
+    @* Override_Percent (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Override_Percent" class="el_tr_request_detail_Override_Percent">
+    <span @Html.Raw(trRequestDetailGrid.Override_Percent.ViewAttributes)>
+    @Html.Raw(trRequestDetailGrid.Override_Percent.GetViewValue())</span>
+    </span>
+    if (trRequestDetailGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Override_Percent" data-hidden="1" name="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Override_Percent" id="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Override_Percent" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Override_Percent.FormValue))">
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Override_Percent" data-hidden="1" data-old name="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Override_Percent" id="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Override_Percent" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Override_Percent.OldValue))">
+    }
+    @* Override_Percent (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestDetailGrid.Override_Percent.Visible (end) *@
+    @if (trRequestDetailGrid.Core_Life_Ind.Visible) { // trRequestDetailGrid.Core_Life_Ind.Visible (begin)
+        <td data-name="Core_Life_Ind" @Html.Raw(trRequestDetailGrid.Core_Life_Ind.CellAttributes)>
+@if (trRequestDetailGrid.RowType == RowType.Add) { // Add (begin)
+    @* Core_Life_Ind (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Core_Life_Ind" class="el_tr_request_detail_Core_Life_Ind">
+    <input type="@(trRequestDetailGrid.Core_Life_Ind.InputTextType)" name="x@(trRequestDetailGrid.RowIndex)_Core_Life_Ind" id="x@(trRequestDetailGrid.RowIndex)_Core_Life_Ind" data-table="tr_request_detail" data-field="x_Core_Life_Ind" value="@Html.Raw(trRequestDetailGrid.Core_Life_Ind.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailGrid.Core_Life_Ind.PlaceHolder))" data-format-pattern="@(trRequestDetailGrid.Core_Life_Ind.FormatPattern)"@Html.Raw(trRequestDetailGrid.Core_Life_Ind.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestDetailGrid.Core_Life_Ind.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Core_Life_Ind" data-hidden="1" data-old name="o@(trRequestDetailGrid.RowIndex)_Core_Life_Ind" id="o@(trRequestDetailGrid.RowIndex)_Core_Life_Ind" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Core_Life_Ind.OldValue))">
+    @* Core_Life_Ind (end) *@
+} @* Add (end) *@
+@if (trRequestDetailGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* Core_Life_Ind (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Core_Life_Ind" class="el_tr_request_detail_Core_Life_Ind">
+    <span @Html.Raw(trRequestDetailGrid.Core_Life_Ind.ViewAttributes)>
+    <input type="text" readonly class="form-control-plaintext" value="@Html.Raw(RemoveHtml(ConvertToString(trRequestDetailGrid.Core_Life_Ind.EditValue)))"></span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Core_Life_Ind" data-hidden="1" name="x@(trRequestDetailGrid.RowIndex)_Core_Life_Ind" id="x@(trRequestDetailGrid.RowIndex)_Core_Life_Ind" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Core_Life_Ind.CurrentValue))">
+    </span>
+    @* Core_Life_Ind (end) *@
+} @* Edit (end) *@
+@if (trRequestDetailGrid.RowType == RowType.View) { // View (begin)
+    @* Core_Life_Ind (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Core_Life_Ind" class="el_tr_request_detail_Core_Life_Ind">
+    <span @Html.Raw(trRequestDetailGrid.Core_Life_Ind.ViewAttributes)>
+    @Html.Raw(trRequestDetailGrid.Core_Life_Ind.GetViewValue())</span>
+    </span>
+    if (trRequestDetailGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Core_Life_Ind" data-hidden="1" name="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Core_Life_Ind" id="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Core_Life_Ind" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Core_Life_Ind.FormValue))">
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Core_Life_Ind" data-hidden="1" data-old name="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Core_Life_Ind" id="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Core_Life_Ind" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Core_Life_Ind.OldValue))">
+    }
+    @* Core_Life_Ind (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestDetailGrid.Core_Life_Ind.Visible (end) *@
+    @if (trRequestDetailGrid.Notes.Visible) { // trRequestDetailGrid.Notes.Visible (begin)
+        <td data-name="Notes" @Html.Raw(trRequestDetailGrid.Notes.CellAttributes)>
+@if (trRequestDetailGrid.RowType == RowType.Add) { // Add (begin)
+    @* Notes (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Notes" class="el_tr_request_detail_Notes">
+    <textarea data-table="tr_request_detail" data-field="x_Notes" name="x@(trRequestDetailGrid.RowIndex)_Notes" id="x@(trRequestDetailGrid.RowIndex)_Notes" cols="35" rows="4" placeholder="@Html.Raw(HtmlEncode(trRequestDetailGrid.Notes.PlaceHolder))"@Html.Raw(trRequestDetailGrid.Notes.EditAttributes)>@(trRequestDetailGrid.Notes.EditValue)</textarea>
+    <div class="invalid-feedback">@Html.Raw(trRequestDetailGrid.Notes.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Notes" data-hidden="1" data-old name="o@(trRequestDetailGrid.RowIndex)_Notes" id="o@(trRequestDetailGrid.RowIndex)_Notes" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Notes.OldValue))">
+    @* Notes (end) *@
+} @* Add (end) *@
+@if (trRequestDetailGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* Notes (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Notes" class="el_tr_request_detail_Notes">
+    <span @Html.Raw(trRequestDetailGrid.Notes.ViewAttributes)>
+    @Html.Raw(trRequestDetailGrid.Notes.EditValue)</span>
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Notes" data-hidden="1" name="x@(trRequestDetailGrid.RowIndex)_Notes" id="x@(trRequestDetailGrid.RowIndex)_Notes" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Notes.CurrentValue))">
+    </span>
+    @* Notes (end) *@
+} @* Edit (end) *@
+@if (trRequestDetailGrid.RowType == RowType.View) { // View (begin)
+    @* Notes (begin) *@
+    <span id="el@(trRequestDetailGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestDetailGrid.RowCount)_tr_request_detail_Notes" class="el_tr_request_detail_Notes">
+    <span @Html.Raw(trRequestDetailGrid.Notes.ViewAttributes)>
+    @Html.Raw(trRequestDetailGrid.Notes.GetViewValue())</span>
+    </span>
+    if (trRequestDetailGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Notes" data-hidden="1" name="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Notes" id="ftr_request_detailgrid$x@(trRequestDetailGrid.RowIndex)_Notes" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Notes.FormValue))">
+    <input type="hidden" data-table="tr_request_detail" data-field="x_Notes" data-hidden="1" data-old name="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Notes" id="ftr_request_detailgrid$o@(trRequestDetailGrid.RowIndex)_Notes" value="@Html.Raw(HtmlEncode(trRequestDetailGrid.Notes.OldValue))">
+    }
+    @* Notes (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestDetailGrid.Notes.Visible (end) *@
+    @* Render list options (body, right) *@
+    @trRequestDetailGrid.ListOptions.RenderBody("right", trRequestDetailGrid.RowCount)
+    </tr>
+if (trRequestDetailGrid.RowType == RowType.Add || trRequestDetailGrid.RowType == RowType.Edit) {
+<script>
+loadjs.ready(["ftr_request_detailgrid","load"], () => ftr_request_detailgrid.updateLists(@(trRequestDetailGrid.RowIndex)@(trRequestDetailGrid.IsAdd || trRequestDetailGrid.IsEdit || trRequestDetailGrid.IsCopy || SameString(trRequestDetailGrid.RowIndex, "$rowindex$") ? ", true" : "")));
+</script>
+}
+    } @* End delete row checking *@
+    } @* End if *@
+
+    // Reset for template row
+    if (SameString(trRequestDetailGrid.RowIndex, "$rowindex$"))
+        trRequestDetailGrid.RowIndex = 0;
+
+    // Reset inline add/copy row
+    if ((trRequestDetailGrid.IsCopy || trRequestDetailGrid.IsAdd) && trRequestDetailGrid.RowIndex is int rowIndex2 && rowIndex2 == 0)
+        trRequestDetailGrid.RowIndex = 1;
+} @* End While *@
+</tbody>
+</table><!-- /.ew-table -->
+@if (trRequestDetailGrid.CurrentMode == "add" || trRequestDetailGrid.CurrentMode == "copy") {
+<input type="hidden" name="@(trRequestDetailGrid.FormKeyCountName)" id="@(trRequestDetailGrid.FormKeyCountName)" value="@(trRequestDetailGrid.KeyCount)">
+@Html.Raw(trRequestDetailGrid.MultiSelectKey)
+}
+@if (trRequestDetailGrid.CurrentMode == "edit") {
+<input type="hidden" name="@(trRequestDetailGrid.FormKeyCountName)" id="@(trRequestDetailGrid.FormKeyCountName)" value="@(trRequestDetailGrid.KeyCount)">
+@Html.Raw(trRequestDetailGrid.MultiSelectKey)
+}
+</div><!-- /.ew-grid-middle-panel -->
+@if (Empty(trRequestDetailGrid.CurrentMode)) {
+<input type="hidden" name="action" id="action" value="">
+}
+<input type="hidden" name="detailpage" value="ftr_request_detailgrid">
+</div><!-- /.ew-list-form -->
+@{ trRequestDetailGrid.CloseRecordset(); }
+@if (trRequestDetailGrid.ShowOtherOptions) {
+<div class="card-footer ew-grid-lower-panel">
+    @trRequestDetailGrid.OtherOptions.RenderBody("bottom")
+</div>
+}
+</div><!-- /.ew-grid -->
+} else { // Show other options
+<div class="ew-list-other-options">
+@trRequestDetailGrid.OtherOptions.ForEach(opt => opt.ButtonClass = "").RenderBody()
+</div>
+}
+</div>
+</main>
+@if (!trRequestDetailGrid.IsExport()) {
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("tr_request_detail");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}
+@{
+    // Close Recordset
+    trRequestDetailGrid.CloseRecordset(); // DN
+    // Clear CurrentGrid
+    CurrentGrid = null;
+}

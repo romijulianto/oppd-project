@@ -1,0 +1,746 @@
+@{
+    // View
+    View = this;
+
+    // Set up CurrentGrid
+    CurrentGrid = trRequestApproverGrid;
+
+    // Run
+    await trRequestApproverGrid.Run();
+
+    // Check action result
+    if (trRequestApproverGrid.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!trRequestApproverGrid.IsExport()) {
+<script>
+var ftr_request_approvergrid;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let currentTable = @Html.Raw(ConvertToJson(trRequestApproverGrid.ToClientVar()));
+    ew.deepAssign(ew.vars, { tables: { tr_request_approver: currentTable } });
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("ftr_request_approvergrid")
+        .setPageId("grid")
+        .setFormKeyCountName("@(trRequestApproverGrid.FormKeyCountName)")
+
+        // Add fields
+        .setFields([
+
+            ["_UserName", [fields._UserName.visible && fields._UserName.required ? ew.Validators.required(fields._UserName.caption) : null], fields._UserName.isInvalid],
+            ["Full_Name", [fields.Full_Name.visible && fields.Full_Name.required ? ew.Validators.required(fields.Full_Name.caption) : null], fields.Full_Name.isInvalid],
+            ["Position_Name", [fields.Position_Name.visible && fields.Position_Name.required ? ew.Validators.required(fields.Position_Name.caption) : null], fields.Position_Name.isInvalid],
+            ["Approval_Status", [fields.Approval_Status.visible && fields.Approval_Status.required ? ew.Validators.required(fields.Approval_Status.caption) : null], fields.Approval_Status.isInvalid],
+            ["Approval_Date", [fields.Approval_Date.visible && fields.Approval_Date.required ? ew.Validators.required(fields.Approval_Date.caption) : null, ew.Validators.datetime(fields.Approval_Date.clientFormatPattern)], fields.Approval_Date.isInvalid],
+            ["Last_Update_By", [fields.Last_Update_By.visible && fields.Last_Update_By.required ? ew.Validators.required(fields.Last_Update_By.caption) : null], fields.Last_Update_By.isInvalid],
+            ["Created_By", [fields.Created_By.visible && fields.Created_By.required ? ew.Validators.required(fields.Created_By.caption) : null, ew.Validators.datetime(fields.Created_By.clientFormatPattern)], fields.Created_By.isInvalid],
+            ["Created_Date", [fields.Created_Date.visible && fields.Created_Date.required ? ew.Validators.required(fields.Created_Date.caption) : null, ew.Validators.datetime(fields.Created_Date.clientFormatPattern)], fields.Created_Date.isInvalid],
+            ["ETL_Date", [fields.ETL_Date.visible && fields.ETL_Date.required ? ew.Validators.required(fields.ETL_Date.caption) : null, ew.Validators.datetime(fields.ETL_Date.clientFormatPattern)], fields.ETL_Date.isInvalid]
+        ])
+
+        // Check empty row
+        .setEmptyRow(
+            function (rowIndex) {
+                let fobj = this.getForm(),
+                    fields = [["_UserName",false],["Full_Name",false],["Position_Name",false],["Approval_Status",false],["Approval_Date",false],["Last_Update_By",false],["Created_By",false],["Created_Date",false],["ETL_Date",false]];
+                if (fields.some(field => ew.valueChanged(fobj, rowIndex, ...field)))
+                    return false;
+                return true;
+            }
+        )
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+        })
+        .build();
+    window[form.id] = form;
+    loadjs.done(form.id);
+});
+</script>
+}
+<main class="list">
+<div id="ew-list">
+@if (trRequestApproverGrid.TotalRecords > 0 || !Empty(trRequestApproverGrid.CurrentAction)) {
+<div class="card ew-card ew-grid@(trRequestApproverGrid.IsAddOrEdit ? " ew-grid-add-edit" : "") @(trRequestApproverGrid.TableGridClass)">
+<div id="ftr_request_approvergrid" class="ew-form ew-list-form">
+<div id="gmp_tr_request_approver" class="card-body ew-grid-middle-panel @(trRequestApproverGrid.TableContainerClass)" style="@(trRequestApproverGrid.TableContainerStyle)">
+<table id="tbl_tr_request_approvergrid" class="@(trRequestApproverGrid.TableClass)"><!-- .ew-table -->
+<thead>
+    <tr class="ew-table-header">
+@{
+    // Header row
+    trRequestApproverGrid.RowType = RowType.Header;
+
+    // Render list options
+    await trRequestApproverGrid.RenderListOptions();
+}
+@* Render list options (header, left) *@
+@trRequestApproverGrid.ListOptions.RenderHeader("left")
+@if (trRequestApproverGrid._UserName.Visible) { // trRequestApproverGrid._UserName.Visible (begin)
+        <th data-name="_UserName" class="@(trRequestApproverGrid._UserName.HeaderCellClass)"><div id="elh_tr_request_approver__UserName" class="tr_request_approver__UserName">@Html.Raw(trRequestApproverGrid.RenderFieldHeader(trRequestApproverGrid._UserName))</div></th>
+} @* trRequestApproverGrid._UserName.Visible (end) *@
+@if (trRequestApproverGrid.Full_Name.Visible) { // trRequestApproverGrid.Full_Name.Visible (begin)
+        <th data-name="Full_Name" class="@(trRequestApproverGrid.Full_Name.HeaderCellClass)"><div id="elh_tr_request_approver_Full_Name" class="tr_request_approver_Full_Name">@Html.Raw(trRequestApproverGrid.RenderFieldHeader(trRequestApproverGrid.Full_Name))</div></th>
+} @* trRequestApproverGrid.Full_Name.Visible (end) *@
+@if (trRequestApproverGrid.Position_Name.Visible) { // trRequestApproverGrid.Position_Name.Visible (begin)
+        <th data-name="Position_Name" class="@(trRequestApproverGrid.Position_Name.HeaderCellClass)"><div id="elh_tr_request_approver_Position_Name" class="tr_request_approver_Position_Name">@Html.Raw(trRequestApproverGrid.RenderFieldHeader(trRequestApproverGrid.Position_Name))</div></th>
+} @* trRequestApproverGrid.Position_Name.Visible (end) *@
+@if (trRequestApproverGrid.Approval_Status.Visible) { // trRequestApproverGrid.Approval_Status.Visible (begin)
+        <th data-name="Approval_Status" class="@(trRequestApproverGrid.Approval_Status.HeaderCellClass)"><div id="elh_tr_request_approver_Approval_Status" class="tr_request_approver_Approval_Status">@Html.Raw(trRequestApproverGrid.RenderFieldHeader(trRequestApproverGrid.Approval_Status))</div></th>
+} @* trRequestApproverGrid.Approval_Status.Visible (end) *@
+@if (trRequestApproverGrid.Approval_Date.Visible) { // trRequestApproverGrid.Approval_Date.Visible (begin)
+        <th data-name="Approval_Date" class="@(trRequestApproverGrid.Approval_Date.HeaderCellClass)"><div id="elh_tr_request_approver_Approval_Date" class="tr_request_approver_Approval_Date">@Html.Raw(trRequestApproverGrid.RenderFieldHeader(trRequestApproverGrid.Approval_Date))</div></th>
+} @* trRequestApproverGrid.Approval_Date.Visible (end) *@
+@if (trRequestApproverGrid.Last_Update_By.Visible) { // trRequestApproverGrid.Last_Update_By.Visible (begin)
+        <th data-name="Last_Update_By" class="@(trRequestApproverGrid.Last_Update_By.HeaderCellClass)"><div id="elh_tr_request_approver_Last_Update_By" class="tr_request_approver_Last_Update_By">@Html.Raw(trRequestApproverGrid.RenderFieldHeader(trRequestApproverGrid.Last_Update_By))</div></th>
+} @* trRequestApproverGrid.Last_Update_By.Visible (end) *@
+@if (trRequestApproverGrid.Created_By.Visible) { // trRequestApproverGrid.Created_By.Visible (begin)
+        <th data-name="Created_By" class="@(trRequestApproverGrid.Created_By.HeaderCellClass)"><div id="elh_tr_request_approver_Created_By" class="tr_request_approver_Created_By">@Html.Raw(trRequestApproverGrid.RenderFieldHeader(trRequestApproverGrid.Created_By))</div></th>
+} @* trRequestApproverGrid.Created_By.Visible (end) *@
+@if (trRequestApproverGrid.Created_Date.Visible) { // trRequestApproverGrid.Created_Date.Visible (begin)
+        <th data-name="Created_Date" class="@(trRequestApproverGrid.Created_Date.HeaderCellClass)"><div id="elh_tr_request_approver_Created_Date" class="tr_request_approver_Created_Date">@Html.Raw(trRequestApproverGrid.RenderFieldHeader(trRequestApproverGrid.Created_Date))</div></th>
+} @* trRequestApproverGrid.Created_Date.Visible (end) *@
+@if (trRequestApproverGrid.ETL_Date.Visible) { // trRequestApproverGrid.ETL_Date.Visible (begin)
+        <th data-name="ETL_Date" class="@(trRequestApproverGrid.ETL_Date.HeaderCellClass)"><div id="elh_tr_request_approver_ETL_Date" class="tr_request_approver_ETL_Date">@Html.Raw(trRequestApproverGrid.RenderFieldHeader(trRequestApproverGrid.ETL_Date))</div></th>
+} @* trRequestApproverGrid.ETL_Date.Visible (end) *@
+@* Render list options (header, right) *@
+@trRequestApproverGrid.ListOptions.RenderHeader("right")
+    </tr>
+</thead>
+<tbody data-page="@(trRequestApproverGrid.PageNumber)">
+@{
+    await trRequestApproverGrid.SetupGrid();
+    bool eof = trRequestApproverGrid.Recordset == null; // DN
+}
+@while (trRequestApproverGrid.RecordCount < trRequestApproverGrid.StopRecord || SameString(trRequestApproverGrid.RowIndex, "$rowindex$")) { // Begin While
+    if (!eof && !SameString(trRequestApproverGrid.RowIndex, "$rowindex$") &&
+        (!trRequestApproverGrid.IsGridAdd || trRequestApproverGrid.CurrentMode == "copy") &&
+        (!((trRequestApproverGrid.IsCopy || trRequestApproverGrid.IsAdd) && trRequestApproverGrid.RowIndex is int rowIndex && rowIndex == 0))) // DN
+        eof = !await trRequestApproverGrid.Recordset.ReadAsync();
+    trRequestApproverGrid.RecordCount++;
+    if (trRequestApproverGrid.RecordCount >= trRequestApproverGrid.StartRecord) {
+        await trRequestApproverGrid.SetupRow();
+
+        // Skip 1) delete row / empty row for confirm page, 2) hidden row
+        if (trRequestApproverGrid.RowAction != "delete" &&
+            trRequestApproverGrid.RowAction != "insertdelete" &&
+            !(trRequestApproverGrid.RowAction == "insert" && trRequestApproverGrid.IsConfirm && trRequestApproverGrid.EmptyRow()) &&
+            trRequestApproverGrid.RowAction != "hide") {
+    <tr @Html.Raw(trRequestApproverGrid.RowAttributes)>
+    @* Render list options (body, left) *@
+    @trRequestApproverGrid.ListOptions.RenderBody("left", trRequestApproverGrid.RowCount)
+    @if (trRequestApproverGrid._UserName.Visible) { // trRequestApproverGrid._UserName.Visible (begin)
+        <td data-name="_UserName" @Html.Raw(trRequestApproverGrid._UserName.CellAttributes)>
+@if (trRequestApproverGrid.RowType == RowType.Add) { // Add (begin)
+    @* _UserName (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver__UserName" class="el_tr_request_approver__UserName">
+    <input type="@(trRequestApproverGrid._UserName.InputTextType)" name="x@(trRequestApproverGrid.RowIndex)__UserName" id="x@(trRequestApproverGrid.RowIndex)__UserName" data-table="tr_request_approver" data-field="x__UserName" value="@Html.Raw(trRequestApproverGrid._UserName.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(trRequestApproverGrid._UserName.PlaceHolder))" data-format-pattern="@(trRequestApproverGrid._UserName.FormatPattern)"@Html.Raw(trRequestApproverGrid._UserName.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestApproverGrid._UserName.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="tr_request_approver" data-field="x__UserName" data-hidden="1" data-old name="o@(trRequestApproverGrid.RowIndex)__UserName" id="o@(trRequestApproverGrid.RowIndex)__UserName" value="@Html.Raw(HtmlEncode(trRequestApproverGrid._UserName.OldValue))">
+    @* _UserName (end) *@
+} @* Add (end) *@
+@if (trRequestApproverGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* _UserName (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver__UserName" class="el_tr_request_approver__UserName">
+    <input type="@(trRequestApproverGrid._UserName.InputTextType)" name="x@(trRequestApproverGrid.RowIndex)__UserName" id="x@(trRequestApproverGrid.RowIndex)__UserName" data-table="tr_request_approver" data-field="x__UserName" value="@Html.Raw(trRequestApproverGrid._UserName.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(trRequestApproverGrid._UserName.PlaceHolder))" data-format-pattern="@(trRequestApproverGrid._UserName.FormatPattern)"@Html.Raw(trRequestApproverGrid._UserName.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestApproverGrid._UserName.GetErrorMessage())</div>
+    </span>
+    @* _UserName (end) *@
+} @* Edit (end) *@
+@if (trRequestApproverGrid.RowType == RowType.View) { // View (begin)
+    @* _UserName (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver__UserName" class="el_tr_request_approver__UserName">
+    <span @Html.Raw(trRequestApproverGrid._UserName.ViewAttributes)>
+    @Html.Raw(trRequestApproverGrid._UserName.GetViewValue())</span>
+    </span>
+    if (trRequestApproverGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_approver" data-field="x__UserName" data-hidden="1" name="ftr_request_approvergrid$x@(trRequestApproverGrid.RowIndex)__UserName" id="ftr_request_approvergrid$x@(trRequestApproverGrid.RowIndex)__UserName" value="@Html.Raw(HtmlEncode(trRequestApproverGrid._UserName.FormValue))">
+    <input type="hidden" data-table="tr_request_approver" data-field="x__UserName" data-hidden="1" data-old name="ftr_request_approvergrid$o@(trRequestApproverGrid.RowIndex)__UserName" id="ftr_request_approvergrid$o@(trRequestApproverGrid.RowIndex)__UserName" value="@Html.Raw(HtmlEncode(trRequestApproverGrid._UserName.OldValue))">
+    }
+    @* _UserName (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestApproverGrid._UserName.Visible (end) *@
+    @if (trRequestApproverGrid.Full_Name.Visible) { // trRequestApproverGrid.Full_Name.Visible (begin)
+        <td data-name="Full_Name" @Html.Raw(trRequestApproverGrid.Full_Name.CellAttributes)>
+@if (trRequestApproverGrid.RowType == RowType.Add) { // Add (begin)
+    @* Full_Name (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Full_Name" class="el_tr_request_approver_Full_Name">
+    <input type="@(trRequestApproverGrid.Full_Name.InputTextType)" name="x@(trRequestApproverGrid.RowIndex)_Full_Name" id="x@(trRequestApproverGrid.RowIndex)_Full_Name" data-table="tr_request_approver" data-field="x_Full_Name" value="@Html.Raw(trRequestApproverGrid.Full_Name.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(trRequestApproverGrid.Full_Name.PlaceHolder))" data-format-pattern="@(trRequestApproverGrid.Full_Name.FormatPattern)"@Html.Raw(trRequestApproverGrid.Full_Name.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestApproverGrid.Full_Name.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Full_Name" data-hidden="1" data-old name="o@(trRequestApproverGrid.RowIndex)_Full_Name" id="o@(trRequestApproverGrid.RowIndex)_Full_Name" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Full_Name.OldValue))">
+    @* Full_Name (end) *@
+} @* Add (end) *@
+@if (trRequestApproverGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* Full_Name (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Full_Name" class="el_tr_request_approver_Full_Name">
+    <input type="@(trRequestApproverGrid.Full_Name.InputTextType)" name="x@(trRequestApproverGrid.RowIndex)_Full_Name" id="x@(trRequestApproverGrid.RowIndex)_Full_Name" data-table="tr_request_approver" data-field="x_Full_Name" value="@Html.Raw(trRequestApproverGrid.Full_Name.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(trRequestApproverGrid.Full_Name.PlaceHolder))" data-format-pattern="@(trRequestApproverGrid.Full_Name.FormatPattern)"@Html.Raw(trRequestApproverGrid.Full_Name.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestApproverGrid.Full_Name.GetErrorMessage())</div>
+    </span>
+    @* Full_Name (end) *@
+} @* Edit (end) *@
+@if (trRequestApproverGrid.RowType == RowType.View) { // View (begin)
+    @* Full_Name (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Full_Name" class="el_tr_request_approver_Full_Name">
+    <span @Html.Raw(trRequestApproverGrid.Full_Name.ViewAttributes)>
+    @Html.Raw(trRequestApproverGrid.Full_Name.GetViewValue())</span>
+    </span>
+    if (trRequestApproverGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Full_Name" data-hidden="1" name="ftr_request_approvergrid$x@(trRequestApproverGrid.RowIndex)_Full_Name" id="ftr_request_approvergrid$x@(trRequestApproverGrid.RowIndex)_Full_Name" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Full_Name.FormValue))">
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Full_Name" data-hidden="1" data-old name="ftr_request_approvergrid$o@(trRequestApproverGrid.RowIndex)_Full_Name" id="ftr_request_approvergrid$o@(trRequestApproverGrid.RowIndex)_Full_Name" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Full_Name.OldValue))">
+    }
+    @* Full_Name (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestApproverGrid.Full_Name.Visible (end) *@
+    @if (trRequestApproverGrid.Position_Name.Visible) { // trRequestApproverGrid.Position_Name.Visible (begin)
+        <td data-name="Position_Name" @Html.Raw(trRequestApproverGrid.Position_Name.CellAttributes)>
+@if (trRequestApproverGrid.RowType == RowType.Add) { // Add (begin)
+    @* Position_Name (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Position_Name" class="el_tr_request_approver_Position_Name">
+    <input type="@(trRequestApproverGrid.Position_Name.InputTextType)" name="x@(trRequestApproverGrid.RowIndex)_Position_Name" id="x@(trRequestApproverGrid.RowIndex)_Position_Name" data-table="tr_request_approver" data-field="x_Position_Name" value="@Html.Raw(trRequestApproverGrid.Position_Name.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(trRequestApproverGrid.Position_Name.PlaceHolder))" data-format-pattern="@(trRequestApproverGrid.Position_Name.FormatPattern)"@Html.Raw(trRequestApproverGrid.Position_Name.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestApproverGrid.Position_Name.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Position_Name" data-hidden="1" data-old name="o@(trRequestApproverGrid.RowIndex)_Position_Name" id="o@(trRequestApproverGrid.RowIndex)_Position_Name" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Position_Name.OldValue))">
+    @* Position_Name (end) *@
+} @* Add (end) *@
+@if (trRequestApproverGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* Position_Name (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Position_Name" class="el_tr_request_approver_Position_Name">
+    <input type="@(trRequestApproverGrid.Position_Name.InputTextType)" name="x@(trRequestApproverGrid.RowIndex)_Position_Name" id="x@(trRequestApproverGrid.RowIndex)_Position_Name" data-table="tr_request_approver" data-field="x_Position_Name" value="@Html.Raw(trRequestApproverGrid.Position_Name.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(trRequestApproverGrid.Position_Name.PlaceHolder))" data-format-pattern="@(trRequestApproverGrid.Position_Name.FormatPattern)"@Html.Raw(trRequestApproverGrid.Position_Name.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestApproverGrid.Position_Name.GetErrorMessage())</div>
+    </span>
+    @* Position_Name (end) *@
+} @* Edit (end) *@
+@if (trRequestApproverGrid.RowType == RowType.View) { // View (begin)
+    @* Position_Name (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Position_Name" class="el_tr_request_approver_Position_Name">
+    <span @Html.Raw(trRequestApproverGrid.Position_Name.ViewAttributes)>
+    @Html.Raw(trRequestApproverGrid.Position_Name.GetViewValue())</span>
+    </span>
+    if (trRequestApproverGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Position_Name" data-hidden="1" name="ftr_request_approvergrid$x@(trRequestApproverGrid.RowIndex)_Position_Name" id="ftr_request_approvergrid$x@(trRequestApproverGrid.RowIndex)_Position_Name" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Position_Name.FormValue))">
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Position_Name" data-hidden="1" data-old name="ftr_request_approvergrid$o@(trRequestApproverGrid.RowIndex)_Position_Name" id="ftr_request_approvergrid$o@(trRequestApproverGrid.RowIndex)_Position_Name" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Position_Name.OldValue))">
+    }
+    @* Position_Name (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestApproverGrid.Position_Name.Visible (end) *@
+    @if (trRequestApproverGrid.Approval_Status.Visible) { // trRequestApproverGrid.Approval_Status.Visible (begin)
+        <td data-name="Approval_Status" @Html.Raw(trRequestApproverGrid.Approval_Status.CellAttributes)>
+@if (trRequestApproverGrid.RowType == RowType.Add) { // Add (begin)
+    @* Approval_Status (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Approval_Status" class="el_tr_request_approver_Approval_Status">
+    <input type="@(trRequestApproverGrid.Approval_Status.InputTextType)" name="x@(trRequestApproverGrid.RowIndex)_Approval_Status" id="x@(trRequestApproverGrid.RowIndex)_Approval_Status" data-table="tr_request_approver" data-field="x_Approval_Status" value="@Html.Raw(trRequestApproverGrid.Approval_Status.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(trRequestApproverGrid.Approval_Status.PlaceHolder))" data-format-pattern="@(trRequestApproverGrid.Approval_Status.FormatPattern)"@Html.Raw(trRequestApproverGrid.Approval_Status.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestApproverGrid.Approval_Status.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Approval_Status" data-hidden="1" data-old name="o@(trRequestApproverGrid.RowIndex)_Approval_Status" id="o@(trRequestApproverGrid.RowIndex)_Approval_Status" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Approval_Status.OldValue))">
+    @* Approval_Status (end) *@
+} @* Add (end) *@
+@if (trRequestApproverGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* Approval_Status (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Approval_Status" class="el_tr_request_approver_Approval_Status">
+    <input type="@(trRequestApproverGrid.Approval_Status.InputTextType)" name="x@(trRequestApproverGrid.RowIndex)_Approval_Status" id="x@(trRequestApproverGrid.RowIndex)_Approval_Status" data-table="tr_request_approver" data-field="x_Approval_Status" value="@Html.Raw(trRequestApproverGrid.Approval_Status.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(trRequestApproverGrid.Approval_Status.PlaceHolder))" data-format-pattern="@(trRequestApproverGrid.Approval_Status.FormatPattern)"@Html.Raw(trRequestApproverGrid.Approval_Status.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestApproverGrid.Approval_Status.GetErrorMessage())</div>
+    </span>
+    @* Approval_Status (end) *@
+} @* Edit (end) *@
+@if (trRequestApproverGrid.RowType == RowType.View) { // View (begin)
+    @* Approval_Status (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Approval_Status" class="el_tr_request_approver_Approval_Status">
+    <span @Html.Raw(trRequestApproverGrid.Approval_Status.ViewAttributes)>
+    @Html.Raw(trRequestApproverGrid.Approval_Status.GetViewValue())</span>
+    </span>
+    if (trRequestApproverGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Approval_Status" data-hidden="1" name="ftr_request_approvergrid$x@(trRequestApproverGrid.RowIndex)_Approval_Status" id="ftr_request_approvergrid$x@(trRequestApproverGrid.RowIndex)_Approval_Status" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Approval_Status.FormValue))">
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Approval_Status" data-hidden="1" data-old name="ftr_request_approvergrid$o@(trRequestApproverGrid.RowIndex)_Approval_Status" id="ftr_request_approvergrid$o@(trRequestApproverGrid.RowIndex)_Approval_Status" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Approval_Status.OldValue))">
+    }
+    @* Approval_Status (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestApproverGrid.Approval_Status.Visible (end) *@
+    @if (trRequestApproverGrid.Approval_Date.Visible) { // trRequestApproverGrid.Approval_Date.Visible (begin)
+        <td data-name="Approval_Date" @Html.Raw(trRequestApproverGrid.Approval_Date.CellAttributes)>
+@if (trRequestApproverGrid.RowType == RowType.Add) { // Add (begin)
+    @* Approval_Date (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Approval_Date" class="el_tr_request_approver_Approval_Date">
+    <input type="@(trRequestApproverGrid.Approval_Date.InputTextType)" name="x@(trRequestApproverGrid.RowIndex)_Approval_Date" id="x@(trRequestApproverGrid.RowIndex)_Approval_Date" data-table="tr_request_approver" data-field="x_Approval_Date" value="@Html.Raw(trRequestApproverGrid.Approval_Date.EditValue)" placeholder="@Html.Raw(HtmlEncode(trRequestApproverGrid.Approval_Date.PlaceHolder))" data-format-pattern="@(trRequestApproverGrid.Approval_Date.FormatPattern)"@Html.Raw(trRequestApproverGrid.Approval_Date.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestApproverGrid.Approval_Date.GetErrorMessage())</div>
+    @if (!trRequestApproverGrid.Approval_Date.ReadOnly && !trRequestApproverGrid.Approval_Date.Disabled && !trRequestApproverGrid.Approval_Date.EditAttrs.Is("readonly") && !trRequestApproverGrid.Approval_Date.EditAttrs.Is("disabled")) {
+    <script>
+    loadjs.ready(["ftr_request_approvergrid", "datetimepicker"], function () {
+        let format = "@Html.Raw(DateFormat(0))", // DN
+            options = {
+                    localization: {
+                        locale: ew.LANGUAGE_ID + "-u-nu-" + ew.getNumberingSystem(),
+                        hourCycle: format.match(/H/) ? "h24" : "h12",
+                        format,
+                        ...ew.language.phrase("datetimepicker")
+                    },
+                    display: {
+                        icons: {
+                            previous: ew.IS_RTL ? "fa-solid fa-chevron-right" : "fa-solid fa-chevron-left",
+                            next: ew.IS_RTL ? "fa-solid fa-chevron-left" : "fa-solid fa-chevron-right"
+                        },
+                        components: {
+                            hours: !!format.match(/h/i),
+                            minutes: !!format.match(/m/),
+                            seconds: !!format.match(/s/i)
+                        },
+                        theme: ew.isDark() ? "dark" : "auto"
+                    }
+                };
+        ew.createDateTimePicker("ftr_request_approvergrid", "x@(trRequestApproverGrid.RowIndex)_Approval_Date", ew.deepAssign({"useCurrent":false,"display":{"sideBySide":false}}, options));
+    });
+    </script>
+    }
+    </span>
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Approval_Date" data-hidden="1" data-old name="o@(trRequestApproverGrid.RowIndex)_Approval_Date" id="o@(trRequestApproverGrid.RowIndex)_Approval_Date" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Approval_Date.OldValue))">
+    @* Approval_Date (end) *@
+} @* Add (end) *@
+@if (trRequestApproverGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* Approval_Date (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Approval_Date" class="el_tr_request_approver_Approval_Date">
+    <input type="@(trRequestApproverGrid.Approval_Date.InputTextType)" name="x@(trRequestApproverGrid.RowIndex)_Approval_Date" id="x@(trRequestApproverGrid.RowIndex)_Approval_Date" data-table="tr_request_approver" data-field="x_Approval_Date" value="@Html.Raw(trRequestApproverGrid.Approval_Date.EditValue)" placeholder="@Html.Raw(HtmlEncode(trRequestApproverGrid.Approval_Date.PlaceHolder))" data-format-pattern="@(trRequestApproverGrid.Approval_Date.FormatPattern)"@Html.Raw(trRequestApproverGrid.Approval_Date.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestApproverGrid.Approval_Date.GetErrorMessage())</div>
+    @if (!trRequestApproverGrid.Approval_Date.ReadOnly && !trRequestApproverGrid.Approval_Date.Disabled && !trRequestApproverGrid.Approval_Date.EditAttrs.Is("readonly") && !trRequestApproverGrid.Approval_Date.EditAttrs.Is("disabled")) {
+    <script>
+    loadjs.ready(["ftr_request_approvergrid", "datetimepicker"], function () {
+        let format = "@Html.Raw(DateFormat(0))", // DN
+            options = {
+                    localization: {
+                        locale: ew.LANGUAGE_ID + "-u-nu-" + ew.getNumberingSystem(),
+                        hourCycle: format.match(/H/) ? "h24" : "h12",
+                        format,
+                        ...ew.language.phrase("datetimepicker")
+                    },
+                    display: {
+                        icons: {
+                            previous: ew.IS_RTL ? "fa-solid fa-chevron-right" : "fa-solid fa-chevron-left",
+                            next: ew.IS_RTL ? "fa-solid fa-chevron-left" : "fa-solid fa-chevron-right"
+                        },
+                        components: {
+                            hours: !!format.match(/h/i),
+                            minutes: !!format.match(/m/),
+                            seconds: !!format.match(/s/i)
+                        },
+                        theme: ew.isDark() ? "dark" : "auto"
+                    }
+                };
+        ew.createDateTimePicker("ftr_request_approvergrid", "x@(trRequestApproverGrid.RowIndex)_Approval_Date", ew.deepAssign({"useCurrent":false,"display":{"sideBySide":false}}, options));
+    });
+    </script>
+    }
+    </span>
+    @* Approval_Date (end) *@
+} @* Edit (end) *@
+@if (trRequestApproverGrid.RowType == RowType.View) { // View (begin)
+    @* Approval_Date (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Approval_Date" class="el_tr_request_approver_Approval_Date">
+    <span @Html.Raw(trRequestApproverGrid.Approval_Date.ViewAttributes)>
+    @Html.Raw(trRequestApproverGrid.Approval_Date.GetViewValue())</span>
+    </span>
+    if (trRequestApproverGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Approval_Date" data-hidden="1" name="ftr_request_approvergrid$x@(trRequestApproverGrid.RowIndex)_Approval_Date" id="ftr_request_approvergrid$x@(trRequestApproverGrid.RowIndex)_Approval_Date" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Approval_Date.FormValue))">
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Approval_Date" data-hidden="1" data-old name="ftr_request_approvergrid$o@(trRequestApproverGrid.RowIndex)_Approval_Date" id="ftr_request_approvergrid$o@(trRequestApproverGrid.RowIndex)_Approval_Date" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Approval_Date.OldValue))">
+    }
+    @* Approval_Date (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestApproverGrid.Approval_Date.Visible (end) *@
+    @if (trRequestApproverGrid.Last_Update_By.Visible) { // trRequestApproverGrid.Last_Update_By.Visible (begin)
+        <td data-name="Last_Update_By" @Html.Raw(trRequestApproverGrid.Last_Update_By.CellAttributes)>
+@if (trRequestApproverGrid.RowType == RowType.Add) { // Add (begin)
+    @* Last_Update_By (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Last_Update_By" class="el_tr_request_approver_Last_Update_By">
+    <input type="@(trRequestApproverGrid.Last_Update_By.InputTextType)" name="x@(trRequestApproverGrid.RowIndex)_Last_Update_By" id="x@(trRequestApproverGrid.RowIndex)_Last_Update_By" data-table="tr_request_approver" data-field="x_Last_Update_By" value="@Html.Raw(trRequestApproverGrid.Last_Update_By.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(trRequestApproverGrid.Last_Update_By.PlaceHolder))" data-format-pattern="@(trRequestApproverGrid.Last_Update_By.FormatPattern)"@Html.Raw(trRequestApproverGrid.Last_Update_By.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestApproverGrid.Last_Update_By.GetErrorMessage())</div>
+    </span>
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Last_Update_By" data-hidden="1" data-old name="o@(trRequestApproverGrid.RowIndex)_Last_Update_By" id="o@(trRequestApproverGrid.RowIndex)_Last_Update_By" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Last_Update_By.OldValue))">
+    @* Last_Update_By (end) *@
+} @* Add (end) *@
+@if (trRequestApproverGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* Last_Update_By (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Last_Update_By" class="el_tr_request_approver_Last_Update_By">
+    <input type="@(trRequestApproverGrid.Last_Update_By.InputTextType)" name="x@(trRequestApproverGrid.RowIndex)_Last_Update_By" id="x@(trRequestApproverGrid.RowIndex)_Last_Update_By" data-table="tr_request_approver" data-field="x_Last_Update_By" value="@Html.Raw(trRequestApproverGrid.Last_Update_By.EditValue)" size="30" maxlength="255" placeholder="@Html.Raw(HtmlEncode(trRequestApproverGrid.Last_Update_By.PlaceHolder))" data-format-pattern="@(trRequestApproverGrid.Last_Update_By.FormatPattern)"@Html.Raw(trRequestApproverGrid.Last_Update_By.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestApproverGrid.Last_Update_By.GetErrorMessage())</div>
+    </span>
+    @* Last_Update_By (end) *@
+} @* Edit (end) *@
+@if (trRequestApproverGrid.RowType == RowType.View) { // View (begin)
+    @* Last_Update_By (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Last_Update_By" class="el_tr_request_approver_Last_Update_By">
+    <span @Html.Raw(trRequestApproverGrid.Last_Update_By.ViewAttributes)>
+    @Html.Raw(trRequestApproverGrid.Last_Update_By.GetViewValue())</span>
+    </span>
+    if (trRequestApproverGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Last_Update_By" data-hidden="1" name="ftr_request_approvergrid$x@(trRequestApproverGrid.RowIndex)_Last_Update_By" id="ftr_request_approvergrid$x@(trRequestApproverGrid.RowIndex)_Last_Update_By" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Last_Update_By.FormValue))">
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Last_Update_By" data-hidden="1" data-old name="ftr_request_approvergrid$o@(trRequestApproverGrid.RowIndex)_Last_Update_By" id="ftr_request_approvergrid$o@(trRequestApproverGrid.RowIndex)_Last_Update_By" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Last_Update_By.OldValue))">
+    }
+    @* Last_Update_By (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestApproverGrid.Last_Update_By.Visible (end) *@
+    @if (trRequestApproverGrid.Created_By.Visible) { // trRequestApproverGrid.Created_By.Visible (begin)
+        <td data-name="Created_By" @Html.Raw(trRequestApproverGrid.Created_By.CellAttributes)>
+@if (trRequestApproverGrid.RowType == RowType.Add) { // Add (begin)
+    @* Created_By (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Created_By" class="el_tr_request_approver_Created_By">
+    <input type="@(trRequestApproverGrid.Created_By.InputTextType)" name="x@(trRequestApproverGrid.RowIndex)_Created_By" id="x@(trRequestApproverGrid.RowIndex)_Created_By" data-table="tr_request_approver" data-field="x_Created_By" value="@Html.Raw(trRequestApproverGrid.Created_By.EditValue)" placeholder="@Html.Raw(HtmlEncode(trRequestApproverGrid.Created_By.PlaceHolder))" data-format-pattern="@(trRequestApproverGrid.Created_By.FormatPattern)"@Html.Raw(trRequestApproverGrid.Created_By.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestApproverGrid.Created_By.GetErrorMessage())</div>
+    @if (!trRequestApproverGrid.Created_By.ReadOnly && !trRequestApproverGrid.Created_By.Disabled && !trRequestApproverGrid.Created_By.EditAttrs.Is("readonly") && !trRequestApproverGrid.Created_By.EditAttrs.Is("disabled")) {
+    <script>
+    loadjs.ready(["ftr_request_approvergrid", "datetimepicker"], function () {
+        let format = "@Html.Raw(DateFormat(0))", // DN
+            options = {
+                    localization: {
+                        locale: ew.LANGUAGE_ID + "-u-nu-" + ew.getNumberingSystem(),
+                        hourCycle: format.match(/H/) ? "h24" : "h12",
+                        format,
+                        ...ew.language.phrase("datetimepicker")
+                    },
+                    display: {
+                        icons: {
+                            previous: ew.IS_RTL ? "fa-solid fa-chevron-right" : "fa-solid fa-chevron-left",
+                            next: ew.IS_RTL ? "fa-solid fa-chevron-left" : "fa-solid fa-chevron-right"
+                        },
+                        components: {
+                            hours: !!format.match(/h/i),
+                            minutes: !!format.match(/m/),
+                            seconds: !!format.match(/s/i)
+                        },
+                        theme: ew.isDark() ? "dark" : "auto"
+                    }
+                };
+        ew.createDateTimePicker("ftr_request_approvergrid", "x@(trRequestApproverGrid.RowIndex)_Created_By", ew.deepAssign({"useCurrent":false,"display":{"sideBySide":false}}, options));
+    });
+    </script>
+    }
+    </span>
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Created_By" data-hidden="1" data-old name="o@(trRequestApproverGrid.RowIndex)_Created_By" id="o@(trRequestApproverGrid.RowIndex)_Created_By" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Created_By.OldValue))">
+    @* Created_By (end) *@
+} @* Add (end) *@
+@if (trRequestApproverGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* Created_By (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Created_By" class="el_tr_request_approver_Created_By">
+    <input type="@(trRequestApproverGrid.Created_By.InputTextType)" name="x@(trRequestApproverGrid.RowIndex)_Created_By" id="x@(trRequestApproverGrid.RowIndex)_Created_By" data-table="tr_request_approver" data-field="x_Created_By" value="@Html.Raw(trRequestApproverGrid.Created_By.EditValue)" placeholder="@Html.Raw(HtmlEncode(trRequestApproverGrid.Created_By.PlaceHolder))" data-format-pattern="@(trRequestApproverGrid.Created_By.FormatPattern)"@Html.Raw(trRequestApproverGrid.Created_By.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestApproverGrid.Created_By.GetErrorMessage())</div>
+    @if (!trRequestApproverGrid.Created_By.ReadOnly && !trRequestApproverGrid.Created_By.Disabled && !trRequestApproverGrid.Created_By.EditAttrs.Is("readonly") && !trRequestApproverGrid.Created_By.EditAttrs.Is("disabled")) {
+    <script>
+    loadjs.ready(["ftr_request_approvergrid", "datetimepicker"], function () {
+        let format = "@Html.Raw(DateFormat(0))", // DN
+            options = {
+                    localization: {
+                        locale: ew.LANGUAGE_ID + "-u-nu-" + ew.getNumberingSystem(),
+                        hourCycle: format.match(/H/) ? "h24" : "h12",
+                        format,
+                        ...ew.language.phrase("datetimepicker")
+                    },
+                    display: {
+                        icons: {
+                            previous: ew.IS_RTL ? "fa-solid fa-chevron-right" : "fa-solid fa-chevron-left",
+                            next: ew.IS_RTL ? "fa-solid fa-chevron-left" : "fa-solid fa-chevron-right"
+                        },
+                        components: {
+                            hours: !!format.match(/h/i),
+                            minutes: !!format.match(/m/),
+                            seconds: !!format.match(/s/i)
+                        },
+                        theme: ew.isDark() ? "dark" : "auto"
+                    }
+                };
+        ew.createDateTimePicker("ftr_request_approvergrid", "x@(trRequestApproverGrid.RowIndex)_Created_By", ew.deepAssign({"useCurrent":false,"display":{"sideBySide":false}}, options));
+    });
+    </script>
+    }
+    </span>
+    @* Created_By (end) *@
+} @* Edit (end) *@
+@if (trRequestApproverGrid.RowType == RowType.View) { // View (begin)
+    @* Created_By (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Created_By" class="el_tr_request_approver_Created_By">
+    <span @Html.Raw(trRequestApproverGrid.Created_By.ViewAttributes)>
+    @Html.Raw(trRequestApproverGrid.Created_By.GetViewValue())</span>
+    </span>
+    if (trRequestApproverGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Created_By" data-hidden="1" name="ftr_request_approvergrid$x@(trRequestApproverGrid.RowIndex)_Created_By" id="ftr_request_approvergrid$x@(trRequestApproverGrid.RowIndex)_Created_By" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Created_By.FormValue))">
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Created_By" data-hidden="1" data-old name="ftr_request_approvergrid$o@(trRequestApproverGrid.RowIndex)_Created_By" id="ftr_request_approvergrid$o@(trRequestApproverGrid.RowIndex)_Created_By" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Created_By.OldValue))">
+    }
+    @* Created_By (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestApproverGrid.Created_By.Visible (end) *@
+    @if (trRequestApproverGrid.Created_Date.Visible) { // trRequestApproverGrid.Created_Date.Visible (begin)
+        <td data-name="Created_Date" @Html.Raw(trRequestApproverGrid.Created_Date.CellAttributes)>
+@if (trRequestApproverGrid.RowType == RowType.Add) { // Add (begin)
+    @* Created_Date (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Created_Date" class="el_tr_request_approver_Created_Date">
+    <input type="@(trRequestApproverGrid.Created_Date.InputTextType)" name="x@(trRequestApproverGrid.RowIndex)_Created_Date" id="x@(trRequestApproverGrid.RowIndex)_Created_Date" data-table="tr_request_approver" data-field="x_Created_Date" value="@Html.Raw(trRequestApproverGrid.Created_Date.EditValue)" placeholder="@Html.Raw(HtmlEncode(trRequestApproverGrid.Created_Date.PlaceHolder))" data-format-pattern="@(trRequestApproverGrid.Created_Date.FormatPattern)"@Html.Raw(trRequestApproverGrid.Created_Date.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestApproverGrid.Created_Date.GetErrorMessage())</div>
+    @if (!trRequestApproverGrid.Created_Date.ReadOnly && !trRequestApproverGrid.Created_Date.Disabled && !trRequestApproverGrid.Created_Date.EditAttrs.Is("readonly") && !trRequestApproverGrid.Created_Date.EditAttrs.Is("disabled")) {
+    <script>
+    loadjs.ready(["ftr_request_approvergrid", "datetimepicker"], function () {
+        let format = "@Html.Raw(DateFormat(0))", // DN
+            options = {
+                    localization: {
+                        locale: ew.LANGUAGE_ID + "-u-nu-" + ew.getNumberingSystem(),
+                        hourCycle: format.match(/H/) ? "h24" : "h12",
+                        format,
+                        ...ew.language.phrase("datetimepicker")
+                    },
+                    display: {
+                        icons: {
+                            previous: ew.IS_RTL ? "fa-solid fa-chevron-right" : "fa-solid fa-chevron-left",
+                            next: ew.IS_RTL ? "fa-solid fa-chevron-left" : "fa-solid fa-chevron-right"
+                        },
+                        components: {
+                            hours: !!format.match(/h/i),
+                            minutes: !!format.match(/m/),
+                            seconds: !!format.match(/s/i)
+                        },
+                        theme: ew.isDark() ? "dark" : "auto"
+                    }
+                };
+        ew.createDateTimePicker("ftr_request_approvergrid", "x@(trRequestApproverGrid.RowIndex)_Created_Date", ew.deepAssign({"useCurrent":false,"display":{"sideBySide":false}}, options));
+    });
+    </script>
+    }
+    </span>
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Created_Date" data-hidden="1" data-old name="o@(trRequestApproverGrid.RowIndex)_Created_Date" id="o@(trRequestApproverGrid.RowIndex)_Created_Date" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Created_Date.OldValue))">
+    @* Created_Date (end) *@
+} @* Add (end) *@
+@if (trRequestApproverGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* Created_Date (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Created_Date" class="el_tr_request_approver_Created_Date">
+    <input type="@(trRequestApproverGrid.Created_Date.InputTextType)" name="x@(trRequestApproverGrid.RowIndex)_Created_Date" id="x@(trRequestApproverGrid.RowIndex)_Created_Date" data-table="tr_request_approver" data-field="x_Created_Date" value="@Html.Raw(trRequestApproverGrid.Created_Date.EditValue)" placeholder="@Html.Raw(HtmlEncode(trRequestApproverGrid.Created_Date.PlaceHolder))" data-format-pattern="@(trRequestApproverGrid.Created_Date.FormatPattern)"@Html.Raw(trRequestApproverGrid.Created_Date.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestApproverGrid.Created_Date.GetErrorMessage())</div>
+    @if (!trRequestApproverGrid.Created_Date.ReadOnly && !trRequestApproverGrid.Created_Date.Disabled && !trRequestApproverGrid.Created_Date.EditAttrs.Is("readonly") && !trRequestApproverGrid.Created_Date.EditAttrs.Is("disabled")) {
+    <script>
+    loadjs.ready(["ftr_request_approvergrid", "datetimepicker"], function () {
+        let format = "@Html.Raw(DateFormat(0))", // DN
+            options = {
+                    localization: {
+                        locale: ew.LANGUAGE_ID + "-u-nu-" + ew.getNumberingSystem(),
+                        hourCycle: format.match(/H/) ? "h24" : "h12",
+                        format,
+                        ...ew.language.phrase("datetimepicker")
+                    },
+                    display: {
+                        icons: {
+                            previous: ew.IS_RTL ? "fa-solid fa-chevron-right" : "fa-solid fa-chevron-left",
+                            next: ew.IS_RTL ? "fa-solid fa-chevron-left" : "fa-solid fa-chevron-right"
+                        },
+                        components: {
+                            hours: !!format.match(/h/i),
+                            minutes: !!format.match(/m/),
+                            seconds: !!format.match(/s/i)
+                        },
+                        theme: ew.isDark() ? "dark" : "auto"
+                    }
+                };
+        ew.createDateTimePicker("ftr_request_approvergrid", "x@(trRequestApproverGrid.RowIndex)_Created_Date", ew.deepAssign({"useCurrent":false,"display":{"sideBySide":false}}, options));
+    });
+    </script>
+    }
+    </span>
+    @* Created_Date (end) *@
+} @* Edit (end) *@
+@if (trRequestApproverGrid.RowType == RowType.View) { // View (begin)
+    @* Created_Date (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_Created_Date" class="el_tr_request_approver_Created_Date">
+    <span @Html.Raw(trRequestApproverGrid.Created_Date.ViewAttributes)>
+    @Html.Raw(trRequestApproverGrid.Created_Date.GetViewValue())</span>
+    </span>
+    if (trRequestApproverGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Created_Date" data-hidden="1" name="ftr_request_approvergrid$x@(trRequestApproverGrid.RowIndex)_Created_Date" id="ftr_request_approvergrid$x@(trRequestApproverGrid.RowIndex)_Created_Date" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Created_Date.FormValue))">
+    <input type="hidden" data-table="tr_request_approver" data-field="x_Created_Date" data-hidden="1" data-old name="ftr_request_approvergrid$o@(trRequestApproverGrid.RowIndex)_Created_Date" id="ftr_request_approvergrid$o@(trRequestApproverGrid.RowIndex)_Created_Date" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.Created_Date.OldValue))">
+    }
+    @* Created_Date (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestApproverGrid.Created_Date.Visible (end) *@
+    @if (trRequestApproverGrid.ETL_Date.Visible) { // trRequestApproverGrid.ETL_Date.Visible (begin)
+        <td data-name="ETL_Date" @Html.Raw(trRequestApproverGrid.ETL_Date.CellAttributes)>
+@if (trRequestApproverGrid.RowType == RowType.Add) { // Add (begin)
+    @* ETL_Date (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_ETL_Date" class="el_tr_request_approver_ETL_Date">
+    <input type="@(trRequestApproverGrid.ETL_Date.InputTextType)" name="x@(trRequestApproverGrid.RowIndex)_ETL_Date" id="x@(trRequestApproverGrid.RowIndex)_ETL_Date" data-table="tr_request_approver" data-field="x_ETL_Date" value="@Html.Raw(trRequestApproverGrid.ETL_Date.EditValue)" placeholder="@Html.Raw(HtmlEncode(trRequestApproverGrid.ETL_Date.PlaceHolder))" data-format-pattern="@(trRequestApproverGrid.ETL_Date.FormatPattern)"@Html.Raw(trRequestApproverGrid.ETL_Date.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestApproverGrid.ETL_Date.GetErrorMessage())</div>
+    @if (!trRequestApproverGrid.ETL_Date.ReadOnly && !trRequestApproverGrid.ETL_Date.Disabled && !trRequestApproverGrid.ETL_Date.EditAttrs.Is("readonly") && !trRequestApproverGrid.ETL_Date.EditAttrs.Is("disabled")) {
+    <script>
+    loadjs.ready(["ftr_request_approvergrid", "datetimepicker"], function () {
+        let format = "@Html.Raw(DateFormat(0))", // DN
+            options = {
+                    localization: {
+                        locale: ew.LANGUAGE_ID + "-u-nu-" + ew.getNumberingSystem(),
+                        hourCycle: format.match(/H/) ? "h24" : "h12",
+                        format,
+                        ...ew.language.phrase("datetimepicker")
+                    },
+                    display: {
+                        icons: {
+                            previous: ew.IS_RTL ? "fa-solid fa-chevron-right" : "fa-solid fa-chevron-left",
+                            next: ew.IS_RTL ? "fa-solid fa-chevron-left" : "fa-solid fa-chevron-right"
+                        },
+                        components: {
+                            hours: !!format.match(/h/i),
+                            minutes: !!format.match(/m/),
+                            seconds: !!format.match(/s/i)
+                        },
+                        theme: ew.isDark() ? "dark" : "auto"
+                    }
+                };
+        ew.createDateTimePicker("ftr_request_approvergrid", "x@(trRequestApproverGrid.RowIndex)_ETL_Date", ew.deepAssign({"useCurrent":false,"display":{"sideBySide":false}}, options));
+    });
+    </script>
+    }
+    </span>
+    <input type="hidden" data-table="tr_request_approver" data-field="x_ETL_Date" data-hidden="1" data-old name="o@(trRequestApproverGrid.RowIndex)_ETL_Date" id="o@(trRequestApproverGrid.RowIndex)_ETL_Date" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.ETL_Date.OldValue))">
+    @* ETL_Date (end) *@
+} @* Add (end) *@
+@if (trRequestApproverGrid.RowType == RowType.Edit) { // Edit (begin)
+    @* ETL_Date (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_ETL_Date" class="el_tr_request_approver_ETL_Date">
+    <input type="@(trRequestApproverGrid.ETL_Date.InputTextType)" name="x@(trRequestApproverGrid.RowIndex)_ETL_Date" id="x@(trRequestApproverGrid.RowIndex)_ETL_Date" data-table="tr_request_approver" data-field="x_ETL_Date" value="@Html.Raw(trRequestApproverGrid.ETL_Date.EditValue)" placeholder="@Html.Raw(HtmlEncode(trRequestApproverGrid.ETL_Date.PlaceHolder))" data-format-pattern="@(trRequestApproverGrid.ETL_Date.FormatPattern)"@Html.Raw(trRequestApproverGrid.ETL_Date.EditAttributes)>
+    <div class="invalid-feedback">@Html.Raw(trRequestApproverGrid.ETL_Date.GetErrorMessage())</div>
+    @if (!trRequestApproverGrid.ETL_Date.ReadOnly && !trRequestApproverGrid.ETL_Date.Disabled && !trRequestApproverGrid.ETL_Date.EditAttrs.Is("readonly") && !trRequestApproverGrid.ETL_Date.EditAttrs.Is("disabled")) {
+    <script>
+    loadjs.ready(["ftr_request_approvergrid", "datetimepicker"], function () {
+        let format = "@Html.Raw(DateFormat(0))", // DN
+            options = {
+                    localization: {
+                        locale: ew.LANGUAGE_ID + "-u-nu-" + ew.getNumberingSystem(),
+                        hourCycle: format.match(/H/) ? "h24" : "h12",
+                        format,
+                        ...ew.language.phrase("datetimepicker")
+                    },
+                    display: {
+                        icons: {
+                            previous: ew.IS_RTL ? "fa-solid fa-chevron-right" : "fa-solid fa-chevron-left",
+                            next: ew.IS_RTL ? "fa-solid fa-chevron-left" : "fa-solid fa-chevron-right"
+                        },
+                        components: {
+                            hours: !!format.match(/h/i),
+                            minutes: !!format.match(/m/),
+                            seconds: !!format.match(/s/i)
+                        },
+                        theme: ew.isDark() ? "dark" : "auto"
+                    }
+                };
+        ew.createDateTimePicker("ftr_request_approvergrid", "x@(trRequestApproverGrid.RowIndex)_ETL_Date", ew.deepAssign({"useCurrent":false,"display":{"sideBySide":false}}, options));
+    });
+    </script>
+    }
+    </span>
+    @* ETL_Date (end) *@
+} @* Edit (end) *@
+@if (trRequestApproverGrid.RowType == RowType.View) { // View (begin)
+    @* ETL_Date (begin) *@
+    <span id="el@(trRequestApproverGrid.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverGrid.RowCount)_tr_request_approver_ETL_Date" class="el_tr_request_approver_ETL_Date">
+    <span @Html.Raw(trRequestApproverGrid.ETL_Date.ViewAttributes)>
+    @Html.Raw(trRequestApproverGrid.ETL_Date.GetViewValue())</span>
+    </span>
+    if (trRequestApproverGrid.IsConfirm) {
+    <input type="hidden" data-table="tr_request_approver" data-field="x_ETL_Date" data-hidden="1" name="ftr_request_approvergrid$x@(trRequestApproverGrid.RowIndex)_ETL_Date" id="ftr_request_approvergrid$x@(trRequestApproverGrid.RowIndex)_ETL_Date" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.ETL_Date.FormValue))">
+    <input type="hidden" data-table="tr_request_approver" data-field="x_ETL_Date" data-hidden="1" data-old name="ftr_request_approvergrid$o@(trRequestApproverGrid.RowIndex)_ETL_Date" id="ftr_request_approvergrid$o@(trRequestApproverGrid.RowIndex)_ETL_Date" value="@Html.Raw(HtmlEncode(trRequestApproverGrid.ETL_Date.OldValue))">
+    }
+    @* ETL_Date (end) *@
+} @* View (end) *@
+</td>
+    } @* trRequestApproverGrid.ETL_Date.Visible (end) *@
+    @* Render list options (body, right) *@
+    @trRequestApproverGrid.ListOptions.RenderBody("right", trRequestApproverGrid.RowCount)
+    </tr>
+if (trRequestApproverGrid.RowType == RowType.Add || trRequestApproverGrid.RowType == RowType.Edit) {
+<script>
+loadjs.ready(["ftr_request_approvergrid","load"], () => ftr_request_approvergrid.updateLists(@(trRequestApproverGrid.RowIndex)@(trRequestApproverGrid.IsAdd || trRequestApproverGrid.IsEdit || trRequestApproverGrid.IsCopy || SameString(trRequestApproverGrid.RowIndex, "$rowindex$") ? ", true" : "")));
+</script>
+}
+    } @* End delete row checking *@
+    } @* End if *@
+
+    // Reset for template row
+    if (SameString(trRequestApproverGrid.RowIndex, "$rowindex$"))
+        trRequestApproverGrid.RowIndex = 0;
+
+    // Reset inline add/copy row
+    if ((trRequestApproverGrid.IsCopy || trRequestApproverGrid.IsAdd) && trRequestApproverGrid.RowIndex is int rowIndex2 && rowIndex2 == 0)
+        trRequestApproverGrid.RowIndex = 1;
+} @* End While *@
+</tbody>
+</table><!-- /.ew-table -->
+@if (trRequestApproverGrid.CurrentMode == "add" || trRequestApproverGrid.CurrentMode == "copy") {
+<input type="hidden" name="@(trRequestApproverGrid.FormKeyCountName)" id="@(trRequestApproverGrid.FormKeyCountName)" value="@(trRequestApproverGrid.KeyCount)">
+@Html.Raw(trRequestApproverGrid.MultiSelectKey)
+}
+@if (trRequestApproverGrid.CurrentMode == "edit") {
+<input type="hidden" name="@(trRequestApproverGrid.FormKeyCountName)" id="@(trRequestApproverGrid.FormKeyCountName)" value="@(trRequestApproverGrid.KeyCount)">
+@Html.Raw(trRequestApproverGrid.MultiSelectKey)
+}
+</div><!-- /.ew-grid-middle-panel -->
+@if (Empty(trRequestApproverGrid.CurrentMode)) {
+<input type="hidden" name="action" id="action" value="">
+}
+<input type="hidden" name="detailpage" value="ftr_request_approvergrid">
+</div><!-- /.ew-list-form -->
+@{ trRequestApproverGrid.CloseRecordset(); }
+@if (trRequestApproverGrid.ShowOtherOptions) {
+<div class="card-footer ew-grid-lower-panel">
+    @trRequestApproverGrid.OtherOptions.RenderBody("bottom")
+</div>
+}
+</div><!-- /.ew-grid -->
+} else { // Show other options
+<div class="ew-list-other-options">
+@trRequestApproverGrid.OtherOptions.ForEach(opt => opt.ButtonClass = "").RenderBody()
+</div>
+}
+</div>
+</main>
+@if (!trRequestApproverGrid.IsExport()) {
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("tr_request_approver");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}
+@{
+    // Close Recordset
+    trRequestApproverGrid.CloseRecordset(); // DN
+    // Clear CurrentGrid
+    CurrentGrid = null;
+}

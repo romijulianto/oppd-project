@@ -1,0 +1,242 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (mtBackupApproverAdd.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!mtBackupApproverAdd.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtBackupApproverAdd.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_backup_approver: currentTable } });
+var currentPageID = ew.PAGE_ID = "add";
+var currentForm;
+var fmt_backup_approveradd;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fmt_backup_approveradd")
+        .setPageId("add")
+
+        // Add fields
+        .setFields([
+
+            ["id", [fields.id.visible && fields.id.required ? ew.Validators.required(fields.id.caption) : null, ew.Validators.integer], fields.id.isInvalid],
+            ["_UserName", [fields._UserName.visible && fields._UserName.required ? ew.Validators.required(fields._UserName.caption) : null], fields._UserName.isInvalid],
+            ["Full_Name", [fields.Full_Name.visible && fields.Full_Name.required ? ew.Validators.required(fields.Full_Name.caption) : null], fields.Full_Name.isInvalid],
+            ["Position", [fields.Position.visible && fields.Position.required ? ew.Validators.required(fields.Position.caption) : null], fields.Position.isInvalid],
+            ["Departement", [fields.Departement.visible && fields.Departement.required ? ew.Validators.required(fields.Departement.caption) : null], fields.Departement.isInvalid],
+            ["Division", [fields.Division.visible && fields.Division.required ? ew.Validators.required(fields.Division.caption) : null], fields.Division.isInvalid],
+            ["Area", [fields.Area.visible && fields.Area.required ? ew.Validators.required(fields.Area.caption) : null], fields.Area.isInvalid],
+            ["Business_Area", [fields.Business_Area.visible && fields.Business_Area.required ? ew.Validators.required(fields.Business_Area.caption) : null], fields.Business_Area.isInvalid],
+            ["Report_To", [fields.Report_To.visible && fields.Report_To.required ? ew.Validators.required(fields.Report_To.caption) : null], fields.Report_To.isInvalid],
+            ["Business_Area_Desc", [fields.Business_Area_Desc.visible && fields.Business_Area_Desc.required ? ew.Validators.required(fields.Business_Area_Desc.caption) : null], fields.Business_Area_Desc.isInvalid]
+        ])
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+        })
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@mtBackupApproverAdd.ShowPageHeader()
+@mtBackupApproverAdd.ShowMessages()
+<form name="fmt_backup_approveradd" id="fmt_backup_approveradd" class="@(mtBackupApproverAdd.FormClassName)" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="insert">
+<input type="hidden" name="modal" value="@ConvertToInt(mtBackupApproverAdd.IsModal)">
+@if (IsJsonResponse()) {
+<input type="hidden" name="json" value="1">
+}
+<input type="hidden" name="@(mtBackupApproverAdd.OldKeyName)" value="@Html.Raw(mtBackupApproverAdd.OldKey)">
+<div class="ew-add-div"><!-- page* -->
+@if (mtBackupApproverAdd.id.Visible) { // mtBackupApproverAdd.id.Visible (begin)
+    <div id="r_id" @Html.Raw(mtBackupApproverAdd.id.RowAttributes)>
+        <label id="elh_mt_backup_approver_id" for="x_id" class="@(mtBackupApproverAdd.LeftColumnClass)">@Html.Raw(mtBackupApproverAdd.id.Caption)@Html.Raw(mtBackupApproverAdd.id.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtBackupApproverAdd.RightColumnClass)"><div @Html.Raw(mtBackupApproverAdd.id.CellAttributes)>
+<span id="el_mt_backup_approver_id">
+<input type="@(mtBackupApproverAdd.id.InputTextType)" name="x_id" id="x_id" data-table="mt_backup_approver" data-field="x_id" value="@Html.Raw(mtBackupApproverAdd.id.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(mtBackupApproverAdd.id.PlaceHolder))" data-format-pattern="@(mtBackupApproverAdd.id.FormatPattern)"@Html.Raw(mtBackupApproverAdd.id.EditAttributes) aria-describedby="x_id_help">
+@Html.Raw(mtBackupApproverAdd.id.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtBackupApproverAdd.id.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtBackupApproverAdd.id.Visible (end) *@
+@if (mtBackupApproverAdd._UserName.Visible) { // mtBackupApproverAdd._UserName.Visible (begin)
+    <div id="r__UserName" @Html.Raw(mtBackupApproverAdd._UserName.RowAttributes)>
+        <label id="elh_mt_backup_approver__UserName" for="x__UserName" class="@(mtBackupApproverAdd.LeftColumnClass)">@Html.Raw(mtBackupApproverAdd._UserName.Caption)@Html.Raw(mtBackupApproverAdd._UserName.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtBackupApproverAdd.RightColumnClass)"><div @Html.Raw(mtBackupApproverAdd._UserName.CellAttributes)>
+<span id="el_mt_backup_approver__UserName">
+<input type="@(mtBackupApproverAdd._UserName.InputTextType)" name="x__UserName" id="x__UserName" data-table="mt_backup_approver" data-field="x__UserName" value="@Html.Raw(mtBackupApproverAdd._UserName.EditValue)" size="30" maxlength="30" placeholder="@Html.Raw(HtmlEncode(mtBackupApproverAdd._UserName.PlaceHolder))" data-format-pattern="@(mtBackupApproverAdd._UserName.FormatPattern)"@Html.Raw(mtBackupApproverAdd._UserName.EditAttributes) aria-describedby="x__UserName_help">
+@Html.Raw(mtBackupApproverAdd._UserName.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtBackupApproverAdd._UserName.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtBackupApproverAdd._UserName.Visible (end) *@
+@if (mtBackupApproverAdd.Full_Name.Visible) { // mtBackupApproverAdd.Full_Name.Visible (begin)
+    <div id="r_Full_Name" @Html.Raw(mtBackupApproverAdd.Full_Name.RowAttributes)>
+        <label id="elh_mt_backup_approver_Full_Name" for="x_Full_Name" class="@(mtBackupApproverAdd.LeftColumnClass)">@Html.Raw(mtBackupApproverAdd.Full_Name.Caption)@Html.Raw(mtBackupApproverAdd.Full_Name.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtBackupApproverAdd.RightColumnClass)"><div @Html.Raw(mtBackupApproverAdd.Full_Name.CellAttributes)>
+<span id="el_mt_backup_approver_Full_Name">
+<input type="@(mtBackupApproverAdd.Full_Name.InputTextType)" name="x_Full_Name" id="x_Full_Name" data-table="mt_backup_approver" data-field="x_Full_Name" value="@Html.Raw(mtBackupApproverAdd.Full_Name.EditValue)" size="30" maxlength="200" placeholder="@Html.Raw(HtmlEncode(mtBackupApproverAdd.Full_Name.PlaceHolder))" data-format-pattern="@(mtBackupApproverAdd.Full_Name.FormatPattern)"@Html.Raw(mtBackupApproverAdd.Full_Name.EditAttributes) aria-describedby="x_Full_Name_help">
+@Html.Raw(mtBackupApproverAdd.Full_Name.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtBackupApproverAdd.Full_Name.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtBackupApproverAdd.Full_Name.Visible (end) *@
+@if (mtBackupApproverAdd.Position.Visible) { // mtBackupApproverAdd.Position.Visible (begin)
+    <div id="r_Position" @Html.Raw(mtBackupApproverAdd.Position.RowAttributes)>
+        <label id="elh_mt_backup_approver_Position" for="x_Position" class="@(mtBackupApproverAdd.LeftColumnClass)">@Html.Raw(mtBackupApproverAdd.Position.Caption)@Html.Raw(mtBackupApproverAdd.Position.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtBackupApproverAdd.RightColumnClass)"><div @Html.Raw(mtBackupApproverAdd.Position.CellAttributes)>
+<span id="el_mt_backup_approver_Position">
+<input type="@(mtBackupApproverAdd.Position.InputTextType)" name="x_Position" id="x_Position" data-table="mt_backup_approver" data-field="x_Position" value="@Html.Raw(mtBackupApproverAdd.Position.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(mtBackupApproverAdd.Position.PlaceHolder))" data-format-pattern="@(mtBackupApproverAdd.Position.FormatPattern)"@Html.Raw(mtBackupApproverAdd.Position.EditAttributes) aria-describedby="x_Position_help">
+@Html.Raw(mtBackupApproverAdd.Position.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtBackupApproverAdd.Position.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtBackupApproverAdd.Position.Visible (end) *@
+@if (mtBackupApproverAdd.Departement.Visible) { // mtBackupApproverAdd.Departement.Visible (begin)
+    <div id="r_Departement" @Html.Raw(mtBackupApproverAdd.Departement.RowAttributes)>
+        <label id="elh_mt_backup_approver_Departement" for="x_Departement" class="@(mtBackupApproverAdd.LeftColumnClass)">@Html.Raw(mtBackupApproverAdd.Departement.Caption)@Html.Raw(mtBackupApproverAdd.Departement.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtBackupApproverAdd.RightColumnClass)"><div @Html.Raw(mtBackupApproverAdd.Departement.CellAttributes)>
+<span id="el_mt_backup_approver_Departement">
+<input type="@(mtBackupApproverAdd.Departement.InputTextType)" name="x_Departement" id="x_Departement" data-table="mt_backup_approver" data-field="x_Departement" value="@Html.Raw(mtBackupApproverAdd.Departement.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(mtBackupApproverAdd.Departement.PlaceHolder))" data-format-pattern="@(mtBackupApproverAdd.Departement.FormatPattern)"@Html.Raw(mtBackupApproverAdd.Departement.EditAttributes) aria-describedby="x_Departement_help">
+@Html.Raw(mtBackupApproverAdd.Departement.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtBackupApproverAdd.Departement.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtBackupApproverAdd.Departement.Visible (end) *@
+@if (mtBackupApproverAdd.Division.Visible) { // mtBackupApproverAdd.Division.Visible (begin)
+    <div id="r_Division" @Html.Raw(mtBackupApproverAdd.Division.RowAttributes)>
+        <label id="elh_mt_backup_approver_Division" for="x_Division" class="@(mtBackupApproverAdd.LeftColumnClass)">@Html.Raw(mtBackupApproverAdd.Division.Caption)@Html.Raw(mtBackupApproverAdd.Division.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtBackupApproverAdd.RightColumnClass)"><div @Html.Raw(mtBackupApproverAdd.Division.CellAttributes)>
+<span id="el_mt_backup_approver_Division">
+<input type="@(mtBackupApproverAdd.Division.InputTextType)" name="x_Division" id="x_Division" data-table="mt_backup_approver" data-field="x_Division" value="@Html.Raw(mtBackupApproverAdd.Division.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(mtBackupApproverAdd.Division.PlaceHolder))" data-format-pattern="@(mtBackupApproverAdd.Division.FormatPattern)"@Html.Raw(mtBackupApproverAdd.Division.EditAttributes) aria-describedby="x_Division_help">
+@Html.Raw(mtBackupApproverAdd.Division.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtBackupApproverAdd.Division.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtBackupApproverAdd.Division.Visible (end) *@
+@if (mtBackupApproverAdd.Area.Visible) { // mtBackupApproverAdd.Area.Visible (begin)
+    <div id="r_Area" @Html.Raw(mtBackupApproverAdd.Area.RowAttributes)>
+        <label id="elh_mt_backup_approver_Area" for="x_Area" class="@(mtBackupApproverAdd.LeftColumnClass)">@Html.Raw(mtBackupApproverAdd.Area.Caption)@Html.Raw(mtBackupApproverAdd.Area.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtBackupApproverAdd.RightColumnClass)"><div @Html.Raw(mtBackupApproverAdd.Area.CellAttributes)>
+<span id="el_mt_backup_approver_Area">
+<input type="@(mtBackupApproverAdd.Area.InputTextType)" name="x_Area" id="x_Area" data-table="mt_backup_approver" data-field="x_Area" value="@Html.Raw(mtBackupApproverAdd.Area.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(mtBackupApproverAdd.Area.PlaceHolder))" data-format-pattern="@(mtBackupApproverAdd.Area.FormatPattern)"@Html.Raw(mtBackupApproverAdd.Area.EditAttributes) aria-describedby="x_Area_help">
+@Html.Raw(mtBackupApproverAdd.Area.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtBackupApproverAdd.Area.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtBackupApproverAdd.Area.Visible (end) *@
+@if (mtBackupApproverAdd.Business_Area.Visible) { // mtBackupApproverAdd.Business_Area.Visible (begin)
+    <div id="r_Business_Area" @Html.Raw(mtBackupApproverAdd.Business_Area.RowAttributes)>
+        <label id="elh_mt_backup_approver_Business_Area" for="x_Business_Area" class="@(mtBackupApproverAdd.LeftColumnClass)">@Html.Raw(mtBackupApproverAdd.Business_Area.Caption)@Html.Raw(mtBackupApproverAdd.Business_Area.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtBackupApproverAdd.RightColumnClass)"><div @Html.Raw(mtBackupApproverAdd.Business_Area.CellAttributes)>
+<span id="el_mt_backup_approver_Business_Area">
+<input type="@(mtBackupApproverAdd.Business_Area.InputTextType)" name="x_Business_Area" id="x_Business_Area" data-table="mt_backup_approver" data-field="x_Business_Area" value="@Html.Raw(mtBackupApproverAdd.Business_Area.EditValue)" size="30" maxlength="10" placeholder="@Html.Raw(HtmlEncode(mtBackupApproverAdd.Business_Area.PlaceHolder))" data-format-pattern="@(mtBackupApproverAdd.Business_Area.FormatPattern)"@Html.Raw(mtBackupApproverAdd.Business_Area.EditAttributes) aria-describedby="x_Business_Area_help">
+@Html.Raw(mtBackupApproverAdd.Business_Area.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtBackupApproverAdd.Business_Area.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtBackupApproverAdd.Business_Area.Visible (end) *@
+@if (mtBackupApproverAdd.Report_To.Visible) { // mtBackupApproverAdd.Report_To.Visible (begin)
+    <div id="r_Report_To" @Html.Raw(mtBackupApproverAdd.Report_To.RowAttributes)>
+        <label id="elh_mt_backup_approver_Report_To" for="x_Report_To" class="@(mtBackupApproverAdd.LeftColumnClass)">@Html.Raw(mtBackupApproverAdd.Report_To.Caption)@Html.Raw(mtBackupApproverAdd.Report_To.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtBackupApproverAdd.RightColumnClass)"><div @Html.Raw(mtBackupApproverAdd.Report_To.CellAttributes)>
+<span id="el_mt_backup_approver_Report_To">
+<input type="@(mtBackupApproverAdd.Report_To.InputTextType)" name="x_Report_To" id="x_Report_To" data-table="mt_backup_approver" data-field="x_Report_To" value="@Html.Raw(mtBackupApproverAdd.Report_To.EditValue)" size="30" maxlength="20" placeholder="@Html.Raw(HtmlEncode(mtBackupApproverAdd.Report_To.PlaceHolder))" data-format-pattern="@(mtBackupApproverAdd.Report_To.FormatPattern)"@Html.Raw(mtBackupApproverAdd.Report_To.EditAttributes) aria-describedby="x_Report_To_help">
+@Html.Raw(mtBackupApproverAdd.Report_To.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtBackupApproverAdd.Report_To.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtBackupApproverAdd.Report_To.Visible (end) *@
+@if (mtBackupApproverAdd.Business_Area_Desc.Visible) { // mtBackupApproverAdd.Business_Area_Desc.Visible (begin)
+    <div id="r_Business_Area_Desc" @Html.Raw(mtBackupApproverAdd.Business_Area_Desc.RowAttributes)>
+        <label id="elh_mt_backup_approver_Business_Area_Desc" for="x_Business_Area_Desc" class="@(mtBackupApproverAdd.LeftColumnClass)">@Html.Raw(mtBackupApproverAdd.Business_Area_Desc.Caption)@Html.Raw(mtBackupApproverAdd.Business_Area_Desc.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtBackupApproverAdd.RightColumnClass)"><div @Html.Raw(mtBackupApproverAdd.Business_Area_Desc.CellAttributes)>
+<span id="el_mt_backup_approver_Business_Area_Desc">
+<input type="@(mtBackupApproverAdd.Business_Area_Desc.InputTextType)" name="x_Business_Area_Desc" id="x_Business_Area_Desc" data-table="mt_backup_approver" data-field="x_Business_Area_Desc" value="@Html.Raw(mtBackupApproverAdd.Business_Area_Desc.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(mtBackupApproverAdd.Business_Area_Desc.PlaceHolder))" data-format-pattern="@(mtBackupApproverAdd.Business_Area_Desc.FormatPattern)"@Html.Raw(mtBackupApproverAdd.Business_Area_Desc.EditAttributes) aria-describedby="x_Business_Area_Desc_help">
+@Html.Raw(mtBackupApproverAdd.Business_Area_Desc.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtBackupApproverAdd.Business_Area_Desc.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtBackupApproverAdd.Business_Area_Desc.Visible (end) *@
+</div><!-- /page* -->
+@{ mtBackupApproverAdd.CloseRecordset(); }
+@Html.Raw(mtBackupApproverAdd.IsModal ? "<template class=\"ew-modal-buttons\">" : "<div class=\"row ew-buttons\">")<!-- buttons .row -->
+    <div class="@(mtBackupApproverAdd.OffsetColumnClass)"><!-- buttons offset -->
+    <button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit" form="fmt_backup_approveradd">@Html.Raw(Language.Phrase("AddBtn"))</button>
+@if (IsJsonResponse()) {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-bs-dismiss="modal">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+} else {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="fmt_backup_approveradd" data-href="@AppPath(mtBackupApproverAdd.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+}
+    </div><!-- /buttons offset -->
+@Html.Raw(mtBackupApproverAdd.IsModal ? "</template>" : "</div>")<!-- /buttons .row -->
+</form>
+@mtBackupApproverAdd.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("mt_backup_approver");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

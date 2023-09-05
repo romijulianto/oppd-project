@@ -1,0 +1,643 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (trRequestUpdate.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!trRequestUpdate.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(trRequestUpdate.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { tr_request: currentTable } });
+var currentPageID = ew.PAGE_ID = "update";
+var currentForm;
+var ftr_requestupdate;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("ftr_requestupdate")
+        .setPageId("update")
+
+        // Add fields
+        .setFields([
+
+            ["id", [fields.id.visible && fields.id.required ? ew.Validators.required(fields.id.caption) : null, ew.Validators.integer, ew.Validators.selected], fields.id.isInvalid],
+            ["Request_No", [fields.Request_No.visible && fields.Request_No.required ? ew.Validators.required(fields.Request_No.caption) : null], fields.Request_No.isInvalid],
+            ["Reference_Doc", [fields.Reference_Doc.visible && fields.Reference_Doc.required ? ew.Validators.required(fields.Reference_Doc.caption) : null], fields.Reference_Doc.isInvalid],
+            ["Reason", [fields.Reason.visible && fields.Reason.required ? ew.Validators.required(fields.Reason.caption) : null], fields.Reason.isInvalid],
+            ["Request_By", [fields.Request_By.visible && fields.Request_By.required ? ew.Validators.required(fields.Request_By.caption) : null], fields.Request_By.isInvalid],
+            ["Request_By_Name", [fields.Request_By_Name.visible && fields.Request_By_Name.required ? ew.Validators.required(fields.Request_By_Name.caption) : null], fields.Request_By_Name.isInvalid],
+            ["Request_By_Position", [fields.Request_By_Position.visible && fields.Request_By_Position.required ? ew.Validators.required(fields.Request_By_Position.caption) : null], fields.Request_By_Position.isInvalid],
+            ["Request_By_Branch", [fields.Request_By_Branch.visible && fields.Request_By_Branch.required ? ew.Validators.required(fields.Request_By_Branch.caption) : null], fields.Request_By_Branch.isInvalid],
+            ["Request_By_Region", [fields.Request_By_Region.visible && fields.Request_By_Region.required ? ew.Validators.required(fields.Request_By_Region.caption) : null], fields.Request_By_Region.isInvalid],
+            ["Request_Industry", [fields.Request_Industry.visible && fields.Request_Industry.required ? ew.Validators.required(fields.Request_Industry.caption) : null], fields.Request_Industry.isInvalid],
+            ["Customer_ID", [fields.Customer_ID.visible && fields.Customer_ID.required ? ew.Validators.required(fields.Customer_ID.caption) : null], fields.Customer_ID.isInvalid],
+            ["Customer_Name", [fields.Customer_Name.visible && fields.Customer_Name.required ? ew.Validators.required(fields.Customer_Name.caption) : null], fields.Customer_Name.isInvalid],
+            ["SAP_Total", [fields.SAP_Total.visible && fields.SAP_Total.required ? ew.Validators.required(fields.SAP_Total.caption) : null, ew.Validators.float, ew.Validators.selected], fields.SAP_Total.isInvalid],
+            ["Override_Total", [fields.Override_Total.visible && fields.Override_Total.required ? ew.Validators.required(fields.Override_Total.caption) : null, ew.Validators.float, ew.Validators.selected], fields.Override_Total.isInvalid],
+            ["Variance_Total", [fields.Variance_Total.visible && fields.Variance_Total.required ? ew.Validators.required(fields.Variance_Total.caption) : null, ew.Validators.float, ew.Validators.selected], fields.Variance_Total.isInvalid],
+            ["Variance_Percent", [fields.Variance_Percent.visible && fields.Variance_Percent.required ? ew.Validators.required(fields.Variance_Percent.caption) : null, ew.Validators.float, ew.Validators.selected], fields.Variance_Percent.isInvalid],
+            ["Notes", [fields.Notes.visible && fields.Notes.required ? ew.Validators.required(fields.Notes.caption) : null], fields.Notes.isInvalid],
+            ["Next_Approver", [fields.Next_Approver.visible && fields.Next_Approver.required ? ew.Validators.required(fields.Next_Approver.caption) : null], fields.Next_Approver.isInvalid],
+            ["Request_PIC", [fields.Request_PIC.visible && fields.Request_PIC.required ? ew.Validators.required(fields.Request_PIC.caption) : null], fields.Request_PIC.isInvalid],
+            ["Request_Status", [fields.Request_Status.visible && fields.Request_Status.required ? ew.Validators.required(fields.Request_Status.caption) : null], fields.Request_Status.isInvalid],
+            ["List_Approver", [fields.List_Approver.visible && fields.List_Approver.required ? ew.Validators.required(fields.List_Approver.caption) : null], fields.List_Approver.isInvalid],
+            ["Last_Update_By", [fields.Last_Update_By.visible && fields.Last_Update_By.required ? ew.Validators.required(fields.Last_Update_By.caption) : null], fields.Last_Update_By.isInvalid],
+            ["Created_By", [fields.Created_By.visible && fields.Created_By.required ? ew.Validators.required(fields.Created_By.caption) : null], fields.Created_By.isInvalid],
+            ["Created_Date", [fields.Created_Date.visible && fields.Created_Date.required ? ew.Validators.required(fields.Created_Date.caption) : null], fields.Created_Date.isInvalid],
+            ["Request_Currency", [fields.Request_Currency.visible && fields.Request_Currency.required ? ew.Validators.required(fields.Request_Currency.caption) : null], fields.Request_Currency.isInvalid]
+        ])
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+            "Reason": @Html.Raw(trRequestUpdate.Reason.ToClientList(trRequestUpdate)),
+            "Request_Status": @Html.Raw(trRequestUpdate.Request_Status.ToClientList(trRequestUpdate)),
+        })
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@trRequestUpdate.ShowPageHeader()
+@trRequestUpdate.ShowMessages()
+<form name="ftr_requestupdate" id="ftr_requestupdate" class="@(trRequestUpdate.FormClassName)" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="update">
+<input type="hidden" name="modal" value="@Convert.ToInt32(trRequestUpdate.IsModal)">
+@foreach (string recordKey in trRequestUpdate.RecordKeys) {
+<input type="hidden" name="key_m[]" value="@recordKey">
+}
+<div id="tbl_tr_requestupdate" class="ew-update-div"><!-- page -->
+    @if (!trRequestUpdate.IsConfirm) { // Confirm page
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" name="u" id="u" data-ew-action="select-all" ><label class="form-check-label" for="u">@Html.Raw(Language.Phrase("SelectAll"))</label>
+    </div>
+    }
+@if (trRequestUpdate.id.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.id.MultiUpdateSelected)) { // trRequestUpdate.id.Visible (begin)
+    <div id="r_id" @Html.Raw(trRequestUpdate.id.RowAttributes)>
+        <label for="x_id" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_id" id="u_id" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.id.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_id">@Html.Raw(trRequestUpdate.id.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.id.CellAttributes)>
+                <span id="el_tr_request_id">
+                <input type="@(trRequestUpdate.id.InputTextType)" name="x_id" id="x_id" data-table="tr_request" data-field="x_id" value="@Html.Raw(trRequestUpdate.id.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestUpdate.id.PlaceHolder))" data-format-pattern="@(trRequestUpdate.id.FormatPattern)"@Html.Raw(trRequestUpdate.id.EditAttributes) aria-describedby="x_id_help">
+                @Html.Raw(trRequestUpdate.id.GetCustomMessage)
+                <div class="invalid-feedback">@Html.Raw(trRequestUpdate.id.GetErrorMessage())</div>
+                <input type="hidden" data-table="tr_request" data-field="x_id" data-hidden="1" data-old name="o_id" id="o_id" value="@Html.Raw(HtmlEncode(trRequestUpdate.id.OldValue ?? trRequestUpdate.id.CurrentValue))">
+                </span>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.id.Visible (end) *@
+@if (trRequestUpdate.Request_No.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Request_No.MultiUpdateSelected)) { // trRequestUpdate.Request_No.Visible (begin)
+    <div id="r_Request_No" @Html.Raw(trRequestUpdate.Request_No.RowAttributes)>
+        <label for="x_Request_No" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Request_No" id="u_Request_No" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Request_No.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Request_No">@Html.Raw(trRequestUpdate.Request_No.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Request_No.CellAttributes)>
+                <span id="el_tr_request_Request_No">
+                <input type="@(trRequestUpdate.Request_No.InputTextType)" name="x_Request_No" id="x_Request_No" data-table="tr_request" data-field="x_Request_No" value="@Html.Raw(trRequestUpdate.Request_No.EditValue)" size="30" maxlength="30" placeholder="@Html.Raw(HtmlEncode(trRequestUpdate.Request_No.PlaceHolder))" data-format-pattern="@(trRequestUpdate.Request_No.FormatPattern)"@Html.Raw(trRequestUpdate.Request_No.EditAttributes) aria-describedby="x_Request_No_help">
+                @Html.Raw(trRequestUpdate.Request_No.GetCustomMessage)
+                <div class="invalid-feedback">@Html.Raw(trRequestUpdate.Request_No.GetErrorMessage())</div>
+                </span>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Request_No.Visible (end) *@
+@if (trRequestUpdate.Reference_Doc.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Reference_Doc.MultiUpdateSelected)) { // trRequestUpdate.Reference_Doc.Visible (begin)
+    <div id="r_Reference_Doc" @Html.Raw(trRequestUpdate.Reference_Doc.RowAttributes)>
+        <label for="x_Reference_Doc" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Reference_Doc" id="u_Reference_Doc" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Reference_Doc.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Reference_Doc">@Html.Raw(trRequestUpdate.Reference_Doc.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Reference_Doc.CellAttributes)>
+                <span id="el_tr_request_Reference_Doc">
+                <input type="@(trRequestUpdate.Reference_Doc.InputTextType)" name="x_Reference_Doc" id="x_Reference_Doc" data-table="tr_request" data-field="x_Reference_Doc" value="@Html.Raw(trRequestUpdate.Reference_Doc.EditValue)" size="30" maxlength="50" placeholder="@Html.Raw(HtmlEncode(trRequestUpdate.Reference_Doc.PlaceHolder))" data-format-pattern="@(trRequestUpdate.Reference_Doc.FormatPattern)"@Html.Raw(trRequestUpdate.Reference_Doc.EditAttributes) aria-describedby="x_Reference_Doc_help">
+                @Html.Raw(trRequestUpdate.Reference_Doc.GetCustomMessage)
+                <div class="invalid-feedback">@Html.Raw(trRequestUpdate.Reference_Doc.GetErrorMessage())</div>
+                </span>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Reference_Doc.Visible (end) *@
+@if (trRequestUpdate.Reason.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Reason.MultiUpdateSelected)) { // trRequestUpdate.Reason.Visible (begin)
+    <div id="r_Reason" @Html.Raw(trRequestUpdate.Reason.RowAttributes)>
+        <label for="x_Reason" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Reason" id="u_Reason" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Reason.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Reason">@Html.Raw(trRequestUpdate.Reason.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Reason.CellAttributes)>
+                <span id="el_tr_request_Reason">
+                    <select
+                        id="x_Reason"
+                        name="x_Reason"
+                        class="form-select ew-select@(trRequestUpdate.Reason.IsInvalidClass)"
+                        data-select2-id="ftr_requestupdate_x_Reason"
+                        data-table="tr_request"
+                        data-field="x_Reason"
+                        data-value-separator="@(trRequestUpdate.Reason.DisplayValueSeparatorAttribute)"
+                        data-placeholder="@(HtmlEncode(trRequestUpdate.Reason.PlaceHolder))"
+                        @Html.Raw(trRequestUpdate.Reason.EditAttributes)>
+                        @(trRequestUpdate.Reason.SelectOptionListHtml("x_Reason"))
+                    </select>
+                    @Html.Raw(trRequestUpdate.Reason.GetCustomMessage)
+                    <div class="invalid-feedback">@Html.Raw(trRequestUpdate.Reason.GetErrorMessage())</div>
+                @Html.Raw(trRequestUpdate.Reason.Lookup.GetParamTag(trRequestUpdate, "p_x_Reason"))
+                <script>
+                loadjs.ready("ftr_requestupdate", function() {
+                    var options = { name: "x_Reason", selectId: "ftr_requestupdate_x_Reason" },
+                        el = document.querySelector("select[data-select2-id='" + options.selectId + "']");
+                    if (!el)
+                        return;
+                    options.closeOnSelect = !options.multiple;
+                    options.dropdownParent = el.closest("#ew-modal-dialog, #ew-add-opt-dialog");
+                    if (ftr_requestupdate.lists.Reason?.lookupOptions.length) {
+                        options.data = { id: "x_Reason", form: "ftr_requestupdate" };
+                    } else {
+                        options.ajax = { id: "x_Reason", form: "ftr_requestupdate", limit: 5 };
+                    }
+                    options.minimumResultsForSearch = Infinity;
+                    options = Object.assign({}, ew.selectOptions, options, ew.vars.tables.tr_request.fields.Reason.selectOptions);
+                    ew.createSelect(options);
+                });
+                </script>
+                </span>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Reason.Visible (end) *@
+@if (trRequestUpdate.Request_By.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Request_By.MultiUpdateSelected)) { // trRequestUpdate.Request_By.Visible (begin)
+    <div id="r_Request_By" @Html.Raw(trRequestUpdate.Request_By.RowAttributes)>
+        <label for="x_Request_By" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Request_By" id="u_Request_By" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Request_By.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Request_By">@Html.Raw(trRequestUpdate.Request_By.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Request_By.CellAttributes)>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Request_By.Visible (end) *@
+@if (trRequestUpdate.Request_By_Name.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Request_By_Name.MultiUpdateSelected)) { // trRequestUpdate.Request_By_Name.Visible (begin)
+    <div id="r_Request_By_Name" @Html.Raw(trRequestUpdate.Request_By_Name.RowAttributes)>
+        <label for="x_Request_By_Name" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Request_By_Name" id="u_Request_By_Name" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Request_By_Name.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Request_By_Name">@Html.Raw(trRequestUpdate.Request_By_Name.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Request_By_Name.CellAttributes)>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Request_By_Name.Visible (end) *@
+@if (trRequestUpdate.Request_By_Position.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Request_By_Position.MultiUpdateSelected)) { // trRequestUpdate.Request_By_Position.Visible (begin)
+    <div id="r_Request_By_Position" @Html.Raw(trRequestUpdate.Request_By_Position.RowAttributes)>
+        <label for="x_Request_By_Position" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Request_By_Position" id="u_Request_By_Position" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Request_By_Position.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Request_By_Position">@Html.Raw(trRequestUpdate.Request_By_Position.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Request_By_Position.CellAttributes)>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Request_By_Position.Visible (end) *@
+@if (trRequestUpdate.Request_By_Branch.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Request_By_Branch.MultiUpdateSelected)) { // trRequestUpdate.Request_By_Branch.Visible (begin)
+    <div id="r_Request_By_Branch" @Html.Raw(trRequestUpdate.Request_By_Branch.RowAttributes)>
+        <label for="x_Request_By_Branch" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Request_By_Branch" id="u_Request_By_Branch" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Request_By_Branch.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Request_By_Branch">@Html.Raw(trRequestUpdate.Request_By_Branch.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Request_By_Branch.CellAttributes)>
+                <span id="el_tr_request_Request_By_Branch">
+                <input type="@(trRequestUpdate.Request_By_Branch.InputTextType)" name="x_Request_By_Branch" id="x_Request_By_Branch" data-table="tr_request" data-field="x_Request_By_Branch" value="@Html.Raw(trRequestUpdate.Request_By_Branch.EditValue)" size="30" maxlength="50" placeholder="@Html.Raw(HtmlEncode(trRequestUpdate.Request_By_Branch.PlaceHolder))" data-format-pattern="@(trRequestUpdate.Request_By_Branch.FormatPattern)"@Html.Raw(trRequestUpdate.Request_By_Branch.EditAttributes) aria-describedby="x_Request_By_Branch_help">
+                @Html.Raw(trRequestUpdate.Request_By_Branch.GetCustomMessage)
+                <div class="invalid-feedback">@Html.Raw(trRequestUpdate.Request_By_Branch.GetErrorMessage())</div>
+                </span>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Request_By_Branch.Visible (end) *@
+@if (trRequestUpdate.Request_By_Region.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Request_By_Region.MultiUpdateSelected)) { // trRequestUpdate.Request_By_Region.Visible (begin)
+    <div id="r_Request_By_Region" @Html.Raw(trRequestUpdate.Request_By_Region.RowAttributes)>
+        <label for="x_Request_By_Region" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Request_By_Region" id="u_Request_By_Region" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Request_By_Region.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Request_By_Region">@Html.Raw(trRequestUpdate.Request_By_Region.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Request_By_Region.CellAttributes)>
+                <span id="el_tr_request_Request_By_Region">
+                <input type="@(trRequestUpdate.Request_By_Region.InputTextType)" name="x_Request_By_Region" id="x_Request_By_Region" data-table="tr_request" data-field="x_Request_By_Region" value="@Html.Raw(trRequestUpdate.Request_By_Region.EditValue)" size="30" maxlength="50" placeholder="@Html.Raw(HtmlEncode(trRequestUpdate.Request_By_Region.PlaceHolder))" data-format-pattern="@(trRequestUpdate.Request_By_Region.FormatPattern)"@Html.Raw(trRequestUpdate.Request_By_Region.EditAttributes) aria-describedby="x_Request_By_Region_help">
+                @Html.Raw(trRequestUpdate.Request_By_Region.GetCustomMessage)
+                <div class="invalid-feedback">@Html.Raw(trRequestUpdate.Request_By_Region.GetErrorMessage())</div>
+                </span>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Request_By_Region.Visible (end) *@
+@if (trRequestUpdate.Request_Industry.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Request_Industry.MultiUpdateSelected)) { // trRequestUpdate.Request_Industry.Visible (begin)
+    <div id="r_Request_Industry" @Html.Raw(trRequestUpdate.Request_Industry.RowAttributes)>
+        <label for="x_Request_Industry" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Request_Industry" id="u_Request_Industry" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Request_Industry.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Request_Industry">@Html.Raw(trRequestUpdate.Request_Industry.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Request_Industry.CellAttributes)>
+                <span id="el_tr_request_Request_Industry">
+                <input type="@(trRequestUpdate.Request_Industry.InputTextType)" name="x_Request_Industry" id="x_Request_Industry" data-table="tr_request" data-field="x_Request_Industry" value="@Html.Raw(trRequestUpdate.Request_Industry.EditValue)" size="30" maxlength="50" placeholder="@Html.Raw(HtmlEncode(trRequestUpdate.Request_Industry.PlaceHolder))" data-format-pattern="@(trRequestUpdate.Request_Industry.FormatPattern)"@Html.Raw(trRequestUpdate.Request_Industry.EditAttributes) aria-describedby="x_Request_Industry_help">
+                @Html.Raw(trRequestUpdate.Request_Industry.GetCustomMessage)
+                <div class="invalid-feedback">@Html.Raw(trRequestUpdate.Request_Industry.GetErrorMessage())</div>
+                </span>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Request_Industry.Visible (end) *@
+@if (trRequestUpdate.Customer_ID.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Customer_ID.MultiUpdateSelected)) { // trRequestUpdate.Customer_ID.Visible (begin)
+    <div id="r_Customer_ID" @Html.Raw(trRequestUpdate.Customer_ID.RowAttributes)>
+        <label for="x_Customer_ID" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Customer_ID" id="u_Customer_ID" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Customer_ID.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Customer_ID">@Html.Raw(trRequestUpdate.Customer_ID.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Customer_ID.CellAttributes)>
+                <span id="el_tr_request_Customer_ID">
+                <input type="@(trRequestUpdate.Customer_ID.InputTextType)" name="x_Customer_ID" id="x_Customer_ID" data-table="tr_request" data-field="x_Customer_ID" value="@Html.Raw(trRequestUpdate.Customer_ID.EditValue)" size="30" maxlength="20" placeholder="@Html.Raw(HtmlEncode(trRequestUpdate.Customer_ID.PlaceHolder))" data-format-pattern="@(trRequestUpdate.Customer_ID.FormatPattern)"@Html.Raw(trRequestUpdate.Customer_ID.EditAttributes) aria-describedby="x_Customer_ID_help">
+                @Html.Raw(trRequestUpdate.Customer_ID.GetCustomMessage)
+                <div class="invalid-feedback">@Html.Raw(trRequestUpdate.Customer_ID.GetErrorMessage())</div>
+                </span>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Customer_ID.Visible (end) *@
+@if (trRequestUpdate.Customer_Name.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Customer_Name.MultiUpdateSelected)) { // trRequestUpdate.Customer_Name.Visible (begin)
+    <div id="r_Customer_Name" @Html.Raw(trRequestUpdate.Customer_Name.RowAttributes)>
+        <label for="x_Customer_Name" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Customer_Name" id="u_Customer_Name" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Customer_Name.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Customer_Name">@Html.Raw(trRequestUpdate.Customer_Name.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Customer_Name.CellAttributes)>
+                <span id="el_tr_request_Customer_Name">
+                <input type="@(trRequestUpdate.Customer_Name.InputTextType)" name="x_Customer_Name" id="x_Customer_Name" data-table="tr_request" data-field="x_Customer_Name" value="@Html.Raw(trRequestUpdate.Customer_Name.EditValue)" size="30" maxlength="200" placeholder="@Html.Raw(HtmlEncode(trRequestUpdate.Customer_Name.PlaceHolder))" data-format-pattern="@(trRequestUpdate.Customer_Name.FormatPattern)"@Html.Raw(trRequestUpdate.Customer_Name.EditAttributes) aria-describedby="x_Customer_Name_help">
+                @Html.Raw(trRequestUpdate.Customer_Name.GetCustomMessage)
+                <div class="invalid-feedback">@Html.Raw(trRequestUpdate.Customer_Name.GetErrorMessage())</div>
+                </span>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Customer_Name.Visible (end) *@
+@if (trRequestUpdate.SAP_Total.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.SAP_Total.MultiUpdateSelected)) { // trRequestUpdate.SAP_Total.Visible (begin)
+    <div id="r_SAP_Total" @Html.Raw(trRequestUpdate.SAP_Total.RowAttributes)>
+        <label for="x_SAP_Total" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_SAP_Total" id="u_SAP_Total" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.SAP_Total.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_SAP_Total">@Html.Raw(trRequestUpdate.SAP_Total.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.SAP_Total.CellAttributes)>
+                <span id="el_tr_request_SAP_Total">
+                <input type="@(trRequestUpdate.SAP_Total.InputTextType)" name="x_SAP_Total" id="x_SAP_Total" data-table="tr_request" data-field="x_SAP_Total" value="@Html.Raw(trRequestUpdate.SAP_Total.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestUpdate.SAP_Total.PlaceHolder))" data-format-pattern="@(trRequestUpdate.SAP_Total.FormatPattern)"@Html.Raw(trRequestUpdate.SAP_Total.EditAttributes) aria-describedby="x_SAP_Total_help">
+                @Html.Raw(trRequestUpdate.SAP_Total.GetCustomMessage)
+                <div class="invalid-feedback">@Html.Raw(trRequestUpdate.SAP_Total.GetErrorMessage())</div>
+                </span>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.SAP_Total.Visible (end) *@
+@if (trRequestUpdate.Override_Total.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Override_Total.MultiUpdateSelected)) { // trRequestUpdate.Override_Total.Visible (begin)
+    <div id="r_Override_Total" @Html.Raw(trRequestUpdate.Override_Total.RowAttributes)>
+        <label for="x_Override_Total" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Override_Total" id="u_Override_Total" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Override_Total.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Override_Total">@Html.Raw(trRequestUpdate.Override_Total.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Override_Total.CellAttributes)>
+                <span id="el_tr_request_Override_Total">
+                <input type="@(trRequestUpdate.Override_Total.InputTextType)" name="x_Override_Total" id="x_Override_Total" data-table="tr_request" data-field="x_Override_Total" value="@Html.Raw(trRequestUpdate.Override_Total.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestUpdate.Override_Total.PlaceHolder))" data-format-pattern="@(trRequestUpdate.Override_Total.FormatPattern)"@Html.Raw(trRequestUpdate.Override_Total.EditAttributes) aria-describedby="x_Override_Total_help">
+                @Html.Raw(trRequestUpdate.Override_Total.GetCustomMessage)
+                <div class="invalid-feedback">@Html.Raw(trRequestUpdate.Override_Total.GetErrorMessage())</div>
+                </span>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Override_Total.Visible (end) *@
+@if (trRequestUpdate.Variance_Total.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Variance_Total.MultiUpdateSelected)) { // trRequestUpdate.Variance_Total.Visible (begin)
+    <div id="r_Variance_Total" @Html.Raw(trRequestUpdate.Variance_Total.RowAttributes)>
+        <label for="x_Variance_Total" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Variance_Total" id="u_Variance_Total" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Variance_Total.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Variance_Total">@Html.Raw(trRequestUpdate.Variance_Total.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Variance_Total.CellAttributes)>
+                <span id="el_tr_request_Variance_Total">
+                <input type="@(trRequestUpdate.Variance_Total.InputTextType)" name="x_Variance_Total" id="x_Variance_Total" data-table="tr_request" data-field="x_Variance_Total" value="@Html.Raw(trRequestUpdate.Variance_Total.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestUpdate.Variance_Total.PlaceHolder))" data-format-pattern="@(trRequestUpdate.Variance_Total.FormatPattern)"@Html.Raw(trRequestUpdate.Variance_Total.EditAttributes) aria-describedby="x_Variance_Total_help">
+                @Html.Raw(trRequestUpdate.Variance_Total.GetCustomMessage)
+                <div class="invalid-feedback">@Html.Raw(trRequestUpdate.Variance_Total.GetErrorMessage())</div>
+                </span>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Variance_Total.Visible (end) *@
+@if (trRequestUpdate.Variance_Percent.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Variance_Percent.MultiUpdateSelected)) { // trRequestUpdate.Variance_Percent.Visible (begin)
+    <div id="r_Variance_Percent" @Html.Raw(trRequestUpdate.Variance_Percent.RowAttributes)>
+        <label for="x_Variance_Percent" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Variance_Percent" id="u_Variance_Percent" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Variance_Percent.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Variance_Percent">@Html.Raw(trRequestUpdate.Variance_Percent.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Variance_Percent.CellAttributes)>
+                <span id="el_tr_request_Variance_Percent">
+                <input type="@(trRequestUpdate.Variance_Percent.InputTextType)" name="x_Variance_Percent" id="x_Variance_Percent" data-table="tr_request" data-field="x_Variance_Percent" value="@Html.Raw(trRequestUpdate.Variance_Percent.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestUpdate.Variance_Percent.PlaceHolder))" data-format-pattern="@(trRequestUpdate.Variance_Percent.FormatPattern)"@Html.Raw(trRequestUpdate.Variance_Percent.EditAttributes) aria-describedby="x_Variance_Percent_help">
+                @Html.Raw(trRequestUpdate.Variance_Percent.GetCustomMessage)
+                <div class="invalid-feedback">@Html.Raw(trRequestUpdate.Variance_Percent.GetErrorMessage())</div>
+                </span>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Variance_Percent.Visible (end) *@
+@if (trRequestUpdate.Notes.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Notes.MultiUpdateSelected)) { // trRequestUpdate.Notes.Visible (begin)
+    <div id="r_Notes" @Html.Raw(trRequestUpdate.Notes.RowAttributes)>
+        <label for="x_Notes" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Notes" id="u_Notes" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Notes.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Notes">@Html.Raw(trRequestUpdate.Notes.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Notes.CellAttributes)>
+                <span id="el_tr_request_Notes">
+                <textarea data-table="tr_request" data-field="x_Notes" name="x_Notes" id="x_Notes" cols="35" rows="4" placeholder="@Html.Raw(HtmlEncode(trRequestUpdate.Notes.PlaceHolder))"@Html.Raw(trRequestUpdate.Notes.EditAttributes) aria-describedby="x_Notes_help">@(trRequestUpdate.Notes.EditValue)</textarea>
+                @Html.Raw(trRequestUpdate.Notes.GetCustomMessage)
+                <div class="invalid-feedback">@Html.Raw(trRequestUpdate.Notes.GetErrorMessage())</div>
+                </span>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Notes.Visible (end) *@
+@if (trRequestUpdate.Next_Approver.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Next_Approver.MultiUpdateSelected)) { // trRequestUpdate.Next_Approver.Visible (begin)
+    <div id="r_Next_Approver" @Html.Raw(trRequestUpdate.Next_Approver.RowAttributes)>
+        <label for="x_Next_Approver" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Next_Approver" id="u_Next_Approver" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Next_Approver.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Next_Approver">@Html.Raw(trRequestUpdate.Next_Approver.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Next_Approver.CellAttributes)>
+                <span id="el_tr_request_Next_Approver">
+                <input type="@(trRequestUpdate.Next_Approver.InputTextType)" name="x_Next_Approver" id="x_Next_Approver" data-table="tr_request" data-field="x_Next_Approver" value="@Html.Raw(trRequestUpdate.Next_Approver.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(trRequestUpdate.Next_Approver.PlaceHolder))" data-format-pattern="@(trRequestUpdate.Next_Approver.FormatPattern)"@Html.Raw(trRequestUpdate.Next_Approver.EditAttributes) aria-describedby="x_Next_Approver_help">
+                @Html.Raw(trRequestUpdate.Next_Approver.GetCustomMessage)
+                <div class="invalid-feedback">@Html.Raw(trRequestUpdate.Next_Approver.GetErrorMessage())</div>
+                </span>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Next_Approver.Visible (end) *@
+@if (trRequestUpdate.Request_PIC.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Request_PIC.MultiUpdateSelected)) { // trRequestUpdate.Request_PIC.Visible (begin)
+    <div id="r_Request_PIC" @Html.Raw(trRequestUpdate.Request_PIC.RowAttributes)>
+        <label for="x_Request_PIC" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Request_PIC" id="u_Request_PIC" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Request_PIC.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Request_PIC">@Html.Raw(trRequestUpdate.Request_PIC.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Request_PIC.CellAttributes)>
+                <span id="el_tr_request_Request_PIC">
+                <input type="@(trRequestUpdate.Request_PIC.InputTextType)" name="x_Request_PIC" id="x_Request_PIC" data-table="tr_request" data-field="x_Request_PIC" value="@Html.Raw(trRequestUpdate.Request_PIC.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(trRequestUpdate.Request_PIC.PlaceHolder))" data-format-pattern="@(trRequestUpdate.Request_PIC.FormatPattern)"@Html.Raw(trRequestUpdate.Request_PIC.EditAttributes) aria-describedby="x_Request_PIC_help">
+                @Html.Raw(trRequestUpdate.Request_PIC.GetCustomMessage)
+                <div class="invalid-feedback">@Html.Raw(trRequestUpdate.Request_PIC.GetErrorMessage())</div>
+                </span>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Request_PIC.Visible (end) *@
+@if (trRequestUpdate.Request_Status.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Request_Status.MultiUpdateSelected)) { // trRequestUpdate.Request_Status.Visible (begin)
+    <div id="r_Request_Status" @Html.Raw(trRequestUpdate.Request_Status.RowAttributes)>
+        <label for="x_Request_Status" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Request_Status" id="u_Request_Status" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Request_Status.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Request_Status">@Html.Raw(trRequestUpdate.Request_Status.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Request_Status.CellAttributes)>
+                <span id="el_tr_request_Request_Status">
+                    <select
+                        id="x_Request_Status"
+                        name="x_Request_Status"
+                        class="form-select ew-select@(trRequestUpdate.Request_Status.IsInvalidClass)"
+                        data-select2-id="ftr_requestupdate_x_Request_Status"
+                        data-table="tr_request"
+                        data-field="x_Request_Status"
+                        data-value-separator="@(trRequestUpdate.Request_Status.DisplayValueSeparatorAttribute)"
+                        data-placeholder="@(HtmlEncode(trRequestUpdate.Request_Status.PlaceHolder))"
+                        @Html.Raw(trRequestUpdate.Request_Status.EditAttributes)>
+                        @(trRequestUpdate.Request_Status.SelectOptionListHtml("x_Request_Status"))
+                    </select>
+                    @Html.Raw(trRequestUpdate.Request_Status.GetCustomMessage)
+                    <div class="invalid-feedback">@Html.Raw(trRequestUpdate.Request_Status.GetErrorMessage())</div>
+                <script>
+                loadjs.ready("ftr_requestupdate", function() {
+                    var options = { name: "x_Request_Status", selectId: "ftr_requestupdate_x_Request_Status" },
+                        el = document.querySelector("select[data-select2-id='" + options.selectId + "']");
+                    if (!el)
+                        return;
+                    options.closeOnSelect = !options.multiple;
+                    options.dropdownParent = el.closest("#ew-modal-dialog, #ew-add-opt-dialog");
+                    if (ftr_requestupdate.lists.Request_Status?.lookupOptions.length) {
+                        options.data = { id: "x_Request_Status", form: "ftr_requestupdate" };
+                    } else {
+                        options.ajax = { id: "x_Request_Status", form: "ftr_requestupdate", limit: ew.LOOKUP_PAGE_SIZE };
+                    }
+                    options.minimumResultsForSearch = Infinity;
+                    options = Object.assign({}, ew.selectOptions, options, ew.vars.tables.tr_request.fields.Request_Status.selectOptions);
+                    ew.createSelect(options);
+                });
+                </script>
+                </span>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Request_Status.Visible (end) *@
+@if (trRequestUpdate.List_Approver.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.List_Approver.MultiUpdateSelected)) { // trRequestUpdate.List_Approver.Visible (begin)
+    <div id="r_List_Approver" @Html.Raw(trRequestUpdate.List_Approver.RowAttributes)>
+        <label for="x_List_Approver" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_List_Approver" id="u_List_Approver" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.List_Approver.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_List_Approver">@Html.Raw(trRequestUpdate.List_Approver.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.List_Approver.CellAttributes)>
+                <span id="el_tr_request_List_Approver">
+                <input type="@(trRequestUpdate.List_Approver.InputTextType)" name="x_List_Approver" id="x_List_Approver" data-table="tr_request" data-field="x_List_Approver" value="@Html.Raw(trRequestUpdate.List_Approver.EditValue)" size="30" maxlength="500" placeholder="@Html.Raw(HtmlEncode(trRequestUpdate.List_Approver.PlaceHolder))" data-format-pattern="@(trRequestUpdate.List_Approver.FormatPattern)"@Html.Raw(trRequestUpdate.List_Approver.EditAttributes) aria-describedby="x_List_Approver_help">
+                @Html.Raw(trRequestUpdate.List_Approver.GetCustomMessage)
+                <div class="invalid-feedback">@Html.Raw(trRequestUpdate.List_Approver.GetErrorMessage())</div>
+                </span>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.List_Approver.Visible (end) *@
+@if (trRequestUpdate.Last_Update_By.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Last_Update_By.MultiUpdateSelected)) { // trRequestUpdate.Last_Update_By.Visible (begin)
+    <div id="r_Last_Update_By" @Html.Raw(trRequestUpdate.Last_Update_By.RowAttributes)>
+        <label for="x_Last_Update_By" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Last_Update_By" id="u_Last_Update_By" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Last_Update_By.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Last_Update_By">@Html.Raw(trRequestUpdate.Last_Update_By.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Last_Update_By.CellAttributes)>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Last_Update_By.Visible (end) *@
+@if (trRequestUpdate.Created_By.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Created_By.MultiUpdateSelected)) { // trRequestUpdate.Created_By.Visible (begin)
+    <div id="r_Created_By" @Html.Raw(trRequestUpdate.Created_By.RowAttributes)>
+        <label for="x_Created_By" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Created_By" id="u_Created_By" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Created_By.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Created_By">@Html.Raw(trRequestUpdate.Created_By.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Created_By.CellAttributes)>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Created_By.Visible (end) *@
+@if (trRequestUpdate.Created_Date.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Created_Date.MultiUpdateSelected)) { // trRequestUpdate.Created_Date.Visible (begin)
+    <div id="r_Created_Date" @Html.Raw(trRequestUpdate.Created_Date.RowAttributes)>
+        <label for="x_Created_Date" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Created_Date" id="u_Created_Date" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Created_Date.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Created_Date">@Html.Raw(trRequestUpdate.Created_Date.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Created_Date.CellAttributes)>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Created_Date.Visible (end) *@
+@if (trRequestUpdate.Request_Currency.Visible && (!trRequestUpdate.IsConfirm || trRequestUpdate.Request_Currency.MultiUpdateSelected)) { // trRequestUpdate.Request_Currency.Visible (begin)
+    <div id="r_Request_Currency" @Html.Raw(trRequestUpdate.Request_Currency.RowAttributes)>
+        <label for="x_Request_Currency" class="@(trRequestUpdate.LeftColumnClass)">
+            <div class="form-check">
+                <input type="checkbox" name="u_Request_Currency" id="u_Request_Currency" class="form-check-input ew-multi-select" value="1"@(trRequestUpdate.Request_Currency.MultiUpdateSelected ? " checked" : "")>
+                <label class="form-check-label" for="u_Request_Currency">@Html.Raw(trRequestUpdate.Request_Currency.Caption)</label>
+            </div>
+        </label>
+        <div class="@(trRequestUpdate.RightColumnClass)">
+            <div @Html.Raw(trRequestUpdate.Request_Currency.CellAttributes)>
+                <span id="el_tr_request_Request_Currency">
+                <input type="@(trRequestUpdate.Request_Currency.InputTextType)" name="x_Request_Currency" id="x_Request_Currency" data-table="tr_request" data-field="x_Request_Currency" value="@Html.Raw(trRequestUpdate.Request_Currency.EditValue)" size="30" maxlength="10" placeholder="@Html.Raw(HtmlEncode(trRequestUpdate.Request_Currency.PlaceHolder))" data-format-pattern="@(trRequestUpdate.Request_Currency.FormatPattern)"@Html.Raw(trRequestUpdate.Request_Currency.EditAttributes) aria-describedby="x_Request_Currency_help">
+                @Html.Raw(trRequestUpdate.Request_Currency.GetCustomMessage)
+                <div class="invalid-feedback">@Html.Raw(trRequestUpdate.Request_Currency.GetErrorMessage())</div>
+                </span>
+            </div>
+        </div>
+    </div>
+} @* trRequestUpdate.Request_Currency.Visible (end) *@
+</div><!-- /page -->
+@Html.Raw(trRequestUpdate.IsModal ? "<template class=\"ew-modal-buttons\">" : "<div class=\"row ew-buttons\">")<!-- buttons .row -->
+    <div class="@(trRequestUpdate.OffsetColumnClass)"><!-- buttons offset -->
+<button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit" form="ftr_requestupdate">@Html.Raw(Language.Phrase("UpdateBtn"))</button>
+<button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="ftr_requestupdate"data-href="@AppPath(trRequestUpdate.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+    </div><!-- /buttons offset -->
+@Html.Raw(trRequestUpdate.IsModal ? "</template>" : "</div>")<!-- /buttons .row -->
+</form>
+@trRequestUpdate.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("tr_request");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

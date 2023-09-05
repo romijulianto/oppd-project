@@ -1,0 +1,251 @@
+@{
+    trRequest.TableClass = "table table-striped table-bordered table-hover table-sm ew-table ew-master-table"; // DN
+}
+@if (trRequest.Visible) { // trRequest.Visible (begin)
+<div class="ew-master-div">
+<table id="tbl_tr_requestmaster" class="table ew-view-table ew-master-table ew-vertical">
+    <tbody>
+        @if (trRequest.Request_No.Visible) { // trRequest.Request_No.Visible (begin)
+        <tr id="r_Request_No" @Html.Raw(trRequest.Request_No.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Request_No.Caption)</td>
+            <td @Html.Raw(trRequest.Request_No.CellAttributes)>
+<span id="el_tr_request_Request_No">
+<span @Html.Raw(trRequest.Request_No.ViewAttributes)>
+@Html.Raw(trRequest.Request_No.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Request_No.Visible (end) *@
+        @if (trRequest.Reference_Doc.Visible) { // trRequest.Reference_Doc.Visible (begin)
+        <tr id="r_Reference_Doc" @Html.Raw(trRequest.Reference_Doc.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Reference_Doc.Caption)</td>
+            <td @Html.Raw(trRequest.Reference_Doc.CellAttributes)>
+<span id="el_tr_request_Reference_Doc">
+<span @Html.Raw(trRequest.Reference_Doc.ViewAttributes)>
+@Html.Raw(trRequest.Reference_Doc.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Reference_Doc.Visible (end) *@
+        @if (trRequest.Reason.Visible) { // trRequest.Reason.Visible (begin)
+        <tr id="r_Reason" @Html.Raw(trRequest.Reason.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Reason.Caption)</td>
+            <td @Html.Raw(trRequest.Reason.CellAttributes)>
+<span id="el_tr_request_Reason">
+<span @Html.Raw(trRequest.Reason.ViewAttributes)>
+@Html.Raw(trRequest.Reason.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Reason.Visible (end) *@
+        @if (trRequest.Request_By.Visible) { // trRequest.Request_By.Visible (begin)
+        <tr id="r_Request_By" @Html.Raw(trRequest.Request_By.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Request_By.Caption)</td>
+            <td @Html.Raw(trRequest.Request_By.CellAttributes)>
+<span id="el_tr_request_Request_By">
+<span @Html.Raw(trRequest.Request_By.ViewAttributes)>
+@Html.Raw(trRequest.Request_By.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Request_By.Visible (end) *@
+        @if (trRequest.Request_By_Name.Visible) { // trRequest.Request_By_Name.Visible (begin)
+        <tr id="r_Request_By_Name" @Html.Raw(trRequest.Request_By_Name.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Request_By_Name.Caption)</td>
+            <td @Html.Raw(trRequest.Request_By_Name.CellAttributes)>
+<span id="el_tr_request_Request_By_Name">
+<span @Html.Raw(trRequest.Request_By_Name.ViewAttributes)>
+@Html.Raw(trRequest.Request_By_Name.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Request_By_Name.Visible (end) *@
+        @if (trRequest.Request_By_Position.Visible) { // trRequest.Request_By_Position.Visible (begin)
+        <tr id="r_Request_By_Position" @Html.Raw(trRequest.Request_By_Position.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Request_By_Position.Caption)</td>
+            <td @Html.Raw(trRequest.Request_By_Position.CellAttributes)>
+<span id="el_tr_request_Request_By_Position">
+<span @Html.Raw(trRequest.Request_By_Position.ViewAttributes)>
+@Html.Raw(trRequest.Request_By_Position.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Request_By_Position.Visible (end) *@
+        @if (trRequest.Request_By_Branch.Visible) { // trRequest.Request_By_Branch.Visible (begin)
+        <tr id="r_Request_By_Branch" @Html.Raw(trRequest.Request_By_Branch.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Request_By_Branch.Caption)</td>
+            <td @Html.Raw(trRequest.Request_By_Branch.CellAttributes)>
+<span id="el_tr_request_Request_By_Branch">
+<span @Html.Raw(trRequest.Request_By_Branch.ViewAttributes)>
+@Html.Raw(trRequest.Request_By_Branch.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Request_By_Branch.Visible (end) *@
+        @if (trRequest.Request_By_Region.Visible) { // trRequest.Request_By_Region.Visible (begin)
+        <tr id="r_Request_By_Region" @Html.Raw(trRequest.Request_By_Region.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Request_By_Region.Caption)</td>
+            <td @Html.Raw(trRequest.Request_By_Region.CellAttributes)>
+<span id="el_tr_request_Request_By_Region">
+<span @Html.Raw(trRequest.Request_By_Region.ViewAttributes)>
+@Html.Raw(trRequest.Request_By_Region.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Request_By_Region.Visible (end) *@
+        @if (trRequest.Request_Industry.Visible) { // trRequest.Request_Industry.Visible (begin)
+        <tr id="r_Request_Industry" @Html.Raw(trRequest.Request_Industry.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Request_Industry.Caption)</td>
+            <td @Html.Raw(trRequest.Request_Industry.CellAttributes)>
+<span id="el_tr_request_Request_Industry">
+<span @Html.Raw(trRequest.Request_Industry.ViewAttributes)>
+@Html.Raw(trRequest.Request_Industry.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Request_Industry.Visible (end) *@
+        @if (trRequest.Customer_ID.Visible) { // trRequest.Customer_ID.Visible (begin)
+        <tr id="r_Customer_ID" @Html.Raw(trRequest.Customer_ID.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Customer_ID.Caption)</td>
+            <td @Html.Raw(trRequest.Customer_ID.CellAttributes)>
+<span id="el_tr_request_Customer_ID">
+<span @Html.Raw(trRequest.Customer_ID.ViewAttributes)>
+@Html.Raw(trRequest.Customer_ID.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Customer_ID.Visible (end) *@
+        @if (trRequest.Customer_Name.Visible) { // trRequest.Customer_Name.Visible (begin)
+        <tr id="r_Customer_Name" @Html.Raw(trRequest.Customer_Name.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Customer_Name.Caption)</td>
+            <td @Html.Raw(trRequest.Customer_Name.CellAttributes)>
+<span id="el_tr_request_Customer_Name">
+<span @Html.Raw(trRequest.Customer_Name.ViewAttributes)>
+@Html.Raw(trRequest.Customer_Name.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Customer_Name.Visible (end) *@
+        @if (trRequest.SAP_Total.Visible) { // trRequest.SAP_Total.Visible (begin)
+        <tr id="r_SAP_Total" @Html.Raw(trRequest.SAP_Total.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.SAP_Total.Caption)</td>
+            <td @Html.Raw(trRequest.SAP_Total.CellAttributes)>
+<span id="el_tr_request_SAP_Total">
+<span @Html.Raw(trRequest.SAP_Total.ViewAttributes)>
+@Html.Raw(trRequest.SAP_Total.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.SAP_Total.Visible (end) *@
+        @if (trRequest.Override_Total.Visible) { // trRequest.Override_Total.Visible (begin)
+        <tr id="r_Override_Total" @Html.Raw(trRequest.Override_Total.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Override_Total.Caption)</td>
+            <td @Html.Raw(trRequest.Override_Total.CellAttributes)>
+<span id="el_tr_request_Override_Total">
+<span @Html.Raw(trRequest.Override_Total.ViewAttributes)>
+@Html.Raw(trRequest.Override_Total.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Override_Total.Visible (end) *@
+        @if (trRequest.Variance_Total.Visible) { // trRequest.Variance_Total.Visible (begin)
+        <tr id="r_Variance_Total" @Html.Raw(trRequest.Variance_Total.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Variance_Total.Caption)</td>
+            <td @Html.Raw(trRequest.Variance_Total.CellAttributes)>
+<span id="el_tr_request_Variance_Total">
+<span @Html.Raw(trRequest.Variance_Total.ViewAttributes)>
+@Html.Raw(trRequest.Variance_Total.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Variance_Total.Visible (end) *@
+        @if (trRequest.Variance_Percent.Visible) { // trRequest.Variance_Percent.Visible (begin)
+        <tr id="r_Variance_Percent" @Html.Raw(trRequest.Variance_Percent.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Variance_Percent.Caption)</td>
+            <td @Html.Raw(trRequest.Variance_Percent.CellAttributes)>
+<span id="el_tr_request_Variance_Percent">
+<span @Html.Raw(trRequest.Variance_Percent.ViewAttributes)>
+@Html.Raw(trRequest.Variance_Percent.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Variance_Percent.Visible (end) *@
+        @if (trRequest.Notes.Visible) { // trRequest.Notes.Visible (begin)
+        <tr id="r_Notes" @Html.Raw(trRequest.Notes.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Notes.Caption)</td>
+            <td @Html.Raw(trRequest.Notes.CellAttributes)>
+<span id="el_tr_request_Notes">
+<span @Html.Raw(trRequest.Notes.ViewAttributes)>
+@Html.Raw(trRequest.Notes.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Notes.Visible (end) *@
+        @if (trRequest.Next_Approver.Visible) { // trRequest.Next_Approver.Visible (begin)
+        <tr id="r_Next_Approver" @Html.Raw(trRequest.Next_Approver.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Next_Approver.Caption)</td>
+            <td @Html.Raw(trRequest.Next_Approver.CellAttributes)>
+<span id="el_tr_request_Next_Approver">
+<span @Html.Raw(trRequest.Next_Approver.ViewAttributes)>
+@Html.Raw(trRequest.Next_Approver.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Next_Approver.Visible (end) *@
+        @if (trRequest.Request_PIC.Visible) { // trRequest.Request_PIC.Visible (begin)
+        <tr id="r_Request_PIC" @Html.Raw(trRequest.Request_PIC.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Request_PIC.Caption)</td>
+            <td @Html.Raw(trRequest.Request_PIC.CellAttributes)>
+<span id="el_tr_request_Request_PIC">
+<span @Html.Raw(trRequest.Request_PIC.ViewAttributes)>
+@Html.Raw(trRequest.Request_PIC.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Request_PIC.Visible (end) *@
+        @if (trRequest.Request_Status.Visible) { // trRequest.Request_Status.Visible (begin)
+        <tr id="r_Request_Status" @Html.Raw(trRequest.Request_Status.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Request_Status.Caption)</td>
+            <td @Html.Raw(trRequest.Request_Status.CellAttributes)>
+<span id="el_tr_request_Request_Status">
+<span @Html.Raw(trRequest.Request_Status.ViewAttributes)>
+@Html.Raw(trRequest.Request_Status.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Request_Status.Visible (end) *@
+        @if (trRequest.List_Approver.Visible) { // trRequest.List_Approver.Visible (begin)
+        <tr id="r_List_Approver" @Html.Raw(trRequest.List_Approver.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.List_Approver.Caption)</td>
+            <td @Html.Raw(trRequest.List_Approver.CellAttributes)>
+<span id="el_tr_request_List_Approver">
+<span @Html.Raw(trRequest.List_Approver.ViewAttributes)>
+@Html.Raw(trRequest.List_Approver.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.List_Approver.Visible (end) *@
+        @if (trRequest.Last_Update_By.Visible) { // trRequest.Last_Update_By.Visible (begin)
+        <tr id="r_Last_Update_By" @Html.Raw(trRequest.Last_Update_By.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Last_Update_By.Caption)</td>
+            <td @Html.Raw(trRequest.Last_Update_By.CellAttributes)>
+<span id="el_tr_request_Last_Update_By">
+<span @Html.Raw(trRequest.Last_Update_By.ViewAttributes)>
+@Html.Raw(trRequest.Last_Update_By.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Last_Update_By.Visible (end) *@
+        @if (trRequest.Created_By.Visible) { // trRequest.Created_By.Visible (begin)
+        <tr id="r_Created_By" @Html.Raw(trRequest.Created_By.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Created_By.Caption)</td>
+            <td @Html.Raw(trRequest.Created_By.CellAttributes)>
+<span id="el_tr_request_Created_By">
+<span @Html.Raw(trRequest.Created_By.ViewAttributes)>
+@Html.Raw(trRequest.Created_By.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Created_By.Visible (end) *@
+        @if (trRequest.Created_Date.Visible) { // trRequest.Created_Date.Visible (begin)
+        <tr id="r_Created_Date" @Html.Raw(trRequest.Created_Date.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Created_Date.Caption)</td>
+            <td @Html.Raw(trRequest.Created_Date.CellAttributes)>
+<span id="el_tr_request_Created_Date">
+<span @Html.Raw(trRequest.Created_Date.ViewAttributes)>
+@Html.Raw(trRequest.Created_Date.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Created_Date.Visible (end) *@
+        @if (trRequest.Request_Currency.Visible) { // trRequest.Request_Currency.Visible (begin)
+        <tr id="r_Request_Currency" @Html.Raw(trRequest.Request_Currency.RowAttributes)>
+            <td class="@(trRequest.TableLeftColumnClass)">@Html.Raw(trRequest.Request_Currency.Caption)</td>
+            <td @Html.Raw(trRequest.Request_Currency.CellAttributes)>
+<span id="el_tr_request_Request_Currency">
+<span @Html.Raw(trRequest.Request_Currency.ViewAttributes)>
+@Html.Raw(trRequest.Request_Currency.GetViewValue())</span>
+</span></td>
+        </tr>
+        } @* trRequest.Request_Currency.Visible (end) *@
+    </tbody>
+</table>
+</div>
+} @* trRequest.Visible (end) *@

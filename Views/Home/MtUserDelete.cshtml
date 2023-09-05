@@ -1,0 +1,205 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (mtUserDelete.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!mtUserDelete.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtUserDelete.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_user: currentTable } });
+var currentPageID = ew.PAGE_ID = "delete";
+var currentForm;
+var fmt_userdelete;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fmt_userdelete")
+        .setPageId("delete")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@mtUserDelete.ShowPageHeader()
+@mtUserDelete.ShowMessages()
+<form name="fmt_userdelete" id="fmt_userdelete" class="ew-form ew-delete-form" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="delete">
+@foreach (string key in mtUserDelete.RecordKeys) {
+<input type="hidden" name="key_m[]" value="@key">
+}
+<div class="card ew-card ew-grid @(mtUserDelete.TableGridClass)">
+<div class="card-body ew-grid-middle-panel @(mtUserDelete.TableContainerClass)" style="@(mtUserDelete.TableContainerStyle)">
+<table class="@(mtUserDelete.TableClass)">
+    <thead>
+    <tr class="ew-table-header">
+@if (mtUserDelete._UserName.Visible) { // mtUserDelete._UserName.Visible (begin)
+        <th class="@Html.Raw(mtUserDelete._UserName.HeaderCellClass)"><span id="elh_mt_user__UserName" class="mt_user__UserName">@Html.Raw(mtUserDelete._UserName.Caption)</span></th>
+} @* mtUserDelete._UserName.Visible (end) *@
+@if (mtUserDelete.UserPassword.Visible) { // mtUserDelete.UserPassword.Visible (begin)
+        <th class="@Html.Raw(mtUserDelete.UserPassword.HeaderCellClass)"><span id="elh_mt_user_UserPassword" class="mt_user_UserPassword">@Html.Raw(mtUserDelete.UserPassword.Caption)</span></th>
+} @* mtUserDelete.UserPassword.Visible (end) *@
+@if (mtUserDelete._UserLevel.Visible) { // mtUserDelete._UserLevel.Visible (begin)
+        <th class="@Html.Raw(mtUserDelete._UserLevel.HeaderCellClass)"><span id="elh_mt_user__UserLevel" class="mt_user__UserLevel">@Html.Raw(mtUserDelete._UserLevel.Caption)</span></th>
+} @* mtUserDelete._UserLevel.Visible (end) *@
+@if (mtUserDelete.UserEmail.Visible) { // mtUserDelete.UserEmail.Visible (begin)
+        <th class="@Html.Raw(mtUserDelete.UserEmail.HeaderCellClass)"><span id="elh_mt_user_UserEmail" class="mt_user_UserEmail">@Html.Raw(mtUserDelete.UserEmail.Caption)</span></th>
+} @* mtUserDelete.UserEmail.Visible (end) *@
+@if (mtUserDelete.Full_Name.Visible) { // mtUserDelete.Full_Name.Visible (begin)
+        <th class="@Html.Raw(mtUserDelete.Full_Name.HeaderCellClass)"><span id="elh_mt_user_Full_Name" class="mt_user_Full_Name">@Html.Raw(mtUserDelete.Full_Name.Caption)</span></th>
+} @* mtUserDelete.Full_Name.Visible (end) *@
+@if (mtUserDelete.Position.Visible) { // mtUserDelete.Position.Visible (begin)
+        <th class="@Html.Raw(mtUserDelete.Position.HeaderCellClass)"><span id="elh_mt_user_Position" class="mt_user_Position">@Html.Raw(mtUserDelete.Position.Caption)</span></th>
+} @* mtUserDelete.Position.Visible (end) *@
+@if (mtUserDelete.Department.Visible) { // mtUserDelete.Department.Visible (begin)
+        <th class="@Html.Raw(mtUserDelete.Department.HeaderCellClass)"><span id="elh_mt_user_Department" class="mt_user_Department">@Html.Raw(mtUserDelete.Department.Caption)</span></th>
+} @* mtUserDelete.Department.Visible (end) *@
+@if (mtUserDelete.Division.Visible) { // mtUserDelete.Division.Visible (begin)
+        <th class="@Html.Raw(mtUserDelete.Division.HeaderCellClass)"><span id="elh_mt_user_Division" class="mt_user_Division">@Html.Raw(mtUserDelete.Division.Caption)</span></th>
+} @* mtUserDelete.Division.Visible (end) *@
+@if (mtUserDelete.Area.Visible) { // mtUserDelete.Area.Visible (begin)
+        <th class="@Html.Raw(mtUserDelete.Area.HeaderCellClass)"><span id="elh_mt_user_Area" class="mt_user_Area">@Html.Raw(mtUserDelete.Area.Caption)</span></th>
+} @* mtUserDelete.Area.Visible (end) *@
+@if (mtUserDelete.ETL_Date.Visible) { // mtUserDelete.ETL_Date.Visible (begin)
+        <th class="@Html.Raw(mtUserDelete.ETL_Date.HeaderCellClass)"><span id="elh_mt_user_ETL_Date" class="mt_user_ETL_Date">@Html.Raw(mtUserDelete.ETL_Date.Caption)</span></th>
+} @* mtUserDelete.ETL_Date.Visible (end) *@
+    </tr>
+    </thead>
+    <tbody>
+@{ mtUserDelete.RecordCount = 0; }
+@while (mtUserDelete.Recordset != null && await mtUserDelete.Recordset.ReadAsync()) { // DN
+    mtUserDelete.RecordCount++;
+    mtUserDelete.RowCount++;
+
+    // Set row properties
+    mtUserDelete.ResetAttributes();
+    mtUserDelete.RowType = RowType.View; // View
+
+    // Get the field contents
+    await mtUserDelete.LoadRowValues(mtUserDelete.Recordset);
+
+    // Render row
+    await mtUserDelete.RenderRow();
+    <tr @Html.Raw(mtUserDelete.RowAttributes)>
+@if (mtUserDelete._UserName.Visible) { // mtUserDelete._UserName.Visible (begin)
+        <td @Html.Raw(mtUserDelete._UserName.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtUserDelete._UserName.ViewAttributes)>
+@Html.Raw(mtUserDelete._UserName.GetViewValue())</span>
+</span></td>
+} @* mtUserDelete._UserName.Visible (end) *@
+@if (mtUserDelete.UserPassword.Visible) { // mtUserDelete.UserPassword.Visible (begin)
+        <td @Html.Raw(mtUserDelete.UserPassword.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtUserDelete.UserPassword.ViewAttributes)>
+@Html.Raw(mtUserDelete.UserPassword.GetViewValue())</span>
+</span></td>
+} @* mtUserDelete.UserPassword.Visible (end) *@
+@if (mtUserDelete._UserLevel.Visible) { // mtUserDelete._UserLevel.Visible (begin)
+        <td @Html.Raw(mtUserDelete._UserLevel.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtUserDelete._UserLevel.ViewAttributes)>
+@Html.Raw(mtUserDelete._UserLevel.GetViewValue())</span>
+</span></td>
+} @* mtUserDelete._UserLevel.Visible (end) *@
+@if (mtUserDelete.UserEmail.Visible) { // mtUserDelete.UserEmail.Visible (begin)
+        <td @Html.Raw(mtUserDelete.UserEmail.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtUserDelete.UserEmail.ViewAttributes)>
+@Html.Raw(mtUserDelete.UserEmail.GetViewValue())</span>
+</span></td>
+} @* mtUserDelete.UserEmail.Visible (end) *@
+@if (mtUserDelete.Full_Name.Visible) { // mtUserDelete.Full_Name.Visible (begin)
+        <td @Html.Raw(mtUserDelete.Full_Name.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtUserDelete.Full_Name.ViewAttributes)>
+@Html.Raw(mtUserDelete.Full_Name.GetViewValue())</span>
+</span></td>
+} @* mtUserDelete.Full_Name.Visible (end) *@
+@if (mtUserDelete.Position.Visible) { // mtUserDelete.Position.Visible (begin)
+        <td @Html.Raw(mtUserDelete.Position.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtUserDelete.Position.ViewAttributes)>
+@Html.Raw(mtUserDelete.Position.GetViewValue())</span>
+</span></td>
+} @* mtUserDelete.Position.Visible (end) *@
+@if (mtUserDelete.Department.Visible) { // mtUserDelete.Department.Visible (begin)
+        <td @Html.Raw(mtUserDelete.Department.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtUserDelete.Department.ViewAttributes)>
+@Html.Raw(mtUserDelete.Department.GetViewValue())</span>
+</span></td>
+} @* mtUserDelete.Department.Visible (end) *@
+@if (mtUserDelete.Division.Visible) { // mtUserDelete.Division.Visible (begin)
+        <td @Html.Raw(mtUserDelete.Division.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtUserDelete.Division.ViewAttributes)>
+@Html.Raw(mtUserDelete.Division.GetViewValue())</span>
+</span></td>
+} @* mtUserDelete.Division.Visible (end) *@
+@if (mtUserDelete.Area.Visible) { // mtUserDelete.Area.Visible (begin)
+        <td @Html.Raw(mtUserDelete.Area.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtUserDelete.Area.ViewAttributes)>
+@Html.Raw(mtUserDelete.Area.GetViewValue())</span>
+</span></td>
+} @* mtUserDelete.Area.Visible (end) *@
+@if (mtUserDelete.ETL_Date.Visible) { // mtUserDelete.ETL_Date.Visible (begin)
+        <td @Html.Raw(mtUserDelete.ETL_Date.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtUserDelete.ETL_Date.ViewAttributes)>
+@Html.Raw(mtUserDelete.ETL_Date.GetViewValue())</span>
+</span></td>
+} @* mtUserDelete.ETL_Date.Visible (end) *@
+    </tr>
+}
+@{ mtUserDelete.CloseRecordset(); }
+</tbody>
+</table>
+</div>
+</div>
+<div class="ew-buttons ew-desktop-buttons">
+<button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit">@Html.Raw(Language.Phrase("DeleteBtn"))</button>
+<button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-href="@AppPath(mtUserDelete.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+</div>
+</form>
+@mtUserDelete.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

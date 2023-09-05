@@ -1,0 +1,360 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (mtUserList.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!mtUserList.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!mtUserList.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtUserList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_user: currentTable } });
+var currentPageID = ew.PAGE_ID = "list";
+var currentForm;
+var @(mtUserList.FormName);
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("@(mtUserList.FormName)")
+        .setPageId("list")
+        .setSubmitWithFetch(@(mtUserList.UseAjaxActions ? "true" : "false"))
+        .setFormKeyCountName("@(mtUserList.FormKeyCountName)")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+ew.PREVIEW_SELECTOR = ".ew-preview-btn";
+ew.PREVIEW_MODAL_CLASS = "modal modal-fullscreen-sm-down";
+ew.PREVIEW_ROW = true;
+ew.PREVIEW_SINGLE_ROW = false;
+ew.PREVIEW || ew.ready("head", ew.PATH_BASE + "js/preview.min.js?v=20.6.0", "preview");
+</script>
+<script>
+window.Tabulator || loadjs([
+    ew.PATH_BASE + "js/tabulator.min.js?v=20.6.3",
+    ew.PATH_BASE + "css/@CssFile("tabulator_bootstrap5.css", false)?v=20.6.3"
+], "import");
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!mtUserList.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+@if (mtUserList.TotalRecords > 0 && mtUserList.ExportOptions.Visible) {
+    mtUserList.ExportOptions.Render("body");
+}
+@if (mtUserList.ImportOptions.Visible) {
+    mtUserList.ImportOptions.Render("body");
+}
+@if (mtUserList.SearchOptions.Visible) {
+    mtUserList.SearchOptions.Render("body");
+}
+@if (mtUserList.FilterOptions.Visible) {
+    mtUserList.FilterOptions.Render("body");
+}
+</div>
+}
+@if (!mtUserList.IsModal) {
+<form name="fmt_usersrch" id="fmt_usersrch" class="ew-form ew-ext-search-form" action="@AppPath(CurrentPageName())" novalidate autocomplete="off">
+<div id="fmt_usersrch_search_panel" class="mb-2 mb-sm-0 @(mtUserList.SearchPanelClass)"><!-- .ew-search-panel -->
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtUserList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_user: currentTable } });
+var currentForm;
+var fmt_usersrch, currentSearchForm, currentAdvancedSearchForm;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery,
+        fields = currentTable.fields;
+
+    // Form object for search
+    let form = new ew.FormBuilder()
+        .setId("fmt_usersrch")
+        .setPageId("list")
+@if (mtUserList.UseAjaxActions) {
+        <text>.setSubmitWithFetch(true)</text>
+}
+
+        // Dynamic selection lists
+        .setLists({
+        })
+
+        // Filters
+        .setFilterList(@Html.Raw(await mtUserList.GetFilterList()))
+        .build();
+    window[form.id] = form;
+    currentSearchForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<input type="hidden" name="cmd" value="search">
+@if (Security.CanSearch) {
+if (!mtUserList.IsExport() && Empty(mtUserList.CurrentAction) && mtUserList.HasSearchFields()) { @* Show search form (begin) *@
+<div class="ew-extended-search container-fluid ps-2">
+<div class="row mb-0">
+    <div class="col-sm-auto px-0 pe-sm-2">
+        <div class="ew-basic-search input-group">
+            <input type="search" name="@(Config.TableBasicSearch)" id="@(Config.TableBasicSearch)" class="form-control ew-basic-search-keyword" value="@Html.Raw(HtmlEncode(mtUserList.BasicSearch.SessionKeyword))" placeholder="@(HtmlEncode(Language.Phrase("Search")))" aria-label="@(HtmlEncode(Language.Phrase("Search")))">
+            <input type="hidden" name="@(Config.TableBasicSearchType)" id="@(Config.TableBasicSearchType)" class="ew-basic-search-type" value="@(HtmlEncode(mtUserList.BasicSearch.SessionType))">
+            <button type="button" data-bs-toggle="dropdown" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" aria-haspopup="true" aria-expanded="false">
+                <span id="searchtype">@Html.Raw(mtUserList.BasicSearch.TypeNameShort)</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end">
+                <button type="button" class="dropdown-item@(mtUserList.BasicSearch.SessionType == "" ? " active" : "")" form="fmt_usersrch" data-ew-action="search-type">@Html.Raw(Language.Phrase("QuickSearchAuto"))</button>
+                <button type="button" class="dropdown-item@(mtUserList.BasicSearch.SessionType == "=" ? " active" : "")" form="fmt_usersrch" data-ew-action="search-type" data-search-type="=">@Html.Raw(Language.Phrase("QuickSearchExact"))</button>
+                <button type="button" class="dropdown-item@(mtUserList.BasicSearch.SessionType == "AND" ? " active" : "")" form="fmt_usersrch" data-ew-action="search-type" data-search-type="AND">@Html.Raw(Language.Phrase("QuickSearchAll"))</button>
+                <button type="button" class="dropdown-item@(mtUserList.BasicSearch.SessionType == "OR" ? " active" : "")" form="fmt_usersrch" data-ew-action="search-type" data-search-type="OR">@Html.Raw(Language.Phrase("QuickSearchAny"))</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-auto mb-3">
+        <button class="btn btn-primary" name="btn-submit" id="btn-submit" type="submit">@Html.Raw(Language.Phrase("SearchBtn"))</button>
+    </div>
+</div>
+</div><!-- /.ew-extended-search -->
+} @* Show search form (end) *@
+}
+</div><!-- /.ew-search-panel -->
+</form>
+}
+@mtUserList.ShowPageHeader()
+@mtUserList.ShowMessages()
+<main class="list @(mtUserList.TotalRecords == 0 && !mtUserList.IsAdd ? " ew-no-record" : "")">
+<div id="ew-list">
+@if (mtUserList.TotalRecords > 0 || !Empty(mtUserList.CurrentAction)) {
+<div class="card ew-card ew-grid@(mtUserList.IsAddOrEdit ? " ew-grid-add-edit" : "") @(mtUserList.TableGridClass)">
+<form name="@(mtUserList.FormName)" id="@(mtUserList.FormName)" class="ew-form ew-list-form" action="@AppPath(mtUserList.PageName)" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+@if (mtUserList.IsModal) {
+<input type="hidden" name="modal" value="1">
+}
+<div id="gmp_mt_user" class="card-body ew-grid-middle-panel @(mtUserList.TableContainerClass)" style="@(mtUserList.TableContainerStyle)">
+@if (mtUserList.TotalRecords > 0 || mtUserList.IsGridEdit || mtUserList.IsMultiEdit) {
+<table id="tbl_mt_userlist" class="@(mtUserList.TableClass)"><!-- .ew-table -->
+<thead>
+    <tr class="ew-table-header">
+@{
+    // Header row
+    mtUserList.RowType = RowType.Header;
+
+    // Render list options
+    await mtUserList.RenderListOptions();
+}
+@* Render list options (header, left) *@
+@mtUserList.ListOptions.RenderHeader("left")
+@if (mtUserList._UserName.Visible) { // mtUserList._UserName.Visible (begin)
+        <th data-name="_UserName" class="@(mtUserList._UserName.HeaderCellClass)"><div id="elh_mt_user__UserName" class="mt_user__UserName">@Html.Raw(mtUserList.RenderFieldHeader(mtUserList._UserName))</div></th>
+} @* mtUserList._UserName.Visible (end) *@
+@if (mtUserList.UserPassword.Visible) { // mtUserList.UserPassword.Visible (begin)
+        <th data-name="UserPassword" class="@(mtUserList.UserPassword.HeaderCellClass)"><div id="elh_mt_user_UserPassword" class="mt_user_UserPassword">@Html.Raw(mtUserList.RenderFieldHeader(mtUserList.UserPassword))</div></th>
+} @* mtUserList.UserPassword.Visible (end) *@
+@if (mtUserList._UserLevel.Visible) { // mtUserList._UserLevel.Visible (begin)
+        <th data-name="_UserLevel" class="@(mtUserList._UserLevel.HeaderCellClass)"><div id="elh_mt_user__UserLevel" class="mt_user__UserLevel">@Html.Raw(mtUserList.RenderFieldHeader(mtUserList._UserLevel))</div></th>
+} @* mtUserList._UserLevel.Visible (end) *@
+@if (mtUserList.UserEmail.Visible) { // mtUserList.UserEmail.Visible (begin)
+        <th data-name="UserEmail" class="@(mtUserList.UserEmail.HeaderCellClass)"><div id="elh_mt_user_UserEmail" class="mt_user_UserEmail">@Html.Raw(mtUserList.RenderFieldHeader(mtUserList.UserEmail))</div></th>
+} @* mtUserList.UserEmail.Visible (end) *@
+@if (mtUserList.Full_Name.Visible) { // mtUserList.Full_Name.Visible (begin)
+        <th data-name="Full_Name" class="@(mtUserList.Full_Name.HeaderCellClass)"><div id="elh_mt_user_Full_Name" class="mt_user_Full_Name">@Html.Raw(mtUserList.RenderFieldHeader(mtUserList.Full_Name))</div></th>
+} @* mtUserList.Full_Name.Visible (end) *@
+@if (mtUserList.Position.Visible) { // mtUserList.Position.Visible (begin)
+        <th data-name="Position" class="@(mtUserList.Position.HeaderCellClass)"><div id="elh_mt_user_Position" class="mt_user_Position">@Html.Raw(mtUserList.RenderFieldHeader(mtUserList.Position))</div></th>
+} @* mtUserList.Position.Visible (end) *@
+@if (mtUserList.Department.Visible) { // mtUserList.Department.Visible (begin)
+        <th data-name="Department" class="@(mtUserList.Department.HeaderCellClass)"><div id="elh_mt_user_Department" class="mt_user_Department">@Html.Raw(mtUserList.RenderFieldHeader(mtUserList.Department))</div></th>
+} @* mtUserList.Department.Visible (end) *@
+@if (mtUserList.Division.Visible) { // mtUserList.Division.Visible (begin)
+        <th data-name="Division" class="@(mtUserList.Division.HeaderCellClass)"><div id="elh_mt_user_Division" class="mt_user_Division">@Html.Raw(mtUserList.RenderFieldHeader(mtUserList.Division))</div></th>
+} @* mtUserList.Division.Visible (end) *@
+@if (mtUserList.Area.Visible) { // mtUserList.Area.Visible (begin)
+        <th data-name="Area" class="@(mtUserList.Area.HeaderCellClass)"><div id="elh_mt_user_Area" class="mt_user_Area">@Html.Raw(mtUserList.RenderFieldHeader(mtUserList.Area))</div></th>
+} @* mtUserList.Area.Visible (end) *@
+@if (mtUserList.ETL_Date.Visible) { // mtUserList.ETL_Date.Visible (begin)
+        <th data-name="ETL_Date" class="@(mtUserList.ETL_Date.HeaderCellClass)"><div id="elh_mt_user_ETL_Date" class="mt_user_ETL_Date">@Html.Raw(mtUserList.RenderFieldHeader(mtUserList.ETL_Date))</div></th>
+} @* mtUserList.ETL_Date.Visible (end) *@
+@* Render list options (header, right) *@
+@mtUserList.ListOptions.RenderHeader("right")
+    </tr>
+</thead>
+<tbody data-page="@(mtUserList.PageNumber)">
+@{
+    await mtUserList.SetupGrid();
+    bool eof = mtUserList.Recordset == null; // DN
+}
+@while (mtUserList.RecordCount < mtUserList.StopRecord || SameString(mtUserList.RowIndex, "$rowindex$")) { // Begin While
+    if (!eof && !SameString(mtUserList.RowIndex, "$rowindex$") &&
+        (!mtUserList.IsGridAdd || mtUserList.CurrentMode == "copy") &&
+        (!((mtUserList.IsCopy || mtUserList.IsAdd) && mtUserList.RowIndex is int rowIndex && rowIndex == 0))) // DN
+        eof = !await mtUserList.Recordset.ReadAsync();
+    mtUserList.RecordCount++;
+    if (mtUserList.RecordCount >= mtUserList.StartRecord) {
+        await mtUserList.SetupRow();
+    <tr @Html.Raw(mtUserList.RowAttributes)>
+    @* Render list options (body, left) *@
+    @mtUserList.ListOptions.RenderBody("left", mtUserList.RowCount)
+    @if (mtUserList._UserName.Visible) { // mtUserList._UserName.Visible (begin)
+        <td data-name="_UserName" @Html.Raw(mtUserList._UserName.CellAttributes)>
+<span id="el@(mtUserList.RowIndex == "$rowindex$" ? "$rowindex$" : mtUserList.RowCount)_mt_user__UserName" class="el_mt_user__UserName">
+<span @Html.Raw(mtUserList._UserName.ViewAttributes)>
+@Html.Raw(mtUserList._UserName.GetViewValue())</span>
+</span>
+</td>
+    } @* mtUserList._UserName.Visible (end) *@
+    @if (mtUserList.UserPassword.Visible) { // mtUserList.UserPassword.Visible (begin)
+        <td data-name="UserPassword" @Html.Raw(mtUserList.UserPassword.CellAttributes)>
+<span id="el@(mtUserList.RowIndex == "$rowindex$" ? "$rowindex$" : mtUserList.RowCount)_mt_user_UserPassword" class="el_mt_user_UserPassword">
+<span @Html.Raw(mtUserList.UserPassword.ViewAttributes)>
+@Html.Raw(mtUserList.UserPassword.GetViewValue())</span>
+</span>
+</td>
+    } @* mtUserList.UserPassword.Visible (end) *@
+    @if (mtUserList._UserLevel.Visible) { // mtUserList._UserLevel.Visible (begin)
+        <td data-name="_UserLevel" @Html.Raw(mtUserList._UserLevel.CellAttributes)>
+<span id="el@(mtUserList.RowIndex == "$rowindex$" ? "$rowindex$" : mtUserList.RowCount)_mt_user__UserLevel" class="el_mt_user__UserLevel">
+<span @Html.Raw(mtUserList._UserLevel.ViewAttributes)>
+@Html.Raw(mtUserList._UserLevel.GetViewValue())</span>
+</span>
+</td>
+    } @* mtUserList._UserLevel.Visible (end) *@
+    @if (mtUserList.UserEmail.Visible) { // mtUserList.UserEmail.Visible (begin)
+        <td data-name="UserEmail" @Html.Raw(mtUserList.UserEmail.CellAttributes)>
+<span id="el@(mtUserList.RowIndex == "$rowindex$" ? "$rowindex$" : mtUserList.RowCount)_mt_user_UserEmail" class="el_mt_user_UserEmail">
+<span @Html.Raw(mtUserList.UserEmail.ViewAttributes)>
+@Html.Raw(mtUserList.UserEmail.GetViewValue())</span>
+</span>
+</td>
+    } @* mtUserList.UserEmail.Visible (end) *@
+    @if (mtUserList.Full_Name.Visible) { // mtUserList.Full_Name.Visible (begin)
+        <td data-name="Full_Name" @Html.Raw(mtUserList.Full_Name.CellAttributes)>
+<span id="el@(mtUserList.RowIndex == "$rowindex$" ? "$rowindex$" : mtUserList.RowCount)_mt_user_Full_Name" class="el_mt_user_Full_Name">
+<span @Html.Raw(mtUserList.Full_Name.ViewAttributes)>
+@Html.Raw(mtUserList.Full_Name.GetViewValue())</span>
+</span>
+</td>
+    } @* mtUserList.Full_Name.Visible (end) *@
+    @if (mtUserList.Position.Visible) { // mtUserList.Position.Visible (begin)
+        <td data-name="Position" @Html.Raw(mtUserList.Position.CellAttributes)>
+<span id="el@(mtUserList.RowIndex == "$rowindex$" ? "$rowindex$" : mtUserList.RowCount)_mt_user_Position" class="el_mt_user_Position">
+<span @Html.Raw(mtUserList.Position.ViewAttributes)>
+@Html.Raw(mtUserList.Position.GetViewValue())</span>
+</span>
+</td>
+    } @* mtUserList.Position.Visible (end) *@
+    @if (mtUserList.Department.Visible) { // mtUserList.Department.Visible (begin)
+        <td data-name="Department" @Html.Raw(mtUserList.Department.CellAttributes)>
+<span id="el@(mtUserList.RowIndex == "$rowindex$" ? "$rowindex$" : mtUserList.RowCount)_mt_user_Department" class="el_mt_user_Department">
+<span @Html.Raw(mtUserList.Department.ViewAttributes)>
+@Html.Raw(mtUserList.Department.GetViewValue())</span>
+</span>
+</td>
+    } @* mtUserList.Department.Visible (end) *@
+    @if (mtUserList.Division.Visible) { // mtUserList.Division.Visible (begin)
+        <td data-name="Division" @Html.Raw(mtUserList.Division.CellAttributes)>
+<span id="el@(mtUserList.RowIndex == "$rowindex$" ? "$rowindex$" : mtUserList.RowCount)_mt_user_Division" class="el_mt_user_Division">
+<span @Html.Raw(mtUserList.Division.ViewAttributes)>
+@Html.Raw(mtUserList.Division.GetViewValue())</span>
+</span>
+</td>
+    } @* mtUserList.Division.Visible (end) *@
+    @if (mtUserList.Area.Visible) { // mtUserList.Area.Visible (begin)
+        <td data-name="Area" @Html.Raw(mtUserList.Area.CellAttributes)>
+<span id="el@(mtUserList.RowIndex == "$rowindex$" ? "$rowindex$" : mtUserList.RowCount)_mt_user_Area" class="el_mt_user_Area">
+<span @Html.Raw(mtUserList.Area.ViewAttributes)>
+@Html.Raw(mtUserList.Area.GetViewValue())</span>
+</span>
+</td>
+    } @* mtUserList.Area.Visible (end) *@
+    @if (mtUserList.ETL_Date.Visible) { // mtUserList.ETL_Date.Visible (begin)
+        <td data-name="ETL_Date" @Html.Raw(mtUserList.ETL_Date.CellAttributes)>
+<span id="el@(mtUserList.RowIndex == "$rowindex$" ? "$rowindex$" : mtUserList.RowCount)_mt_user_ETL_Date" class="el_mt_user_ETL_Date">
+<span @Html.Raw(mtUserList.ETL_Date.ViewAttributes)>
+@Html.Raw(mtUserList.ETL_Date.GetViewValue())</span>
+</span>
+</td>
+    } @* mtUserList.ETL_Date.Visible (end) *@
+    @* Render list options (body, right) *@
+    @mtUserList.ListOptions.RenderBody("right", mtUserList.RowCount)
+    </tr>
+    } @* End if *@
+
+    // Reset for template row
+    if (SameString(mtUserList.RowIndex, "$rowindex$"))
+        mtUserList.RowIndex = 0;
+
+    // Reset inline add/copy row
+    if ((mtUserList.IsCopy || mtUserList.IsAdd) && mtUserList.RowIndex is int rowIndex2 && rowIndex2 == 0)
+        mtUserList.RowIndex = 1;
+} @* End While *@
+</tbody>
+</table><!-- /.ew-table -->
+} @* End If TotalRecords > 0 *@
+</div><!-- /.ew-grid-middle-panel -->
+@if (Empty(mtUserList.CurrentAction) && !mtUserList.UseAjaxActions) {
+<input type="hidden" name="action" id="action" value="">
+}
+</form><!-- /.ew-list-form -->
+@{ mtUserList.CloseRecordset(); }
+@if (!mtUserList.IsExport()) {
+<div class="card-footer ew-grid-lower-panel">
+@if (!mtUserList.IsGridAdd && !(mtUserList.IsGridEdit && mtUserList.ModalGridEdit) && !mtUserList.IsMultiEdit) {
+@Html.Raw(mtUserList.Pager.Render())
+}
+<div class="ew-list-other-options">
+@mtUserList.OtherOptions.RenderBody("bottom")
+</div>
+</div>
+}
+</div><!-- /.ew-grid -->
+} else { // Show other options
+<div class="ew-list-other-options">
+@mtUserList.OtherOptions.ForEach(opt => opt.ButtonClass = "").RenderBody()
+</div>
+}
+</div>
+</main>
+@mtUserList.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!mtUserList.IsExport()) {
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("mt_user");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

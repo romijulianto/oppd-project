@@ -1,0 +1,11 @@
+{
+    "name": "override-ps",
+    "version": "20.6.1",
+    "description": "override ps",
+    "license": "SEE LICENSE IN LICENSE.md",
+    "private": true,
+    "dependencies": {},
+    "engines": {
+        "node": ">=16"
+    }
+}

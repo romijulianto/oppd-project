@@ -1,0 +1,358 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (trRequestDetailAdd.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!trRequestDetailAdd.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(trRequestDetailAdd.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { tr_request_detail: currentTable } });
+var currentPageID = ew.PAGE_ID = "add";
+var currentForm;
+var ftr_request_detailadd;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("ftr_request_detailadd")
+        .setPageId("add")
+
+        // Add fields
+        .setFields([
+
+            ["id", [fields.id.visible && fields.id.required ? ew.Validators.required(fields.id.caption) : null], fields.id.isInvalid],
+            ["request_id", [fields.request_id.visible && fields.request_id.required ? ew.Validators.fileRequired(fields.request_id.caption) : null], fields.request_id.isInvalid],
+            ["Item_No", [fields.Item_No.visible && fields.Item_No.required ? ew.Validators.required(fields.Item_No.caption) : null], fields.Item_No.isInvalid],
+            ["Part_No", [fields.Part_No.visible && fields.Part_No.required ? ew.Validators.required(fields.Part_No.caption) : null], fields.Part_No.isInvalid],
+            ["Part_Description", [fields.Part_Description.visible && fields.Part_Description.required ? ew.Validators.required(fields.Part_Description.caption) : null], fields.Part_Description.isInvalid],
+            ["Qty", [fields.Qty.visible && fields.Qty.required ? ew.Validators.required(fields.Qty.caption) : null, ew.Validators.integer], fields.Qty.isInvalid],
+            ["SAP_Unit_Price", [fields.SAP_Unit_Price.visible && fields.SAP_Unit_Price.required ? ew.Validators.required(fields.SAP_Unit_Price.caption) : null, ew.Validators.float], fields.SAP_Unit_Price.isInvalid],
+            ["Extd_SAP_Price", [fields.Extd_SAP_Price.visible && fields.Extd_SAP_Price.required ? ew.Validators.required(fields.Extd_SAP_Price.caption) : null, ew.Validators.float], fields.Extd_SAP_Price.isInvalid],
+            ["GP_SAP_Price", [fields.GP_SAP_Price.visible && fields.GP_SAP_Price.required ? ew.Validators.required(fields.GP_SAP_Price.caption) : null, ew.Validators.float], fields.GP_SAP_Price.isInvalid],
+            ["Override_Unit_Price", [fields.Override_Unit_Price.visible && fields.Override_Unit_Price.required ? ew.Validators.required(fields.Override_Unit_Price.caption) : null, ew.Validators.float], fields.Override_Unit_Price.isInvalid],
+            ["Extd_Override_Price", [fields.Extd_Override_Price.visible && fields.Extd_Override_Price.required ? ew.Validators.required(fields.Extd_Override_Price.caption) : null, ew.Validators.float], fields.Extd_Override_Price.isInvalid],
+            ["GP_Override_Price", [fields.GP_Override_Price.visible && fields.GP_Override_Price.required ? ew.Validators.required(fields.GP_Override_Price.caption) : null, ew.Validators.float], fields.GP_Override_Price.isInvalid],
+            ["Override_Core", [fields.Override_Core.visible && fields.Override_Core.required ? ew.Validators.required(fields.Override_Core.caption) : null, ew.Validators.float], fields.Override_Core.isInvalid],
+            ["Override_Percent", [fields.Override_Percent.visible && fields.Override_Percent.required ? ew.Validators.required(fields.Override_Percent.caption) : null, ew.Validators.float], fields.Override_Percent.isInvalid],
+            ["Core_Life_Ind", [fields.Core_Life_Ind.visible && fields.Core_Life_Ind.required ? ew.Validators.required(fields.Core_Life_Ind.caption) : null, ew.Validators.float], fields.Core_Life_Ind.isInvalid],
+            ["Notes", [fields.Notes.visible && fields.Notes.required ? ew.Validators.required(fields.Notes.caption) : null], fields.Notes.isInvalid]
+        ])
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+        })
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@trRequestDetailAdd.ShowPageHeader()
+@trRequestDetailAdd.ShowMessages()
+<form name="ftr_request_detailadd" id="ftr_request_detailadd" class="@(trRequestDetailAdd.FormClassName)" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="insert">
+<input type="hidden" name="modal" value="@ConvertToInt(trRequestDetailAdd.IsModal)">
+@if (IsJsonResponse()) {
+<input type="hidden" name="json" value="1">
+}
+<input type="hidden" name="@(trRequestDetailAdd.OldKeyName)" value="@Html.Raw(trRequestDetailAdd.OldKey)">
+@if (trRequestDetailAdd.CurrentMasterTable == "v_tr_request") {
+<input type="hidden" name="@Config.TableShowMaster" value="v_tr_request">
+<input type="hidden" name="fk_id" value="@(HtmlEncode(trRequestDetailAdd.request_id.SessionValue))">
+}
+@if (trRequestDetailAdd.CurrentMasterTable == "tr_request") {
+<input type="hidden" name="@Config.TableShowMaster" value="tr_request">
+<input type="hidden" name="fk_id" value="@(HtmlEncode(trRequestDetailAdd.request_id.SessionValue))">
+}
+<div class="ew-add-div"><!-- page* -->
+@if (trRequestDetailAdd.id.Visible) { // trRequestDetailAdd.id.Visible (begin)
+    <div id="r_id" @Html.Raw(trRequestDetailAdd.id.RowAttributes)>
+        <label id="elh_tr_request_detail_id" class="@(trRequestDetailAdd.LeftColumnClass)">@Html.Raw(trRequestDetailAdd.id.Caption)@Html.Raw(trRequestDetailAdd.id.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestDetailAdd.RightColumnClass)"><div @Html.Raw(trRequestDetailAdd.id.CellAttributes)>
+<span id="el_tr_request_detail_id">
+<input type="@(trRequestDetailAdd.id.InputTextType)" name="x_id" id="x_id" data-table="tr_request_detail" data-field="x_id" value="@Html.Raw(trRequestDetailAdd.id.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailAdd.id.PlaceHolder))" data-format-pattern="@(trRequestDetailAdd.id.FormatPattern)"@Html.Raw(trRequestDetailAdd.id.EditAttributes) aria-describedby="x_id_help">
+@Html.Raw(trRequestDetailAdd.id.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestDetailAdd.id.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestDetailAdd.id.Visible (end) *@
+@if (trRequestDetailAdd.request_id.Visible) { // trRequestDetailAdd.request_id.Visible (begin)
+    <div id="r_request_id" @Html.Raw(trRequestDetailAdd.request_id.RowAttributes)>
+        <label id="elh_tr_request_detail_request_id" class="@(trRequestDetailAdd.LeftColumnClass)">@Html.Raw(trRequestDetailAdd.request_id.Caption)@Html.Raw(trRequestDetailAdd.request_id.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestDetailAdd.RightColumnClass)"><div @Html.Raw(trRequestDetailAdd.request_id.CellAttributes)>
+@if (!Empty(trRequestDetailAdd.request_id.SessionValue)) {
+<span @Html.Raw(trRequestDetailAdd.request_id.ViewAttributes)>
+@Html.Raw(await GetFileViewTag((DbField)trRequestDetailAdd.request_id, ConvertToString(trRequestDetailAdd.request_id.ViewValue), false))
+</span>
+<input type="hidden" id="x_request_id" name="x_request_id" value="@(HtmlEncode(trRequestDetailAdd.request_id.CurrentValue))" data-hidden="1">
+} else {
+<span id="el_tr_request_detail_request_id">
+<div id="fd_x_request_id" class="fileinput-button ew-file-drop-zone">
+    <input
+        type="file"
+        id="x_request_id"
+        name="x_request_id"
+        class="form-control ew-file-input"
+        title="@(trRequestDetailAdd.request_id.Title)"
+        lang="@(CurrentLanguageID)"
+        data-table="tr_request_detail"
+        data-field="x_request_id"
+        data-size="255"
+        data-accept-file-types="@(trRequestDetailAdd.request_id.AcceptFileTypes)"
+        data-max-file-size="@(trRequestDetailAdd.request_id.UploadMaxFileSize)"
+        data-max-number-of-files="null"
+        data-disable-image-crop="@(trRequestDetailAdd.request_id.ImageCropper ? 0 : 1)"
+        aria-describedby="x_request_id_help"
+        @Html.Raw((trRequestDetailAdd.request_id.ReadOnly || trRequestDetailAdd.request_id.Disabled) ? " disabled" : "")
+        @Html.Raw(trRequestDetailAdd.request_id.EditAttributes)
+    >
+    <div class="text-muted ew-file-text">@Html.Raw(Language.Phrase("ChooseFile"))</div>
+</div>
+@Html.Raw(trRequestDetailAdd.request_id.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestDetailAdd.request_id.GetErrorMessage())</div>
+<input type="hidden" name="fn_x_request_id" id= "fn_x_request_id" value="@(trRequestDetailAdd.request_id.Upload.FileName)">
+<input type="hidden" name="fa_x_request_id" id= "fa_x_request_id" value="0">
+<table id="ft_x_request_id" class="table table-sm float-start ew-upload-table"><tbody class="files"></tbody></table>
+</span>
+}
+</div></div>
+    </div>
+} @* trRequestDetailAdd.request_id.Visible (end) *@
+@if (trRequestDetailAdd.Item_No.Visible) { // trRequestDetailAdd.Item_No.Visible (begin)
+    <div id="r_Item_No" @Html.Raw(trRequestDetailAdd.Item_No.RowAttributes)>
+        <label id="elh_tr_request_detail_Item_No" for="x_Item_No" class="@(trRequestDetailAdd.LeftColumnClass)">@Html.Raw(trRequestDetailAdd.Item_No.Caption)@Html.Raw(trRequestDetailAdd.Item_No.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestDetailAdd.RightColumnClass)"><div @Html.Raw(trRequestDetailAdd.Item_No.CellAttributes)>
+<span id="el_tr_request_detail_Item_No">
+<input type="@(trRequestDetailAdd.Item_No.InputTextType)" name="x_Item_No" id="x_Item_No" data-table="tr_request_detail" data-field="x_Item_No" value="@Html.Raw(trRequestDetailAdd.Item_No.EditValue)" size="30" maxlength="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailAdd.Item_No.PlaceHolder))" data-format-pattern="@(trRequestDetailAdd.Item_No.FormatPattern)"@Html.Raw(trRequestDetailAdd.Item_No.EditAttributes) aria-describedby="x_Item_No_help">
+@Html.Raw(trRequestDetailAdd.Item_No.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestDetailAdd.Item_No.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestDetailAdd.Item_No.Visible (end) *@
+@if (trRequestDetailAdd.Part_No.Visible) { // trRequestDetailAdd.Part_No.Visible (begin)
+    <div id="r_Part_No" @Html.Raw(trRequestDetailAdd.Part_No.RowAttributes)>
+        <label id="elh_tr_request_detail_Part_No" for="x_Part_No" class="@(trRequestDetailAdd.LeftColumnClass)">@Html.Raw(trRequestDetailAdd.Part_No.Caption)@Html.Raw(trRequestDetailAdd.Part_No.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestDetailAdd.RightColumnClass)"><div @Html.Raw(trRequestDetailAdd.Part_No.CellAttributes)>
+<span id="el_tr_request_detail_Part_No">
+<input type="@(trRequestDetailAdd.Part_No.InputTextType)" name="x_Part_No" id="x_Part_No" data-table="tr_request_detail" data-field="x_Part_No" value="@Html.Raw(trRequestDetailAdd.Part_No.EditValue)" size="30" maxlength="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailAdd.Part_No.PlaceHolder))" data-format-pattern="@(trRequestDetailAdd.Part_No.FormatPattern)"@Html.Raw(trRequestDetailAdd.Part_No.EditAttributes) aria-describedby="x_Part_No_help">
+@Html.Raw(trRequestDetailAdd.Part_No.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestDetailAdd.Part_No.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestDetailAdd.Part_No.Visible (end) *@
+@if (trRequestDetailAdd.Part_Description.Visible) { // trRequestDetailAdd.Part_Description.Visible (begin)
+    <div id="r_Part_Description" @Html.Raw(trRequestDetailAdd.Part_Description.RowAttributes)>
+        <label id="elh_tr_request_detail_Part_Description" for="x_Part_Description" class="@(trRequestDetailAdd.LeftColumnClass)">@Html.Raw(trRequestDetailAdd.Part_Description.Caption)@Html.Raw(trRequestDetailAdd.Part_Description.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestDetailAdd.RightColumnClass)"><div @Html.Raw(trRequestDetailAdd.Part_Description.CellAttributes)>
+<span id="el_tr_request_detail_Part_Description">
+<input type="@(trRequestDetailAdd.Part_Description.InputTextType)" name="x_Part_Description" id="x_Part_Description" data-table="tr_request_detail" data-field="x_Part_Description" value="@Html.Raw(trRequestDetailAdd.Part_Description.EditValue)" size="30" maxlength="200" placeholder="@Html.Raw(HtmlEncode(trRequestDetailAdd.Part_Description.PlaceHolder))" data-format-pattern="@(trRequestDetailAdd.Part_Description.FormatPattern)"@Html.Raw(trRequestDetailAdd.Part_Description.EditAttributes) aria-describedby="x_Part_Description_help">
+@Html.Raw(trRequestDetailAdd.Part_Description.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestDetailAdd.Part_Description.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestDetailAdd.Part_Description.Visible (end) *@
+@if (trRequestDetailAdd.Qty.Visible) { // trRequestDetailAdd.Qty.Visible (begin)
+    <div id="r_Qty" @Html.Raw(trRequestDetailAdd.Qty.RowAttributes)>
+        <label id="elh_tr_request_detail_Qty" for="x_Qty" class="@(trRequestDetailAdd.LeftColumnClass)">@Html.Raw(trRequestDetailAdd.Qty.Caption)@Html.Raw(trRequestDetailAdd.Qty.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestDetailAdd.RightColumnClass)"><div @Html.Raw(trRequestDetailAdd.Qty.CellAttributes)>
+<span id="el_tr_request_detail_Qty">
+<input type="@(trRequestDetailAdd.Qty.InputTextType)" name="x_Qty" id="x_Qty" data-table="tr_request_detail" data-field="x_Qty" value="@Html.Raw(trRequestDetailAdd.Qty.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailAdd.Qty.PlaceHolder))" data-format-pattern="@(trRequestDetailAdd.Qty.FormatPattern)"@Html.Raw(trRequestDetailAdd.Qty.EditAttributes) aria-describedby="x_Qty_help">
+@Html.Raw(trRequestDetailAdd.Qty.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestDetailAdd.Qty.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestDetailAdd.Qty.Visible (end) *@
+@if (trRequestDetailAdd.SAP_Unit_Price.Visible) { // trRequestDetailAdd.SAP_Unit_Price.Visible (begin)
+    <div id="r_SAP_Unit_Price" @Html.Raw(trRequestDetailAdd.SAP_Unit_Price.RowAttributes)>
+        <label id="elh_tr_request_detail_SAP_Unit_Price" for="x_SAP_Unit_Price" class="@(trRequestDetailAdd.LeftColumnClass)">@Html.Raw(trRequestDetailAdd.SAP_Unit_Price.Caption)@Html.Raw(trRequestDetailAdd.SAP_Unit_Price.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestDetailAdd.RightColumnClass)"><div @Html.Raw(trRequestDetailAdd.SAP_Unit_Price.CellAttributes)>
+<span id="el_tr_request_detail_SAP_Unit_Price">
+<input type="@(trRequestDetailAdd.SAP_Unit_Price.InputTextType)" name="x_SAP_Unit_Price" id="x_SAP_Unit_Price" data-table="tr_request_detail" data-field="x_SAP_Unit_Price" value="@Html.Raw(trRequestDetailAdd.SAP_Unit_Price.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailAdd.SAP_Unit_Price.PlaceHolder))" data-format-pattern="@(trRequestDetailAdd.SAP_Unit_Price.FormatPattern)"@Html.Raw(trRequestDetailAdd.SAP_Unit_Price.EditAttributes) aria-describedby="x_SAP_Unit_Price_help">
+@Html.Raw(trRequestDetailAdd.SAP_Unit_Price.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestDetailAdd.SAP_Unit_Price.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestDetailAdd.SAP_Unit_Price.Visible (end) *@
+@if (trRequestDetailAdd.Extd_SAP_Price.Visible) { // trRequestDetailAdd.Extd_SAP_Price.Visible (begin)
+    <div id="r_Extd_SAP_Price" @Html.Raw(trRequestDetailAdd.Extd_SAP_Price.RowAttributes)>
+        <label id="elh_tr_request_detail_Extd_SAP_Price" for="x_Extd_SAP_Price" class="@(trRequestDetailAdd.LeftColumnClass)">@Html.Raw(trRequestDetailAdd.Extd_SAP_Price.Caption)@Html.Raw(trRequestDetailAdd.Extd_SAP_Price.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestDetailAdd.RightColumnClass)"><div @Html.Raw(trRequestDetailAdd.Extd_SAP_Price.CellAttributes)>
+<span id="el_tr_request_detail_Extd_SAP_Price">
+<input type="@(trRequestDetailAdd.Extd_SAP_Price.InputTextType)" name="x_Extd_SAP_Price" id="x_Extd_SAP_Price" data-table="tr_request_detail" data-field="x_Extd_SAP_Price" value="@Html.Raw(trRequestDetailAdd.Extd_SAP_Price.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailAdd.Extd_SAP_Price.PlaceHolder))" data-format-pattern="@(trRequestDetailAdd.Extd_SAP_Price.FormatPattern)"@Html.Raw(trRequestDetailAdd.Extd_SAP_Price.EditAttributes) aria-describedby="x_Extd_SAP_Price_help">
+@Html.Raw(trRequestDetailAdd.Extd_SAP_Price.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestDetailAdd.Extd_SAP_Price.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestDetailAdd.Extd_SAP_Price.Visible (end) *@
+@if (trRequestDetailAdd.GP_SAP_Price.Visible) { // trRequestDetailAdd.GP_SAP_Price.Visible (begin)
+    <div id="r_GP_SAP_Price" @Html.Raw(trRequestDetailAdd.GP_SAP_Price.RowAttributes)>
+        <label id="elh_tr_request_detail_GP_SAP_Price" for="x_GP_SAP_Price" class="@(trRequestDetailAdd.LeftColumnClass)">@Html.Raw(trRequestDetailAdd.GP_SAP_Price.Caption)@Html.Raw(trRequestDetailAdd.GP_SAP_Price.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestDetailAdd.RightColumnClass)"><div @Html.Raw(trRequestDetailAdd.GP_SAP_Price.CellAttributes)>
+<span id="el_tr_request_detail_GP_SAP_Price">
+<input type="@(trRequestDetailAdd.GP_SAP_Price.InputTextType)" name="x_GP_SAP_Price" id="x_GP_SAP_Price" data-table="tr_request_detail" data-field="x_GP_SAP_Price" value="@Html.Raw(trRequestDetailAdd.GP_SAP_Price.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailAdd.GP_SAP_Price.PlaceHolder))" data-format-pattern="@(trRequestDetailAdd.GP_SAP_Price.FormatPattern)"@Html.Raw(trRequestDetailAdd.GP_SAP_Price.EditAttributes) aria-describedby="x_GP_SAP_Price_help">
+@Html.Raw(trRequestDetailAdd.GP_SAP_Price.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestDetailAdd.GP_SAP_Price.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestDetailAdd.GP_SAP_Price.Visible (end) *@
+@if (trRequestDetailAdd.Override_Unit_Price.Visible) { // trRequestDetailAdd.Override_Unit_Price.Visible (begin)
+    <div id="r_Override_Unit_Price" @Html.Raw(trRequestDetailAdd.Override_Unit_Price.RowAttributes)>
+        <label id="elh_tr_request_detail_Override_Unit_Price" for="x_Override_Unit_Price" class="@(trRequestDetailAdd.LeftColumnClass)">@Html.Raw(trRequestDetailAdd.Override_Unit_Price.Caption)@Html.Raw(trRequestDetailAdd.Override_Unit_Price.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestDetailAdd.RightColumnClass)"><div @Html.Raw(trRequestDetailAdd.Override_Unit_Price.CellAttributes)>
+<span id="el_tr_request_detail_Override_Unit_Price">
+<input type="@(trRequestDetailAdd.Override_Unit_Price.InputTextType)" name="x_Override_Unit_Price" id="x_Override_Unit_Price" data-table="tr_request_detail" data-field="x_Override_Unit_Price" value="@Html.Raw(trRequestDetailAdd.Override_Unit_Price.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailAdd.Override_Unit_Price.PlaceHolder))" data-format-pattern="@(trRequestDetailAdd.Override_Unit_Price.FormatPattern)"@Html.Raw(trRequestDetailAdd.Override_Unit_Price.EditAttributes) aria-describedby="x_Override_Unit_Price_help">
+@Html.Raw(trRequestDetailAdd.Override_Unit_Price.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestDetailAdd.Override_Unit_Price.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestDetailAdd.Override_Unit_Price.Visible (end) *@
+@if (trRequestDetailAdd.Extd_Override_Price.Visible) { // trRequestDetailAdd.Extd_Override_Price.Visible (begin)
+    <div id="r_Extd_Override_Price" @Html.Raw(trRequestDetailAdd.Extd_Override_Price.RowAttributes)>
+        <label id="elh_tr_request_detail_Extd_Override_Price" for="x_Extd_Override_Price" class="@(trRequestDetailAdd.LeftColumnClass)">@Html.Raw(trRequestDetailAdd.Extd_Override_Price.Caption)@Html.Raw(trRequestDetailAdd.Extd_Override_Price.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestDetailAdd.RightColumnClass)"><div @Html.Raw(trRequestDetailAdd.Extd_Override_Price.CellAttributes)>
+<span id="el_tr_request_detail_Extd_Override_Price">
+<input type="@(trRequestDetailAdd.Extd_Override_Price.InputTextType)" name="x_Extd_Override_Price" id="x_Extd_Override_Price" data-table="tr_request_detail" data-field="x_Extd_Override_Price" value="@Html.Raw(trRequestDetailAdd.Extd_Override_Price.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailAdd.Extd_Override_Price.PlaceHolder))" data-format-pattern="@(trRequestDetailAdd.Extd_Override_Price.FormatPattern)"@Html.Raw(trRequestDetailAdd.Extd_Override_Price.EditAttributes) aria-describedby="x_Extd_Override_Price_help">
+@Html.Raw(trRequestDetailAdd.Extd_Override_Price.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestDetailAdd.Extd_Override_Price.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestDetailAdd.Extd_Override_Price.Visible (end) *@
+@if (trRequestDetailAdd.GP_Override_Price.Visible) { // trRequestDetailAdd.GP_Override_Price.Visible (begin)
+    <div id="r_GP_Override_Price" @Html.Raw(trRequestDetailAdd.GP_Override_Price.RowAttributes)>
+        <label id="elh_tr_request_detail_GP_Override_Price" for="x_GP_Override_Price" class="@(trRequestDetailAdd.LeftColumnClass)">@Html.Raw(trRequestDetailAdd.GP_Override_Price.Caption)@Html.Raw(trRequestDetailAdd.GP_Override_Price.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestDetailAdd.RightColumnClass)"><div @Html.Raw(trRequestDetailAdd.GP_Override_Price.CellAttributes)>
+<span id="el_tr_request_detail_GP_Override_Price">
+<input type="@(trRequestDetailAdd.GP_Override_Price.InputTextType)" name="x_GP_Override_Price" id="x_GP_Override_Price" data-table="tr_request_detail" data-field="x_GP_Override_Price" value="@Html.Raw(trRequestDetailAdd.GP_Override_Price.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailAdd.GP_Override_Price.PlaceHolder))" data-format-pattern="@(trRequestDetailAdd.GP_Override_Price.FormatPattern)"@Html.Raw(trRequestDetailAdd.GP_Override_Price.EditAttributes) aria-describedby="x_GP_Override_Price_help">
+@Html.Raw(trRequestDetailAdd.GP_Override_Price.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestDetailAdd.GP_Override_Price.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestDetailAdd.GP_Override_Price.Visible (end) *@
+@if (trRequestDetailAdd.Override_Core.Visible) { // trRequestDetailAdd.Override_Core.Visible (begin)
+    <div id="r_Override_Core" @Html.Raw(trRequestDetailAdd.Override_Core.RowAttributes)>
+        <label id="elh_tr_request_detail_Override_Core" for="x_Override_Core" class="@(trRequestDetailAdd.LeftColumnClass)">@Html.Raw(trRequestDetailAdd.Override_Core.Caption)@Html.Raw(trRequestDetailAdd.Override_Core.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestDetailAdd.RightColumnClass)"><div @Html.Raw(trRequestDetailAdd.Override_Core.CellAttributes)>
+<span id="el_tr_request_detail_Override_Core">
+<input type="@(trRequestDetailAdd.Override_Core.InputTextType)" name="x_Override_Core" id="x_Override_Core" data-table="tr_request_detail" data-field="x_Override_Core" value="@Html.Raw(trRequestDetailAdd.Override_Core.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailAdd.Override_Core.PlaceHolder))" data-format-pattern="@(trRequestDetailAdd.Override_Core.FormatPattern)"@Html.Raw(trRequestDetailAdd.Override_Core.EditAttributes) aria-describedby="x_Override_Core_help">
+@Html.Raw(trRequestDetailAdd.Override_Core.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestDetailAdd.Override_Core.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestDetailAdd.Override_Core.Visible (end) *@
+@if (trRequestDetailAdd.Override_Percent.Visible) { // trRequestDetailAdd.Override_Percent.Visible (begin)
+    <div id="r_Override_Percent" @Html.Raw(trRequestDetailAdd.Override_Percent.RowAttributes)>
+        <label id="elh_tr_request_detail_Override_Percent" for="x_Override_Percent" class="@(trRequestDetailAdd.LeftColumnClass)">@Html.Raw(trRequestDetailAdd.Override_Percent.Caption)@Html.Raw(trRequestDetailAdd.Override_Percent.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestDetailAdd.RightColumnClass)"><div @Html.Raw(trRequestDetailAdd.Override_Percent.CellAttributes)>
+<span id="el_tr_request_detail_Override_Percent">
+<input type="@(trRequestDetailAdd.Override_Percent.InputTextType)" name="x_Override_Percent" id="x_Override_Percent" data-table="tr_request_detail" data-field="x_Override_Percent" value="@Html.Raw(trRequestDetailAdd.Override_Percent.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailAdd.Override_Percent.PlaceHolder))" data-format-pattern="@(trRequestDetailAdd.Override_Percent.FormatPattern)"@Html.Raw(trRequestDetailAdd.Override_Percent.EditAttributes) aria-describedby="x_Override_Percent_help">
+@Html.Raw(trRequestDetailAdd.Override_Percent.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestDetailAdd.Override_Percent.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestDetailAdd.Override_Percent.Visible (end) *@
+@if (trRequestDetailAdd.Core_Life_Ind.Visible) { // trRequestDetailAdd.Core_Life_Ind.Visible (begin)
+    <div id="r_Core_Life_Ind" @Html.Raw(trRequestDetailAdd.Core_Life_Ind.RowAttributes)>
+        <label id="elh_tr_request_detail_Core_Life_Ind" for="x_Core_Life_Ind" class="@(trRequestDetailAdd.LeftColumnClass)">@Html.Raw(trRequestDetailAdd.Core_Life_Ind.Caption)@Html.Raw(trRequestDetailAdd.Core_Life_Ind.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestDetailAdd.RightColumnClass)"><div @Html.Raw(trRequestDetailAdd.Core_Life_Ind.CellAttributes)>
+<span id="el_tr_request_detail_Core_Life_Ind">
+<input type="@(trRequestDetailAdd.Core_Life_Ind.InputTextType)" name="x_Core_Life_Ind" id="x_Core_Life_Ind" data-table="tr_request_detail" data-field="x_Core_Life_Ind" value="@Html.Raw(trRequestDetailAdd.Core_Life_Ind.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(trRequestDetailAdd.Core_Life_Ind.PlaceHolder))" data-format-pattern="@(trRequestDetailAdd.Core_Life_Ind.FormatPattern)"@Html.Raw(trRequestDetailAdd.Core_Life_Ind.EditAttributes) aria-describedby="x_Core_Life_Ind_help">
+@Html.Raw(trRequestDetailAdd.Core_Life_Ind.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestDetailAdd.Core_Life_Ind.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestDetailAdd.Core_Life_Ind.Visible (end) *@
+@if (trRequestDetailAdd.Notes.Visible) { // trRequestDetailAdd.Notes.Visible (begin)
+    <div id="r_Notes" @Html.Raw(trRequestDetailAdd.Notes.RowAttributes)>
+        <label id="elh_tr_request_detail_Notes" for="x_Notes" class="@(trRequestDetailAdd.LeftColumnClass)">@Html.Raw(trRequestDetailAdd.Notes.Caption)@Html.Raw(trRequestDetailAdd.Notes.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(trRequestDetailAdd.RightColumnClass)"><div @Html.Raw(trRequestDetailAdd.Notes.CellAttributes)>
+<span id="el_tr_request_detail_Notes">
+<textarea data-table="tr_request_detail" data-field="x_Notes" name="x_Notes" id="x_Notes" cols="35" rows="4" placeholder="@Html.Raw(HtmlEncode(trRequestDetailAdd.Notes.PlaceHolder))"@Html.Raw(trRequestDetailAdd.Notes.EditAttributes) aria-describedby="x_Notes_help">@(trRequestDetailAdd.Notes.EditValue)</textarea>
+@Html.Raw(trRequestDetailAdd.Notes.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(trRequestDetailAdd.Notes.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* trRequestDetailAdd.Notes.Visible (end) *@
+</div><!-- /page* -->
+@{ trRequestDetailAdd.CloseRecordset(); }
+@Html.Raw(trRequestDetailAdd.IsModal ? "<template class=\"ew-modal-buttons\">" : "<div class=\"row ew-buttons\">")<!-- buttons .row -->
+    <div class="@(trRequestDetailAdd.OffsetColumnClass)"><!-- buttons offset -->
+    <button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit" form="ftr_request_detailadd">@Html.Raw(Language.Phrase("AddBtn"))</button>
+@if (IsJsonResponse()) {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-bs-dismiss="modal">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+} else {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="ftr_request_detailadd" data-href="@AppPath(trRequestDetailAdd.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+}
+    </div><!-- /buttons offset -->
+@Html.Raw(trRequestDetailAdd.IsModal ? "</template>" : "</div>")<!-- /buttons .row -->
+</form>
+@trRequestDetailAdd.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("tr_request_detail");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

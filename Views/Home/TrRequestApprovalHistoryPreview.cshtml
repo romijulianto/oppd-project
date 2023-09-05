@@ -1,0 +1,279 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (trRequestApprovalHistoryPreview.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+ew.deepAssign(ew.vars, { tables: { tr_request_approval_history: @Html.Raw(ConvertToJson(trRequestApprovalHistoryPreview.ToClientVar())) } });
+</script>
+@trRequestApprovalHistoryPreview.ShowPageHeader()
+@if (trRequestApprovalHistoryPreview.TotalRecords > 0) {
+<div class="card ew-grid @(trRequestApprovalHistoryPreview.TableGridClass)"><!-- .card -->
+<div class="card-body ew-preview-middle-panel ew-grid-middle-panel @(trRequestApprovalHistoryPreview.TableContainerClass)" style="@(trRequestApprovalHistoryPreview.TableContainerStyle)"><!-- .card-body -->
+<table class="@(trRequestApprovalHistoryPreview.TableClass)"><!-- .table -->
+    <thead><!-- Table header -->
+        <tr class="ew-table-header">
+@{
+    await trRequestApprovalHistoryPreview.RenderListOptions(); // Render list options
+}
+@trRequestApprovalHistoryPreview.ListOptions.RenderHeader("left")
+@if (trRequestApprovalHistoryPreview._UserName.Visible) { // trRequestApprovalHistoryPreview._UserName.Visible (begin)
+    if (Empty(trRequestApprovalHistoryPreview.SortUrl(trRequestApprovalHistoryPreview._UserName))) {
+        <th class="@trRequestApprovalHistoryPreview._UserName.HeaderCellClass">@Html.Raw(trRequestApprovalHistoryPreview._UserName.Caption)</th>
+    } else {
+        <th class="@trRequestApprovalHistoryPreview._UserName.HeaderCellClass"><div role="button" data-table="tr_request_approval_history" data-sort="@trRequestApprovalHistoryPreview._UserName.Name" data-sort-type="1" data-sort-order="@trRequestApprovalHistoryPreview._UserName.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestApprovalHistoryPreview._UserName.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestApprovalHistoryPreview._UserName.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestApprovalHistoryPreview._UserName.Visible (end) *@
+@if (trRequestApprovalHistoryPreview.Full_Name.Visible) { // trRequestApprovalHistoryPreview.Full_Name.Visible (begin)
+    if (Empty(trRequestApprovalHistoryPreview.SortUrl(trRequestApprovalHistoryPreview.Full_Name))) {
+        <th class="@trRequestApprovalHistoryPreview.Full_Name.HeaderCellClass">@Html.Raw(trRequestApprovalHistoryPreview.Full_Name.Caption)</th>
+    } else {
+        <th class="@trRequestApprovalHistoryPreview.Full_Name.HeaderCellClass"><div role="button" data-table="tr_request_approval_history" data-sort="@trRequestApprovalHistoryPreview.Full_Name.Name" data-sort-type="1" data-sort-order="@trRequestApprovalHistoryPreview.Full_Name.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestApprovalHistoryPreview.Full_Name.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestApprovalHistoryPreview.Full_Name.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestApprovalHistoryPreview.Full_Name.Visible (end) *@
+@if (trRequestApprovalHistoryPreview.Position_Name.Visible) { // trRequestApprovalHistoryPreview.Position_Name.Visible (begin)
+    if (Empty(trRequestApprovalHistoryPreview.SortUrl(trRequestApprovalHistoryPreview.Position_Name))) {
+        <th class="@trRequestApprovalHistoryPreview.Position_Name.HeaderCellClass">@Html.Raw(trRequestApprovalHistoryPreview.Position_Name.Caption)</th>
+    } else {
+        <th class="@trRequestApprovalHistoryPreview.Position_Name.HeaderCellClass"><div role="button" data-table="tr_request_approval_history" data-sort="@trRequestApprovalHistoryPreview.Position_Name.Name" data-sort-type="1" data-sort-order="@trRequestApprovalHistoryPreview.Position_Name.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestApprovalHistoryPreview.Position_Name.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestApprovalHistoryPreview.Position_Name.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestApprovalHistoryPreview.Position_Name.Visible (end) *@
+@if (trRequestApprovalHistoryPreview.Status_Approval.Visible) { // trRequestApprovalHistoryPreview.Status_Approval.Visible (begin)
+    if (Empty(trRequestApprovalHistoryPreview.SortUrl(trRequestApprovalHistoryPreview.Status_Approval))) {
+        <th class="@trRequestApprovalHistoryPreview.Status_Approval.HeaderCellClass">@Html.Raw(trRequestApprovalHistoryPreview.Status_Approval.Caption)</th>
+    } else {
+        <th class="@trRequestApprovalHistoryPreview.Status_Approval.HeaderCellClass"><div role="button" data-table="tr_request_approval_history" data-sort="@trRequestApprovalHistoryPreview.Status_Approval.Name" data-sort-type="1" data-sort-order="@trRequestApprovalHistoryPreview.Status_Approval.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestApprovalHistoryPreview.Status_Approval.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestApprovalHistoryPreview.Status_Approval.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestApprovalHistoryPreview.Status_Approval.Visible (end) *@
+@if (trRequestApprovalHistoryPreview.Approval_Date.Visible) { // trRequestApprovalHistoryPreview.Approval_Date.Visible (begin)
+    if (Empty(trRequestApprovalHistoryPreview.SortUrl(trRequestApprovalHistoryPreview.Approval_Date))) {
+        <th class="@trRequestApprovalHistoryPreview.Approval_Date.HeaderCellClass">@Html.Raw(trRequestApprovalHistoryPreview.Approval_Date.Caption)</th>
+    } else {
+        <th class="@trRequestApprovalHistoryPreview.Approval_Date.HeaderCellClass"><div role="button" data-table="tr_request_approval_history" data-sort="@trRequestApprovalHistoryPreview.Approval_Date.Name" data-sort-type="1" data-sort-order="@trRequestApprovalHistoryPreview.Approval_Date.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestApprovalHistoryPreview.Approval_Date.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestApprovalHistoryPreview.Approval_Date.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestApprovalHistoryPreview.Approval_Date.Visible (end) *@
+@if (trRequestApprovalHistoryPreview.Approval_Notes.Visible) { // trRequestApprovalHistoryPreview.Approval_Notes.Visible (begin)
+    if (Empty(trRequestApprovalHistoryPreview.SortUrl(trRequestApprovalHistoryPreview.Approval_Notes))) {
+        <th class="@trRequestApprovalHistoryPreview.Approval_Notes.HeaderCellClass">@Html.Raw(trRequestApprovalHistoryPreview.Approval_Notes.Caption)</th>
+    } else {
+        <th class="@trRequestApprovalHistoryPreview.Approval_Notes.HeaderCellClass"><div role="button" data-table="tr_request_approval_history" data-sort="@trRequestApprovalHistoryPreview.Approval_Notes.Name" data-sort-type="1" data-sort-order="@trRequestApprovalHistoryPreview.Approval_Notes.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestApprovalHistoryPreview.Approval_Notes.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestApprovalHistoryPreview.Approval_Notes.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestApprovalHistoryPreview.Approval_Notes.Visible (end) *@
+@if (trRequestApprovalHistoryPreview.Reject_Notes.Visible) { // trRequestApprovalHistoryPreview.Reject_Notes.Visible (begin)
+    if (Empty(trRequestApprovalHistoryPreview.SortUrl(trRequestApprovalHistoryPreview.Reject_Notes))) {
+        <th class="@trRequestApprovalHistoryPreview.Reject_Notes.HeaderCellClass">@Html.Raw(trRequestApprovalHistoryPreview.Reject_Notes.Caption)</th>
+    } else {
+        <th class="@trRequestApprovalHistoryPreview.Reject_Notes.HeaderCellClass"><div role="button" data-table="tr_request_approval_history" data-sort="@trRequestApprovalHistoryPreview.Reject_Notes.Name" data-sort-type="1" data-sort-order="@trRequestApprovalHistoryPreview.Reject_Notes.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestApprovalHistoryPreview.Reject_Notes.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestApprovalHistoryPreview.Reject_Notes.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestApprovalHistoryPreview.Reject_Notes.Visible (end) *@
+@if (trRequestApprovalHistoryPreview.Last_Update_By.Visible) { // trRequestApprovalHistoryPreview.Last_Update_By.Visible (begin)
+    if (Empty(trRequestApprovalHistoryPreview.SortUrl(trRequestApprovalHistoryPreview.Last_Update_By))) {
+        <th class="@trRequestApprovalHistoryPreview.Last_Update_By.HeaderCellClass">@Html.Raw(trRequestApprovalHistoryPreview.Last_Update_By.Caption)</th>
+    } else {
+        <th class="@trRequestApprovalHistoryPreview.Last_Update_By.HeaderCellClass"><div role="button" data-table="tr_request_approval_history" data-sort="@trRequestApprovalHistoryPreview.Last_Update_By.Name" data-sort-type="1" data-sort-order="@trRequestApprovalHistoryPreview.Last_Update_By.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestApprovalHistoryPreview.Last_Update_By.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestApprovalHistoryPreview.Last_Update_By.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestApprovalHistoryPreview.Last_Update_By.Visible (end) *@
+@if (trRequestApprovalHistoryPreview.Created_By.Visible) { // trRequestApprovalHistoryPreview.Created_By.Visible (begin)
+    if (Empty(trRequestApprovalHistoryPreview.SortUrl(trRequestApprovalHistoryPreview.Created_By))) {
+        <th class="@trRequestApprovalHistoryPreview.Created_By.HeaderCellClass">@Html.Raw(trRequestApprovalHistoryPreview.Created_By.Caption)</th>
+    } else {
+        <th class="@trRequestApprovalHistoryPreview.Created_By.HeaderCellClass"><div role="button" data-table="tr_request_approval_history" data-sort="@trRequestApprovalHistoryPreview.Created_By.Name" data-sort-type="1" data-sort-order="@trRequestApprovalHistoryPreview.Created_By.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestApprovalHistoryPreview.Created_By.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestApprovalHistoryPreview.Created_By.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestApprovalHistoryPreview.Created_By.Visible (end) *@
+@if (trRequestApprovalHistoryPreview.Created_Date.Visible) { // trRequestApprovalHistoryPreview.Created_Date.Visible (begin)
+    if (Empty(trRequestApprovalHistoryPreview.SortUrl(trRequestApprovalHistoryPreview.Created_Date))) {
+        <th class="@trRequestApprovalHistoryPreview.Created_Date.HeaderCellClass">@Html.Raw(trRequestApprovalHistoryPreview.Created_Date.Caption)</th>
+    } else {
+        <th class="@trRequestApprovalHistoryPreview.Created_Date.HeaderCellClass"><div role="button" data-table="tr_request_approval_history" data-sort="@trRequestApprovalHistoryPreview.Created_Date.Name" data-sort-type="1" data-sort-order="@trRequestApprovalHistoryPreview.Created_Date.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestApprovalHistoryPreview.Created_Date.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestApprovalHistoryPreview.Created_Date.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestApprovalHistoryPreview.Created_Date.Visible (end) *@
+@if (trRequestApprovalHistoryPreview.ETL_Date.Visible) { // trRequestApprovalHistoryPreview.ETL_Date.Visible (begin)
+    if (Empty(trRequestApprovalHistoryPreview.SortUrl(trRequestApprovalHistoryPreview.ETL_Date))) {
+        <th class="@trRequestApprovalHistoryPreview.ETL_Date.HeaderCellClass">@Html.Raw(trRequestApprovalHistoryPreview.ETL_Date.Caption)</th>
+    } else {
+        <th class="@trRequestApprovalHistoryPreview.ETL_Date.HeaderCellClass"><div role="button" data-table="tr_request_approval_history" data-sort="@trRequestApprovalHistoryPreview.ETL_Date.Name" data-sort-type="1" data-sort-order="@trRequestApprovalHistoryPreview.ETL_Date.NextSort">
+            <div class="ew-table-header-btn">
+                <span class="ew-table-header-caption">@Html.Raw(trRequestApprovalHistoryPreview.ETL_Date.Caption)</span>
+                <span class="ew-table-header-sort">@Html.Raw(trRequestApprovalHistoryPreview.ETL_Date.SortIcon)</span>
+            </div>
+        </th>
+    }
+} @* trRequestApprovalHistoryPreview.ETL_Date.Visible (end) *@
+@trRequestApprovalHistoryPreview.ListOptions.RenderHeader("right")
+        </tr>
+    </thead>
+    <tbody><!-- Table body -->
+@{
+    trRequestApprovalHistoryPreview.RecordCount = 0;
+    trRequestApprovalHistoryPreview.RowCount = 0;
+}
+@do {
+    // Init row class and style
+    trRequestApprovalHistoryPreview.RecordCount++;
+    trRequestApprovalHistoryPreview.RowCount++;
+    trRequestApprovalHistoryPreview.CssStyle = "";
+    trRequestApprovalHistoryPreview.LoadListRowValues(trRequestApprovalHistoryPreview.Recordset);
+
+    // Render row
+    trRequestApprovalHistoryPreview.RowType = RowType.Preview; // Preview record
+    trRequestApprovalHistoryPreview.ResetAttributes();
+    await trRequestApprovalHistoryPreview.RenderListRow();
+
+    // Render list options
+    await trRequestApprovalHistoryPreview.RenderListOptions();
+    <tr @Html.Raw(trRequestApprovalHistoryPreview.RowAttributes)>
+    @trRequestApprovalHistoryPreview.ListOptions.RenderBody("left", trRequestApprovalHistoryPreview.RowCount)
+    @if (trRequestApprovalHistoryPreview._UserName.Visible) { // trRequestApprovalHistoryPreview._UserName.Visible (begin)
+            <td @Html.Raw(trRequestApprovalHistoryPreview._UserName.CellAttributes)>
+<span @Html.Raw(trRequestApprovalHistoryPreview._UserName.ViewAttributes)>
+@Html.Raw(trRequestApprovalHistoryPreview._UserName.GetViewValue())</span>
+</td>
+    } @* trRequestApprovalHistoryPreview._UserName.Visible (end) *@
+    @if (trRequestApprovalHistoryPreview.Full_Name.Visible) { // trRequestApprovalHistoryPreview.Full_Name.Visible (begin)
+            <td @Html.Raw(trRequestApprovalHistoryPreview.Full_Name.CellAttributes)>
+<span @Html.Raw(trRequestApprovalHistoryPreview.Full_Name.ViewAttributes)>
+@Html.Raw(trRequestApprovalHistoryPreview.Full_Name.GetViewValue())</span>
+</td>
+    } @* trRequestApprovalHistoryPreview.Full_Name.Visible (end) *@
+    @if (trRequestApprovalHistoryPreview.Position_Name.Visible) { // trRequestApprovalHistoryPreview.Position_Name.Visible (begin)
+            <td @Html.Raw(trRequestApprovalHistoryPreview.Position_Name.CellAttributes)>
+<span @Html.Raw(trRequestApprovalHistoryPreview.Position_Name.ViewAttributes)>
+@Html.Raw(trRequestApprovalHistoryPreview.Position_Name.GetViewValue())</span>
+</td>
+    } @* trRequestApprovalHistoryPreview.Position_Name.Visible (end) *@
+    @if (trRequestApprovalHistoryPreview.Status_Approval.Visible) { // trRequestApprovalHistoryPreview.Status_Approval.Visible (begin)
+            <td @Html.Raw(trRequestApprovalHistoryPreview.Status_Approval.CellAttributes)>
+<span @Html.Raw(trRequestApprovalHistoryPreview.Status_Approval.ViewAttributes)>
+@Html.Raw(trRequestApprovalHistoryPreview.Status_Approval.GetViewValue())</span>
+</td>
+    } @* trRequestApprovalHistoryPreview.Status_Approval.Visible (end) *@
+    @if (trRequestApprovalHistoryPreview.Approval_Date.Visible) { // trRequestApprovalHistoryPreview.Approval_Date.Visible (begin)
+            <td @Html.Raw(trRequestApprovalHistoryPreview.Approval_Date.CellAttributes)>
+<span @Html.Raw(trRequestApprovalHistoryPreview.Approval_Date.ViewAttributes)>
+@Html.Raw(trRequestApprovalHistoryPreview.Approval_Date.GetViewValue())</span>
+</td>
+    } @* trRequestApprovalHistoryPreview.Approval_Date.Visible (end) *@
+    @if (trRequestApprovalHistoryPreview.Approval_Notes.Visible) { // trRequestApprovalHistoryPreview.Approval_Notes.Visible (begin)
+            <td @Html.Raw(trRequestApprovalHistoryPreview.Approval_Notes.CellAttributes)>
+<span @Html.Raw(trRequestApprovalHistoryPreview.Approval_Notes.ViewAttributes)>
+@Html.Raw(trRequestApprovalHistoryPreview.Approval_Notes.GetViewValue())</span>
+</td>
+    } @* trRequestApprovalHistoryPreview.Approval_Notes.Visible (end) *@
+    @if (trRequestApprovalHistoryPreview.Reject_Notes.Visible) { // trRequestApprovalHistoryPreview.Reject_Notes.Visible (begin)
+            <td @Html.Raw(trRequestApprovalHistoryPreview.Reject_Notes.CellAttributes)>
+<span @Html.Raw(trRequestApprovalHistoryPreview.Reject_Notes.ViewAttributes)>
+@Html.Raw(trRequestApprovalHistoryPreview.Reject_Notes.GetViewValue())</span>
+</td>
+    } @* trRequestApprovalHistoryPreview.Reject_Notes.Visible (end) *@
+    @if (trRequestApprovalHistoryPreview.Last_Update_By.Visible) { // trRequestApprovalHistoryPreview.Last_Update_By.Visible (begin)
+            <td @Html.Raw(trRequestApprovalHistoryPreview.Last_Update_By.CellAttributes)>
+<span @Html.Raw(trRequestApprovalHistoryPreview.Last_Update_By.ViewAttributes)>
+@Html.Raw(trRequestApprovalHistoryPreview.Last_Update_By.GetViewValue())</span>
+</td>
+    } @* trRequestApprovalHistoryPreview.Last_Update_By.Visible (end) *@
+    @if (trRequestApprovalHistoryPreview.Created_By.Visible) { // trRequestApprovalHistoryPreview.Created_By.Visible (begin)
+            <td @Html.Raw(trRequestApprovalHistoryPreview.Created_By.CellAttributes)>
+<span @Html.Raw(trRequestApprovalHistoryPreview.Created_By.ViewAttributes)>
+@Html.Raw(trRequestApprovalHistoryPreview.Created_By.GetViewValue())</span>
+</td>
+    } @* trRequestApprovalHistoryPreview.Created_By.Visible (end) *@
+    @if (trRequestApprovalHistoryPreview.Created_Date.Visible) { // trRequestApprovalHistoryPreview.Created_Date.Visible (begin)
+            <td @Html.Raw(trRequestApprovalHistoryPreview.Created_Date.CellAttributes)>
+<span @Html.Raw(trRequestApprovalHistoryPreview.Created_Date.ViewAttributes)>
+@Html.Raw(trRequestApprovalHistoryPreview.Created_Date.GetViewValue())</span>
+</td>
+    } @* trRequestApprovalHistoryPreview.Created_Date.Visible (end) *@
+    @if (trRequestApprovalHistoryPreview.ETL_Date.Visible) { // trRequestApprovalHistoryPreview.ETL_Date.Visible (begin)
+            <td @Html.Raw(trRequestApprovalHistoryPreview.ETL_Date.CellAttributes)>
+<span @Html.Raw(trRequestApprovalHistoryPreview.ETL_Date.ViewAttributes)>
+@Html.Raw(trRequestApprovalHistoryPreview.ETL_Date.GetViewValue())</span>
+</td>
+    } @* trRequestApprovalHistoryPreview.ETL_Date.Visible (end) *@
+    @trRequestApprovalHistoryPreview.ListOptions.RenderBody("right", trRequestApprovalHistoryPreview.RowCount)
+    </tr>
+} while (await trRequestApprovalHistoryPreview.Recordset.ReadAsync());
+    </tbody>
+</table><!-- /.table -->
+</div><!-- /.card-body -->
+<div class="card-footer ew-grid-lower-panel ew-preview-lower-panel"><!-- .card-footer -->
+@Html.Raw(trRequestApprovalHistoryPreview.Pager.Render())
+<div class="ew-preview-other-options">
+@trRequestApprovalHistoryPreview.OtherOptions.RenderBody()
+</div>
+</div><!-- /.card-footer -->
+</div><!-- /.card -->
+} else { @* No record *@
+<div class="card border-0"><!-- .card -->
+<div class="ew-detail-count">@Html.Raw(Language.Phrase("NoRecord"))</div>
+<div class="ew-preview-other-options">
+@trRequestApprovalHistoryPreview.OtherOptions.RenderBody()
+</div>
+</div><!-- /.card -->
+}
+@trRequestApprovalHistoryPreview.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()

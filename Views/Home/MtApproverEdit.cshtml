@@ -1,0 +1,232 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (mtApproverEdit.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!mtApproverEdit.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@mtApproverEdit.ShowPageHeader()
+@mtApproverEdit.ShowMessages()
+<main class="edit">
+<form name="fmt_approveredit" id="fmt_approveredit" class="@(mtApproverEdit.FormClassName)" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtApproverEdit.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_approver: currentTable } });
+var currentPageID = ew.PAGE_ID = "edit";
+var currentForm;
+var fmt_approveredit;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fmt_approveredit")
+        .setPageId("edit")
+
+        // Add fields
+        .setFields([
+
+            ["id", [fields.id.visible && fields.id.required ? ew.Validators.required(fields.id.caption) : null, ew.Validators.integer], fields.id.isInvalid],
+            ["_UserName", [fields._UserName.visible && fields._UserName.required ? ew.Validators.required(fields._UserName.caption) : null], fields._UserName.isInvalid],
+            ["Full_Name", [fields.Full_Name.visible && fields.Full_Name.required ? ew.Validators.required(fields.Full_Name.caption) : null], fields.Full_Name.isInvalid],
+            ["Position", [fields.Position.visible && fields.Position.required ? ew.Validators.required(fields.Position.caption) : null], fields.Position.isInvalid],
+            ["Departement", [fields.Departement.visible && fields.Departement.required ? ew.Validators.required(fields.Departement.caption) : null], fields.Departement.isInvalid],
+            ["Division", [fields.Division.visible && fields.Division.required ? ew.Validators.required(fields.Division.caption) : null], fields.Division.isInvalid],
+            ["Area", [fields.Area.visible && fields.Area.required ? ew.Validators.required(fields.Area.caption) : null], fields.Area.isInvalid],
+            ["Business_Area", [fields.Business_Area.visible && fields.Business_Area.required ? ew.Validators.required(fields.Business_Area.caption) : null], fields.Business_Area.isInvalid],
+            ["Business_Area_Desc", [fields.Business_Area_Desc.visible && fields.Business_Area_Desc.required ? ew.Validators.required(fields.Business_Area_Desc.caption) : null], fields.Business_Area_Desc.isInvalid]
+        ])
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+        })
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="update">
+<input type="hidden" name="modal" value="@ConvertToInt(mtApproverEdit.IsModal)">
+@if (IsJsonResponse()) {
+<input type="hidden" name="json" value="1">
+}
+<input type="hidden" name="@(mtApproverEdit.OldKeyName)" value="@Html.Raw(mtApproverEdit.OldKey)">
+<div class="ew-edit-div"><!-- page* -->
+@if (mtApproverEdit.id.Visible) { // mtApproverEdit.id.Visible (begin)
+    <div id="r_id" @Html.Raw(mtApproverEdit.id.RowAttributes)>
+        <label id="elh_mt_approver_id" for="x_id" class="@(mtApproverEdit.LeftColumnClass)">@Html.Raw(mtApproverEdit.id.Caption)@Html.Raw(mtApproverEdit.id.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtApproverEdit.RightColumnClass)"><div @Html.Raw(mtApproverEdit.id.CellAttributes)>
+<span id="el_mt_approver_id">
+<input type="@(mtApproverEdit.id.InputTextType)" name="x_id" id="x_id" data-table="mt_approver" data-field="x_id" value="@Html.Raw(mtApproverEdit.id.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(mtApproverEdit.id.PlaceHolder))" data-format-pattern="@(mtApproverEdit.id.FormatPattern)"@Html.Raw(mtApproverEdit.id.EditAttributes) aria-describedby="x_id_help">
+@Html.Raw(mtApproverEdit.id.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtApproverEdit.id.GetErrorMessage())</div>
+<input type="hidden" data-table="mt_approver" data-field="x_id" data-hidden="1" data-old name="o_id" id="o_id" value="@Html.Raw(HtmlEncode(mtApproverEdit.id.OldValue ?? mtApproverEdit.id.CurrentValue))">
+</span>
+</div></div>
+    </div>
+} @* mtApproverEdit.id.Visible (end) *@
+@if (mtApproverEdit._UserName.Visible) { // mtApproverEdit._UserName.Visible (begin)
+    <div id="r__UserName" @Html.Raw(mtApproverEdit._UserName.RowAttributes)>
+        <label id="elh_mt_approver__UserName" for="x__UserName" class="@(mtApproverEdit.LeftColumnClass)">@Html.Raw(mtApproverEdit._UserName.Caption)@Html.Raw(mtApproverEdit._UserName.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtApproverEdit.RightColumnClass)"><div @Html.Raw(mtApproverEdit._UserName.CellAttributes)>
+<span id="el_mt_approver__UserName">
+<input type="@(mtApproverEdit._UserName.InputTextType)" name="x__UserName" id="x__UserName" data-table="mt_approver" data-field="x__UserName" value="@Html.Raw(mtApproverEdit._UserName.EditValue)" size="30" maxlength="30" placeholder="@Html.Raw(HtmlEncode(mtApproverEdit._UserName.PlaceHolder))" data-format-pattern="@(mtApproverEdit._UserName.FormatPattern)"@Html.Raw(mtApproverEdit._UserName.EditAttributes) aria-describedby="x__UserName_help">
+@Html.Raw(mtApproverEdit._UserName.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtApproverEdit._UserName.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtApproverEdit._UserName.Visible (end) *@
+@if (mtApproverEdit.Full_Name.Visible) { // mtApproverEdit.Full_Name.Visible (begin)
+    <div id="r_Full_Name" @Html.Raw(mtApproverEdit.Full_Name.RowAttributes)>
+        <label id="elh_mt_approver_Full_Name" for="x_Full_Name" class="@(mtApproverEdit.LeftColumnClass)">@Html.Raw(mtApproverEdit.Full_Name.Caption)@Html.Raw(mtApproverEdit.Full_Name.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtApproverEdit.RightColumnClass)"><div @Html.Raw(mtApproverEdit.Full_Name.CellAttributes)>
+<span id="el_mt_approver_Full_Name">
+<input type="@(mtApproverEdit.Full_Name.InputTextType)" name="x_Full_Name" id="x_Full_Name" data-table="mt_approver" data-field="x_Full_Name" value="@Html.Raw(mtApproverEdit.Full_Name.EditValue)" size="30" maxlength="200" placeholder="@Html.Raw(HtmlEncode(mtApproverEdit.Full_Name.PlaceHolder))" data-format-pattern="@(mtApproverEdit.Full_Name.FormatPattern)"@Html.Raw(mtApproverEdit.Full_Name.EditAttributes) aria-describedby="x_Full_Name_help">
+@Html.Raw(mtApproverEdit.Full_Name.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtApproverEdit.Full_Name.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtApproverEdit.Full_Name.Visible (end) *@
+@if (mtApproverEdit.Position.Visible) { // mtApproverEdit.Position.Visible (begin)
+    <div id="r_Position" @Html.Raw(mtApproverEdit.Position.RowAttributes)>
+        <label id="elh_mt_approver_Position" for="x_Position" class="@(mtApproverEdit.LeftColumnClass)">@Html.Raw(mtApproverEdit.Position.Caption)@Html.Raw(mtApproverEdit.Position.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtApproverEdit.RightColumnClass)"><div @Html.Raw(mtApproverEdit.Position.CellAttributes)>
+<span id="el_mt_approver_Position">
+<input type="@(mtApproverEdit.Position.InputTextType)" name="x_Position" id="x_Position" data-table="mt_approver" data-field="x_Position" value="@Html.Raw(mtApproverEdit.Position.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(mtApproverEdit.Position.PlaceHolder))" data-format-pattern="@(mtApproverEdit.Position.FormatPattern)"@Html.Raw(mtApproverEdit.Position.EditAttributes) aria-describedby="x_Position_help">
+@Html.Raw(mtApproverEdit.Position.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtApproverEdit.Position.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtApproverEdit.Position.Visible (end) *@
+@if (mtApproverEdit.Departement.Visible) { // mtApproverEdit.Departement.Visible (begin)
+    <div id="r_Departement" @Html.Raw(mtApproverEdit.Departement.RowAttributes)>
+        <label id="elh_mt_approver_Departement" for="x_Departement" class="@(mtApproverEdit.LeftColumnClass)">@Html.Raw(mtApproverEdit.Departement.Caption)@Html.Raw(mtApproverEdit.Departement.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtApproverEdit.RightColumnClass)"><div @Html.Raw(mtApproverEdit.Departement.CellAttributes)>
+<span id="el_mt_approver_Departement">
+<input type="@(mtApproverEdit.Departement.InputTextType)" name="x_Departement" id="x_Departement" data-table="mt_approver" data-field="x_Departement" value="@Html.Raw(mtApproverEdit.Departement.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(mtApproverEdit.Departement.PlaceHolder))" data-format-pattern="@(mtApproverEdit.Departement.FormatPattern)"@Html.Raw(mtApproverEdit.Departement.EditAttributes) aria-describedby="x_Departement_help">
+@Html.Raw(mtApproverEdit.Departement.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtApproverEdit.Departement.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtApproverEdit.Departement.Visible (end) *@
+@if (mtApproverEdit.Division.Visible) { // mtApproverEdit.Division.Visible (begin)
+    <div id="r_Division" @Html.Raw(mtApproverEdit.Division.RowAttributes)>
+        <label id="elh_mt_approver_Division" for="x_Division" class="@(mtApproverEdit.LeftColumnClass)">@Html.Raw(mtApproverEdit.Division.Caption)@Html.Raw(mtApproverEdit.Division.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtApproverEdit.RightColumnClass)"><div @Html.Raw(mtApproverEdit.Division.CellAttributes)>
+<span id="el_mt_approver_Division">
+<input type="@(mtApproverEdit.Division.InputTextType)" name="x_Division" id="x_Division" data-table="mt_approver" data-field="x_Division" value="@Html.Raw(mtApproverEdit.Division.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(mtApproverEdit.Division.PlaceHolder))" data-format-pattern="@(mtApproverEdit.Division.FormatPattern)"@Html.Raw(mtApproverEdit.Division.EditAttributes) aria-describedby="x_Division_help">
+@Html.Raw(mtApproverEdit.Division.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtApproverEdit.Division.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtApproverEdit.Division.Visible (end) *@
+@if (mtApproverEdit.Area.Visible) { // mtApproverEdit.Area.Visible (begin)
+    <div id="r_Area" @Html.Raw(mtApproverEdit.Area.RowAttributes)>
+        <label id="elh_mt_approver_Area" for="x_Area" class="@(mtApproverEdit.LeftColumnClass)">@Html.Raw(mtApproverEdit.Area.Caption)@Html.Raw(mtApproverEdit.Area.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtApproverEdit.RightColumnClass)"><div @Html.Raw(mtApproverEdit.Area.CellAttributes)>
+<span id="el_mt_approver_Area">
+<input type="@(mtApproverEdit.Area.InputTextType)" name="x_Area" id="x_Area" data-table="mt_approver" data-field="x_Area" value="@Html.Raw(mtApproverEdit.Area.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(mtApproverEdit.Area.PlaceHolder))" data-format-pattern="@(mtApproverEdit.Area.FormatPattern)"@Html.Raw(mtApproverEdit.Area.EditAttributes) aria-describedby="x_Area_help">
+@Html.Raw(mtApproverEdit.Area.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtApproverEdit.Area.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtApproverEdit.Area.Visible (end) *@
+@if (mtApproverEdit.Business_Area.Visible) { // mtApproverEdit.Business_Area.Visible (begin)
+    <div id="r_Business_Area" @Html.Raw(mtApproverEdit.Business_Area.RowAttributes)>
+        <label id="elh_mt_approver_Business_Area" for="x_Business_Area" class="@(mtApproverEdit.LeftColumnClass)">@Html.Raw(mtApproverEdit.Business_Area.Caption)@Html.Raw(mtApproverEdit.Business_Area.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtApproverEdit.RightColumnClass)"><div @Html.Raw(mtApproverEdit.Business_Area.CellAttributes)>
+<span id="el_mt_approver_Business_Area">
+<input type="@(mtApproverEdit.Business_Area.InputTextType)" name="x_Business_Area" id="x_Business_Area" data-table="mt_approver" data-field="x_Business_Area" value="@Html.Raw(mtApproverEdit.Business_Area.EditValue)" size="30" maxlength="10" placeholder="@Html.Raw(HtmlEncode(mtApproverEdit.Business_Area.PlaceHolder))" data-format-pattern="@(mtApproverEdit.Business_Area.FormatPattern)"@Html.Raw(mtApproverEdit.Business_Area.EditAttributes) aria-describedby="x_Business_Area_help">
+@Html.Raw(mtApproverEdit.Business_Area.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtApproverEdit.Business_Area.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtApproverEdit.Business_Area.Visible (end) *@
+@if (mtApproverEdit.Business_Area_Desc.Visible) { // mtApproverEdit.Business_Area_Desc.Visible (begin)
+    <div id="r_Business_Area_Desc" @Html.Raw(mtApproverEdit.Business_Area_Desc.RowAttributes)>
+        <label id="elh_mt_approver_Business_Area_Desc" for="x_Business_Area_Desc" class="@(mtApproverEdit.LeftColumnClass)">@Html.Raw(mtApproverEdit.Business_Area_Desc.Caption)@Html.Raw(mtApproverEdit.Business_Area_Desc.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtApproverEdit.RightColumnClass)"><div @Html.Raw(mtApproverEdit.Business_Area_Desc.CellAttributes)>
+<span id="el_mt_approver_Business_Area_Desc">
+<input type="@(mtApproverEdit.Business_Area_Desc.InputTextType)" name="x_Business_Area_Desc" id="x_Business_Area_Desc" data-table="mt_approver" data-field="x_Business_Area_Desc" value="@Html.Raw(mtApproverEdit.Business_Area_Desc.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(mtApproverEdit.Business_Area_Desc.PlaceHolder))" data-format-pattern="@(mtApproverEdit.Business_Area_Desc.FormatPattern)"@Html.Raw(mtApproverEdit.Business_Area_Desc.EditAttributes) aria-describedby="x_Business_Area_Desc_help">
+@Html.Raw(mtApproverEdit.Business_Area_Desc.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtApproverEdit.Business_Area_Desc.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtApproverEdit.Business_Area_Desc.Visible (end) *@
+</div><!-- /page* -->
+@{ mtApproverEdit.CloseRecordset(); }
+@Html.Raw(mtApproverEdit.IsModal ? "<template class=\"ew-modal-buttons\">" : "<div class=\"row ew-buttons\">")<!-- buttons .row -->
+    <div class="@(mtApproverEdit.OffsetColumnClass)"><!-- buttons offset -->
+    <button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit" form="fmt_approveredit">@Html.Raw(Language.Phrase("SaveBtn"))</button>
+@if (IsJsonResponse()) {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-bs-dismiss="modal">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+} else {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="fmt_approveredit" data-href="@AppPath(mtApproverEdit.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+}
+    </div><!-- /buttons offset -->
+@Html.Raw(mtApproverEdit.IsModal ? "</template>" : "</div>")<!-- /buttons .row -->
+</form>
+</main>
+@mtApproverEdit.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("mt_approver");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

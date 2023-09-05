@@ -1,0 +1,605 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (welcomePage.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!welcomePage.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@welcomePage.ShowMessages()
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trakindo Dashboard</title>
+    <!-- Box Icon -->
+    <script src="https://unpkg.com/boxicons@2.1.2/dist/boxicons.js"></script>
+    <link
+      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      /*
+*  html5resetcss
+*/
+
+      :root {
+        --side-bar-background-color: #353a40;
+        --navbar-yellow-background-color: #fec107;
+        --white-color: #fff;
+        --black-color: #222;
+        --blue-light-color: #01c0ee;
+        --grey-80: #505050;
+        --green-color: #03a55a;
+        --dark-grey: #9d9d9d;
+        --orange-color: #edc840;
+        --yellow-color: #d8e03d;
+        --red-color: #e0583d;
+      }
+
+      /* Section */
+      .section {
+        position: absolute;
+        left: 22%;
+      }
+      .section h1 {
+        font-family: "Roboto", sans-serif;
+        font-weight: 100;
+        font-size: 20px;
+      }
+
+      .section .boxes {
+        display: flex;
+        flex-direction: row;
+        margin-top: 20px;
+      }
+      .section .boxes .box_one {
+        width: 30vw;
+        background-color: var(--dark-grey);
+        box-sizing: border-box;
+        border-radius: 3px;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        -ms-border-radius: 3px;
+        -o-border-radius: 3px;
+        box-shadow: 0px 0px 4px #ddd;
+        margin-left: 0px;
+        margin-right: 10px;
+      }
+      .section .boxes .box_one .content {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-evenly;
+        padding: 27px 18px 19px 18px;
+        height: 20vh;
+      }
+      .section .boxes .box_one .content h5 {
+        font-size: 5vh;
+        text-align: center;
+        color: var(--white-color);
+        font-weight: 100;
+        font-family: "Verdana", sans-serif;
+      }
+      .section .boxes .box_one .content i {
+        font-size: 70px;
+        color: #333;
+        opacity: 0.4;
+      }
+      .section .box_one .footer {
+        background-color: rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        color: var(--white-color);
+        text-align: center;
+      }
+      .section .box_one .kiaa {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .section .box_one .kiaa h6 {
+        font-weight: 100;
+        font-family: "Verdana", sans-serif;
+        font-size: 16px;
+        margin-right: 10px;
+      }
+      /* Box Two */
+      .section .boxes .box_two {
+        width: 30vw;
+        background-color: var(--orange-color);
+        box-sizing: border-box;
+        border-radius: 3px;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        -ms-border-radius: 3px;
+        -o-border-radius: 3px;
+        box-shadow: 0px 0px 4px #ddd;
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+      .section .boxes .box_two .content {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-evenly;
+        padding: 27px 18px 19px 18px;
+        height: 20vh;
+      }
+      .section .boxes .box_two .content h5 {
+        font-size: 5vh;
+        text-align: center;
+        color: var(--white-color);
+        font-weight: 100;
+        font-family: "Verdana", sans-serif;
+      }
+      .section .boxes .box_two .content i {
+        font-size: 70px;
+        color: #333;
+        opacity: 0.4;
+      }
+      .section .box_two .footer {
+        background-color: rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        color: var(--white-color);
+        text-align: center;
+      }
+      .section .box_two .kiaa {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .section .box_two .kiaa h6 {
+        font-weight: 100;
+        font-family: "Verdana", sans-serif;
+        font-size: 16px;
+        margin-right: 10px;
+      }
+
+      /* Three */
+
+      .section .boxes .box_three {
+        width: 30vw;
+        background-color: var(--red-color);
+        box-sizing: border-box;
+        border-radius: 3px;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        -ms-border-radius: 3px;
+        -o-border-radius: 3px;
+        box-shadow: 0px 0px 4px #ddd;
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+      .section .boxes .box_three .content {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-evenly;
+        padding: 34px 24px 34px 24p;
+        height: 20vh;
+      }
+      .section .boxes .box_three .content h5 {
+        font-size: 5vh;
+        text-align: center;
+        color: var(--white-color);
+        font-weight: 100;
+        font-family: "Verdana", sans-serif;
+      }
+      .section .boxes .box_three .content i {
+        font-size: 70px;
+        color: #333;
+        opacity: 0.4;
+      }
+      .section .box_three .footer {
+        background-color: rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        color: var(--white-color);
+        text-align: center;
+      }
+      .section .box_three .kiaa {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .section .box_three .kiaa h6 {
+        font-weight: 100;
+        font-family: "Verdana", sans-serif;
+        font-size: 16px;
+        margin-right: 10px;
+      }
+
+      /* Four */
+
+      .section .boxes .box_four {
+        width: 30vw;
+        background-color: var(--green-color);
+        box-sizing: border-box;
+        border-radius: 3px;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        -ms-border-radius: 3px;
+        -o-border-radius: 3px;
+        box-shadow: 0px 0px 4px #ddd;
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+      .section .boxes .box_four .content {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-evenly;
+        padding: 34px 24px 34px 24p;
+        height: 20vh;
+      }
+      .section .boxes .box_four .content h5 {
+        font-size: 5vh;
+        text-align: center;
+        color: var(--white-color);
+        font-weight: 100;
+        font-family: "Verdana", sans-serif;
+      }
+      .section .boxes .box_four .content i {
+        font-size: 70px;
+        color: #333;
+        opacity: 0.4;
+      }
+      .section .box_four .footer {
+        background-color: rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        color: var(--white-color);
+        text-align: center;
+      }
+      .section .box_four .kiaa {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .section .box_four .kiaa h6 {
+        font-weight: 100;
+        font-family: "Verdana", sans-serif;
+        font-size: 16px;
+        margin-right: 10px;
+      }
+      /* eof box_four */
+      /* box five*/
+      .section .boxes .box_five {
+        width: 61vw;
+        background-color: #ffffff;
+        box-sizing: border-box;
+        border-radius: 3px;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        -ms-border-radius: 3px;
+        -o-border-radius: 3px;
+        box-shadow: 0px 0px 4px #ddd;
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+
+      .section .boxes .box_five .content {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-evenly;
+        padding: 34px 24px 34px 24p;
+        height: 15vh;
+      }
+
+      .section .boxes .box_five .content h5 {
+        font-size: 5vh;
+        text-align: center;
+        color: var(--grey-80);
+        font-weight: 100;
+        font-family: "Verdana", sans-serif;
+      }
+
+      .section .boxes .box_five .content i {
+        font-size: 70px;
+        color: #333;
+        opacity: 0.4;
+      }
+
+      .section .box_five .footer {
+        background-color: rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        color: var(--white-color);
+        text-align: center;
+      }
+
+      .section .box_five .kiaa {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .section .box_five.kiaa h6 {
+        font-weight: 100;
+        font-family: "Verdana", sans-serif;
+        font-size: 16px;
+        margin-right: 10px;
+      }
+      /* eof box five*/
+      .footer_dashboard {
+        position: absolute;
+        bottom: -73px;
+        left: 20%;
+      }
+
+      .footer_dashboard h6 {
+        font-family: "Verdana", sans-serif;
+        font-size: 14px;
+        color: #888;
+        font-weight: 100;
+      }
+    </style>
+  </head>
+
+  <body>
+    <section class="section">
+      <h1>Welcome, @(JsEncode(CurrentUserInfo("Full_Name")))</h1>
+
+      <div class="boxes">
+        <div>
+          <a href="" id="href_box1" style="text-decoration: none">
+            <div class="box_one">
+              <div class="content font-weight-bold">
+                <div>
+                  <h5 id="box1"></h5>
+                </div>
+                <div class="d-none d-xl-block d-lg-block">
+                  <i class="fa fa-file-alt" aria-hidden="true"></i>
+                </div>
+              </div>
+              <div class="footer">
+                <div class="kiaa">
+                  <h6>Click Here</h6>
+                  <i
+                    class="fa fa-arrow-circle-right"
+                    aria-hidden="true"
+                    style="user-select: auto; padding-bottom: 5px"
+                  ></i>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div>
+          <a href="" id="href_box2" style="text-decoration: none">
+            <div class="box_two">
+              <div class="content">
+                <div>
+                  <h5 id="box2"></h5>
+                </div>
+                <div class="d-none d-xl-block d-lg-block">
+                  <i class="fa fa-hourglass-start" aria-hidden="true"></i>
+                </div>
+              </div>
+              <div class="footer">
+                <div class="kiaa">
+                  <h6>Click Here</h6>
+                  <i
+                    class="fa fa-arrow-circle-right"
+                    aria-hidden="true"
+                    style="user-select: auto; padding-bottom: 5px"
+                  ></i>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div class="boxes" style="margin-left: -0.75vw">
+        <div>
+          <a href="" id="href_box3" style="text-decoration: none">
+            <div class="box_three">
+              <div class="content font-weight-bold">
+                <div>
+                  <h5 id="box3"></h5>
+                </div>
+                <div class="d-none d-xl-block d-lg-block">
+                  <i class="fa fa-times" aria-hidden="true"></i>
+                </div>
+              </div>
+              <div class="footer">
+                <div class="kiaa">
+                  <h6>Click Here</h6>
+                  <i
+                    class="fa fa-arrow-circle-right"
+                    aria-hidden="true"
+                    style="user-select: auto; padding-bottom: 5px"
+                  ></i>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div>
+          <a href="" id="href_box4" style="text-decoration: none">
+            <div class="box_four">
+              <div class="content">
+                <div>
+                  <h5 id="box4"></h5>
+                </div>
+                <div class="d-none d-xl-block d-lg-block">
+                  <i class="fa fa-check" aria-hidden="true"></i>
+                </div>
+              </div>
+              <div class="footer">
+                <div class="kiaa">
+                  <h6>Click Here</h6>
+                  <i
+                    class="fa fa-arrow-circle-right"
+                    aria-hidden="true"
+                    style="user-select: auto; padding-bottom: 5px"
+                  ></i>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div class="boxes" style="margin-left: -0.5vw">
+        <div>
+          <!-- box 5-->
+          <div class="box_five">
+            <div class="content">
+              <div>
+                <h5 id="box5">Total Request</h5>
+              </div>
+              <!--<div>
+                                <i class="fa fa-list" aria-hidden="true"></i>
+                            </div>-->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      setTimeout(function () {
+        document.getElementsByTagName("body")[0].className =
+          "layout-fixed sidebar-collapse";
+        var parent_url = ew.PATH_BASE; //"../MEP/";
+        var username = "@(JsEncode(CurrentUserName()))";
+        var userlevel = "@(JsEncode(CurrentUserLevel()))";
+        $(document).ready(function () {
+          var jenis = "approver";
+          $("#href_box1").attr(
+            "href",
+            parent_url +
+              "VTrOutstandingList?x_XUPJList=" +
+              username +
+              "&z_XUPJList=LIKE&cmd=search"
+          );
+          //$("#href_box2").attr("href", parent_url + "VTrOutstandingList?cmd=search&psearch=" + username + "&psearchtype=xupj_next");
+          $("#href_box2").attr(
+            "href",
+            parent_url +
+              "VTrOutstandingList?x_xupj_next=" +
+              username +
+              "&z_xupj_next=LIKE&cmd=search"
+          );
+          $("#href_box3").attr(
+            "href",
+            parent_url +
+              "VTrOutstandingList?x_Approval_Status%5B%5D=Rejected&x_XUPJList=" +
+              username +
+              "&z_XUPJList=LIKE&cmd=search"
+          );
+          $("#href_box4").attr(
+            "href",
+            parent_url +
+              "VTrOutstandingList?x_Approval_Status%5B%5D=Completed&x_XUPJList=" +
+              username +
+              "&z_XUPJList=LIKE&cmd=search"
+          );
+
+          if (userlevel == "5") {
+            jenis = "biasa";
+            $("#href_box1").attr(
+              "href",
+              parent_url +
+                "VTrOutstandingList?x_Approval_Status%5B%5D=Submitted&x_Created_By=" +
+                username +
+                "&z_Created_By=LIKE&cmd=search"
+            );
+            $("#href_box2").attr(
+              "href",
+              parent_url +
+                "VTrOutstandingList?x_Approval_Status%5B%5D=Approval+1&x_Approval_Status%5B%5D=Approval+2&x_Approval_Status%5B%5D=Approval+3&x_Created_By=" +
+                username +
+                "&z_Created_By=LIKE&cmd=search"
+            );
+            $("#href_box3").attr(
+              "href",
+              parent_url +
+                "VTrOutstandingList?x_Approval_Status%5B%5D=Rejected&x_Created_By=" +
+                username +
+                "&z_Created_By=LIKE&cmd=search"
+            );
+            $("#href_box4").attr(
+              "href",
+              parent_url +
+                "VTrOutstandingList?x_Approval_Status%5B%5D=Completed&x_Created_By=" +
+                username +
+                "&z_Created_By=LIKE&cmd=search"
+            );
+          } else if (userlevel == "-1") {
+            jenis = "kabeh";
+            $("#href_box1").attr(
+              "href",
+              parent_url +
+                "VTrOutstandingList?x_Approval_Status%5B%5D=Submitted"
+            );
+            $("#href_box2").attr(
+              "href",
+              parent_url +
+                "VTrOutstandingList?x_Approval_Status%5B%5D=Approval+1&x_Approval_Status%5B%5D=Approval+2&x_Approval_Status%5B%5D=Approval+3"
+            );
+            $("#href_box3").attr(
+              "href",
+              parent_url + "VTrOutstandingList?x_Approval_Status%5B%5D=Rejected"
+            );
+            $("#href_box4").attr(
+              "href",
+              parent_url +
+                "VTrOutstandingList?x_Approval_Status%5B%5D=Completed"
+            );
+          }
+          $.ajax({
+            type: "GET",
+            url: parent_url + "api/LookUpList/get_doc_status",
+            data: {
+              jenis: jenis,
+              idsdm: username,
+            },
+          }).done(function (data) {
+            $("#box1").html("Submitted  <br>(" + data.subm + ")");
+
+            if (userlevel == "5") {
+              $("#box2").html("In Progress  <br>(" + data.inpr + ")");
+            } else {
+              $("#box2").html("Approval Outstanding  <br>(" + data.inpr + ")");
+            }
+            $("#box3").html("Rejected  <br>(" + data.reje + ")");
+            $("#box4").html("Completed  <br>(" + data.comp + ")");
+            if (userlevel == "4" || userlevel == "-1") {
+              $("#box5").html("Total Request (" + data.total + ")");
+            } else {
+              $("#box5").html(
+                "Total Request (" +
+                  (parseInt(data.subm) +
+                    parseInt(data.inpr) +
+                    parseInt(data.reje) +
+                    parseInt(data.comp)) +
+                  ")"
+              );
+            }
+          });
+        });
+      }, 600);
+    </script>
+  </body>
+</html>
+
+@Html.Raw(GetDebugMessage())

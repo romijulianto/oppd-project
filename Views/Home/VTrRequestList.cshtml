@@ -1,0 +1,514 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (vTrRequestList.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!vTrRequestList.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!vTrRequestList.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(vTrRequestList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { v_tr_request: currentTable } });
+var currentPageID = ew.PAGE_ID = "list";
+var currentForm;
+var @(vTrRequestList.FormName);
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("@(vTrRequestList.FormName)")
+        .setPageId("list")
+        .setSubmitWithFetch(@(vTrRequestList.UseAjaxActions ? "true" : "false"))
+        .setFormKeyCountName("@(vTrRequestList.FormKeyCountName)")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+ew.PREVIEW_SELECTOR = ".ew-preview-btn";
+ew.PREVIEW_MODAL_CLASS = "modal modal-fullscreen-sm-down";
+ew.PREVIEW_ROW = true;
+ew.PREVIEW_SINGLE_ROW = false;
+ew.PREVIEW || ew.ready("head", ew.PATH_BASE + "js/preview.min.js?v=20.6.0", "preview");
+</script>
+<script>
+window.Tabulator || loadjs([
+    ew.PATH_BASE + "js/tabulator.min.js?v=20.6.3",
+    ew.PATH_BASE + "css/@CssFile("tabulator_bootstrap5.css", false)?v=20.6.3"
+], "import");
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!vTrRequestList.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+@if (vTrRequestList.TotalRecords > 0 && vTrRequestList.ExportOptions.Visible) {
+    vTrRequestList.ExportOptions.Render("body");
+}
+@if (vTrRequestList.ImportOptions.Visible) {
+    vTrRequestList.ImportOptions.Render("body");
+}
+@if (vTrRequestList.SearchOptions.Visible) {
+    vTrRequestList.SearchOptions.Render("body");
+}
+@if (vTrRequestList.FilterOptions.Visible) {
+    vTrRequestList.FilterOptions.Render("body");
+}
+</div>
+}
+@if (!vTrRequestList.IsModal) {
+<form name="fv_tr_requestsrch" id="fv_tr_requestsrch" class="ew-form ew-ext-search-form" action="@AppPath(CurrentPageName())" novalidate autocomplete="off">
+<div id="fv_tr_requestsrch_search_panel" class="mb-2 mb-sm-0 @(vTrRequestList.SearchPanelClass)"><!-- .ew-search-panel -->
+<script>
+var currentTable = @Html.Raw(ConvertToJson(vTrRequestList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { v_tr_request: currentTable } });
+var currentForm;
+var fv_tr_requestsrch, currentSearchForm, currentAdvancedSearchForm;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery,
+        fields = currentTable.fields;
+
+    // Form object for search
+    let form = new ew.FormBuilder()
+        .setId("fv_tr_requestsrch")
+        .setPageId("list")
+@if (vTrRequestList.UseAjaxActions) {
+        <text>.setSubmitWithFetch(true)</text>
+}
+
+        // Dynamic selection lists
+        .setLists({
+        })
+
+        // Filters
+        .setFilterList(@Html.Raw(await vTrRequestList.GetFilterList()))
+        .build();
+    window[form.id] = form;
+    currentSearchForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<input type="hidden" name="cmd" value="search">
+@if (Security.CanSearch) {
+if (!vTrRequestList.IsExport() && Empty(vTrRequestList.CurrentAction) && vTrRequestList.HasSearchFields()) { @* Show search form (begin) *@
+<div class="ew-extended-search container-fluid ps-2">
+<div class="row mb-0">
+    <div class="col-sm-auto px-0 pe-sm-2">
+        <div class="ew-basic-search input-group">
+            <input type="search" name="@(Config.TableBasicSearch)" id="@(Config.TableBasicSearch)" class="form-control ew-basic-search-keyword" value="@Html.Raw(HtmlEncode(vTrRequestList.BasicSearch.SessionKeyword))" placeholder="@(HtmlEncode(Language.Phrase("Search")))" aria-label="@(HtmlEncode(Language.Phrase("Search")))">
+            <input type="hidden" name="@(Config.TableBasicSearchType)" id="@(Config.TableBasicSearchType)" class="ew-basic-search-type" value="@(HtmlEncode(vTrRequestList.BasicSearch.SessionType))">
+            <button type="button" data-bs-toggle="dropdown" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" aria-haspopup="true" aria-expanded="false">
+                <span id="searchtype">@Html.Raw(vTrRequestList.BasicSearch.TypeNameShort)</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end">
+                <button type="button" class="dropdown-item@(vTrRequestList.BasicSearch.SessionType == "" ? " active" : "")" form="fv_tr_requestsrch" data-ew-action="search-type">@Html.Raw(Language.Phrase("QuickSearchAuto"))</button>
+                <button type="button" class="dropdown-item@(vTrRequestList.BasicSearch.SessionType == "=" ? " active" : "")" form="fv_tr_requestsrch" data-ew-action="search-type" data-search-type="=">@Html.Raw(Language.Phrase("QuickSearchExact"))</button>
+                <button type="button" class="dropdown-item@(vTrRequestList.BasicSearch.SessionType == "AND" ? " active" : "")" form="fv_tr_requestsrch" data-ew-action="search-type" data-search-type="AND">@Html.Raw(Language.Phrase("QuickSearchAll"))</button>
+                <button type="button" class="dropdown-item@(vTrRequestList.BasicSearch.SessionType == "OR" ? " active" : "")" form="fv_tr_requestsrch" data-ew-action="search-type" data-search-type="OR">@Html.Raw(Language.Phrase("QuickSearchAny"))</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-auto mb-3">
+        <button class="btn btn-primary" name="btn-submit" id="btn-submit" type="submit">@Html.Raw(Language.Phrase("SearchBtn"))</button>
+    </div>
+</div>
+</div><!-- /.ew-extended-search -->
+} @* Show search form (end) *@
+}
+</div><!-- /.ew-search-panel -->
+</form>
+}
+@vTrRequestList.ShowPageHeader()
+@vTrRequestList.ShowMessages()
+<main class="list @(vTrRequestList.TotalRecords == 0 && !vTrRequestList.IsAdd ? " ew-no-record" : "")">
+<div id="ew-list">
+@if (vTrRequestList.TotalRecords > 0 || !Empty(vTrRequestList.CurrentAction)) {
+<div class="card ew-card ew-grid@(vTrRequestList.IsAddOrEdit ? " ew-grid-add-edit" : "") @(vTrRequestList.TableGridClass)">
+<form name="@(vTrRequestList.FormName)" id="@(vTrRequestList.FormName)" class="ew-form ew-list-form" action="@AppPath(vTrRequestList.PageName)" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+@if (vTrRequestList.IsModal) {
+<input type="hidden" name="modal" value="1">
+}
+<div id="gmp_v_tr_request" class="card-body ew-grid-middle-panel @(vTrRequestList.TableContainerClass)" style="@(vTrRequestList.TableContainerStyle)">
+@if (vTrRequestList.TotalRecords > 0 || vTrRequestList.IsGridEdit || vTrRequestList.IsMultiEdit) {
+<table id="tbl_v_tr_requestlist" class="@(vTrRequestList.TableClass)"><!-- .ew-table -->
+<thead>
+    <tr class="ew-table-header">
+@{
+    // Header row
+    vTrRequestList.RowType = RowType.Header;
+
+    // Render list options
+    await vTrRequestList.RenderListOptions();
+}
+@* Render list options (header, left) *@
+@vTrRequestList.ListOptions.RenderHeader("left")
+@if (vTrRequestList.Request_No.Visible) { // vTrRequestList.Request_No.Visible (begin)
+        <th data-name="Request_No" class="@(vTrRequestList.Request_No.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Request_No" class="v_tr_request_Request_No">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Request_No))</div></th>
+} @* vTrRequestList.Request_No.Visible (end) *@
+@if (vTrRequestList.Reference_Doc.Visible) { // vTrRequestList.Reference_Doc.Visible (begin)
+        <th data-name="Reference_Doc" class="@(vTrRequestList.Reference_Doc.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Reference_Doc" class="v_tr_request_Reference_Doc">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Reference_Doc))</div></th>
+} @* vTrRequestList.Reference_Doc.Visible (end) *@
+@if (vTrRequestList.Reason.Visible) { // vTrRequestList.Reason.Visible (begin)
+        <th data-name="Reason" class="@(vTrRequestList.Reason.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Reason" class="v_tr_request_Reason">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Reason))</div></th>
+} @* vTrRequestList.Reason.Visible (end) *@
+@if (vTrRequestList.Request_By.Visible) { // vTrRequestList.Request_By.Visible (begin)
+        <th data-name="Request_By" class="@(vTrRequestList.Request_By.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Request_By" class="v_tr_request_Request_By">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Request_By))</div></th>
+} @* vTrRequestList.Request_By.Visible (end) *@
+@if (vTrRequestList.Request_By_Name.Visible) { // vTrRequestList.Request_By_Name.Visible (begin)
+        <th data-name="Request_By_Name" class="@(vTrRequestList.Request_By_Name.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Request_By_Name" class="v_tr_request_Request_By_Name">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Request_By_Name))</div></th>
+} @* vTrRequestList.Request_By_Name.Visible (end) *@
+@if (vTrRequestList.Request_By_Position.Visible) { // vTrRequestList.Request_By_Position.Visible (begin)
+        <th data-name="Request_By_Position" class="@(vTrRequestList.Request_By_Position.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Request_By_Position" class="v_tr_request_Request_By_Position">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Request_By_Position))</div></th>
+} @* vTrRequestList.Request_By_Position.Visible (end) *@
+@if (vTrRequestList.Request_By_Branch.Visible) { // vTrRequestList.Request_By_Branch.Visible (begin)
+        <th data-name="Request_By_Branch" class="@(vTrRequestList.Request_By_Branch.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Request_By_Branch" class="v_tr_request_Request_By_Branch">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Request_By_Branch))</div></th>
+} @* vTrRequestList.Request_By_Branch.Visible (end) *@
+@if (vTrRequestList.Request_By_Region.Visible) { // vTrRequestList.Request_By_Region.Visible (begin)
+        <th data-name="Request_By_Region" class="@(vTrRequestList.Request_By_Region.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Request_By_Region" class="v_tr_request_Request_By_Region">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Request_By_Region))</div></th>
+} @* vTrRequestList.Request_By_Region.Visible (end) *@
+@if (vTrRequestList.Request_Industry.Visible) { // vTrRequestList.Request_Industry.Visible (begin)
+        <th data-name="Request_Industry" class="@(vTrRequestList.Request_Industry.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Request_Industry" class="v_tr_request_Request_Industry">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Request_Industry))</div></th>
+} @* vTrRequestList.Request_Industry.Visible (end) *@
+@if (vTrRequestList.Customer_ID.Visible) { // vTrRequestList.Customer_ID.Visible (begin)
+        <th data-name="Customer_ID" class="@(vTrRequestList.Customer_ID.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Customer_ID" class="v_tr_request_Customer_ID">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Customer_ID))</div></th>
+} @* vTrRequestList.Customer_ID.Visible (end) *@
+@if (vTrRequestList.Customer_Name.Visible) { // vTrRequestList.Customer_Name.Visible (begin)
+        <th data-name="Customer_Name" class="@(vTrRequestList.Customer_Name.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Customer_Name" class="v_tr_request_Customer_Name">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Customer_Name))</div></th>
+} @* vTrRequestList.Customer_Name.Visible (end) *@
+@if (vTrRequestList.SAP_Total.Visible) { // vTrRequestList.SAP_Total.Visible (begin)
+        <th data-name="SAP_Total" class="@(vTrRequestList.SAP_Total.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_SAP_Total" class="v_tr_request_SAP_Total">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.SAP_Total))</div></th>
+} @* vTrRequestList.SAP_Total.Visible (end) *@
+@if (vTrRequestList.Override_Total.Visible) { // vTrRequestList.Override_Total.Visible (begin)
+        <th data-name="Override_Total" class="@(vTrRequestList.Override_Total.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Override_Total" class="v_tr_request_Override_Total">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Override_Total))</div></th>
+} @* vTrRequestList.Override_Total.Visible (end) *@
+@if (vTrRequestList.Variance_Total.Visible) { // vTrRequestList.Variance_Total.Visible (begin)
+        <th data-name="Variance_Total" class="@(vTrRequestList.Variance_Total.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Variance_Total" class="v_tr_request_Variance_Total">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Variance_Total))</div></th>
+} @* vTrRequestList.Variance_Total.Visible (end) *@
+@if (vTrRequestList.Variance_Percent.Visible) { // vTrRequestList.Variance_Percent.Visible (begin)
+        <th data-name="Variance_Percent" class="@(vTrRequestList.Variance_Percent.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Variance_Percent" class="v_tr_request_Variance_Percent">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Variance_Percent))</div></th>
+} @* vTrRequestList.Variance_Percent.Visible (end) *@
+@if (vTrRequestList.Notes.Visible) { // vTrRequestList.Notes.Visible (begin)
+        <th data-name="Notes" class="@(vTrRequestList.Notes.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Notes" class="v_tr_request_Notes">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Notes))</div></th>
+} @* vTrRequestList.Notes.Visible (end) *@
+@if (vTrRequestList.Next_Approver.Visible) { // vTrRequestList.Next_Approver.Visible (begin)
+        <th data-name="Next_Approver" class="@(vTrRequestList.Next_Approver.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Next_Approver" class="v_tr_request_Next_Approver">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Next_Approver))</div></th>
+} @* vTrRequestList.Next_Approver.Visible (end) *@
+@if (vTrRequestList.List_Approver.Visible) { // vTrRequestList.List_Approver.Visible (begin)
+        <th data-name="List_Approver" class="@(vTrRequestList.List_Approver.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_List_Approver" class="v_tr_request_List_Approver">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.List_Approver))</div></th>
+} @* vTrRequestList.List_Approver.Visible (end) *@
+@if (vTrRequestList.Last_Update_By.Visible) { // vTrRequestList.Last_Update_By.Visible (begin)
+        <th data-name="Last_Update_By" class="@(vTrRequestList.Last_Update_By.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Last_Update_By" class="v_tr_request_Last_Update_By">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Last_Update_By))</div></th>
+} @* vTrRequestList.Last_Update_By.Visible (end) *@
+@if (vTrRequestList.Created_By.Visible) { // vTrRequestList.Created_By.Visible (begin)
+        <th data-name="Created_By" class="@(vTrRequestList.Created_By.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Created_By" class="v_tr_request_Created_By">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Created_By))</div></th>
+} @* vTrRequestList.Created_By.Visible (end) *@
+@if (vTrRequestList.Created_Date.Visible) { // vTrRequestList.Created_Date.Visible (begin)
+        <th data-name="Created_Date" class="@(vTrRequestList.Created_Date.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Created_Date" class="v_tr_request_Created_Date">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Created_Date))</div></th>
+} @* vTrRequestList.Created_Date.Visible (end) *@
+@if (vTrRequestList.ETL_Date.Visible) { // vTrRequestList.ETL_Date.Visible (begin)
+        <th data-name="ETL_Date" class="@(vTrRequestList.ETL_Date.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_ETL_Date" class="v_tr_request_ETL_Date">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.ETL_Date))</div></th>
+} @* vTrRequestList.ETL_Date.Visible (end) *@
+@if (vTrRequestList.Request_Status.Visible) { // vTrRequestList.Request_Status.Visible (begin)
+        <th data-name="Request_Status" class="@(vTrRequestList.Request_Status.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Request_Status" class="v_tr_request_Request_Status">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Request_Status))</div></th>
+} @* vTrRequestList.Request_Status.Visible (end) *@
+@if (vTrRequestList.Request_PIC.Visible) { // vTrRequestList.Request_PIC.Visible (begin)
+        <th data-name="Request_PIC" class="@(vTrRequestList.Request_PIC.HeaderCellClass)" style="white-space: nowrap;"><div id="elh_v_tr_request_Request_PIC" class="v_tr_request_Request_PIC">@Html.Raw(vTrRequestList.RenderFieldHeader(vTrRequestList.Request_PIC))</div></th>
+} @* vTrRequestList.Request_PIC.Visible (end) *@
+@* Render list options (header, right) *@
+@vTrRequestList.ListOptions.RenderHeader("right")
+    </tr>
+</thead>
+<tbody data-page="@(vTrRequestList.PageNumber)">
+@{
+    await vTrRequestList.SetupGrid();
+    bool eof = vTrRequestList.Recordset == null; // DN
+}
+@while (vTrRequestList.RecordCount < vTrRequestList.StopRecord || SameString(vTrRequestList.RowIndex, "$rowindex$")) { // Begin While
+    if (!eof && !SameString(vTrRequestList.RowIndex, "$rowindex$") &&
+        (!vTrRequestList.IsGridAdd || vTrRequestList.CurrentMode == "copy") &&
+        (!((vTrRequestList.IsCopy || vTrRequestList.IsAdd) && vTrRequestList.RowIndex is int rowIndex && rowIndex == 0))) // DN
+        eof = !await vTrRequestList.Recordset.ReadAsync();
+    vTrRequestList.RecordCount++;
+    if (vTrRequestList.RecordCount >= vTrRequestList.StartRecord) {
+        await vTrRequestList.SetupRow();
+    <tr @Html.Raw(vTrRequestList.RowAttributes)>
+    @* Render list options (body, left) *@
+    @vTrRequestList.ListOptions.RenderBody("left", vTrRequestList.RowCount)
+    @if (vTrRequestList.Request_No.Visible) { // vTrRequestList.Request_No.Visible (begin)
+        <td data-name="Request_No" @Html.Raw(vTrRequestList.Request_No.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Request_No" class="el_v_tr_request_Request_No">
+<span @Html.Raw(vTrRequestList.Request_No.ViewAttributes)>
+@Html.Raw(vTrRequestList.Request_No.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Request_No.Visible (end) *@
+    @if (vTrRequestList.Reference_Doc.Visible) { // vTrRequestList.Reference_Doc.Visible (begin)
+        <td data-name="Reference_Doc" @Html.Raw(vTrRequestList.Reference_Doc.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Reference_Doc" class="el_v_tr_request_Reference_Doc">
+<span @Html.Raw(vTrRequestList.Reference_Doc.ViewAttributes)>
+@Html.Raw(vTrRequestList.Reference_Doc.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Reference_Doc.Visible (end) *@
+    @if (vTrRequestList.Reason.Visible) { // vTrRequestList.Reason.Visible (begin)
+        <td data-name="Reason" @Html.Raw(vTrRequestList.Reason.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Reason" class="el_v_tr_request_Reason">
+<span @Html.Raw(vTrRequestList.Reason.ViewAttributes)>
+@Html.Raw(vTrRequestList.Reason.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Reason.Visible (end) *@
+    @if (vTrRequestList.Request_By.Visible) { // vTrRequestList.Request_By.Visible (begin)
+        <td data-name="Request_By" @Html.Raw(vTrRequestList.Request_By.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Request_By" class="el_v_tr_request_Request_By">
+<span @Html.Raw(vTrRequestList.Request_By.ViewAttributes)>
+@Html.Raw(vTrRequestList.Request_By.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Request_By.Visible (end) *@
+    @if (vTrRequestList.Request_By_Name.Visible) { // vTrRequestList.Request_By_Name.Visible (begin)
+        <td data-name="Request_By_Name" @Html.Raw(vTrRequestList.Request_By_Name.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Request_By_Name" class="el_v_tr_request_Request_By_Name">
+<span @Html.Raw(vTrRequestList.Request_By_Name.ViewAttributes)>
+@Html.Raw(vTrRequestList.Request_By_Name.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Request_By_Name.Visible (end) *@
+    @if (vTrRequestList.Request_By_Position.Visible) { // vTrRequestList.Request_By_Position.Visible (begin)
+        <td data-name="Request_By_Position" @Html.Raw(vTrRequestList.Request_By_Position.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Request_By_Position" class="el_v_tr_request_Request_By_Position">
+<span @Html.Raw(vTrRequestList.Request_By_Position.ViewAttributes)>
+@Html.Raw(vTrRequestList.Request_By_Position.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Request_By_Position.Visible (end) *@
+    @if (vTrRequestList.Request_By_Branch.Visible) { // vTrRequestList.Request_By_Branch.Visible (begin)
+        <td data-name="Request_By_Branch" @Html.Raw(vTrRequestList.Request_By_Branch.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Request_By_Branch" class="el_v_tr_request_Request_By_Branch">
+<span @Html.Raw(vTrRequestList.Request_By_Branch.ViewAttributes)>
+@Html.Raw(vTrRequestList.Request_By_Branch.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Request_By_Branch.Visible (end) *@
+    @if (vTrRequestList.Request_By_Region.Visible) { // vTrRequestList.Request_By_Region.Visible (begin)
+        <td data-name="Request_By_Region" @Html.Raw(vTrRequestList.Request_By_Region.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Request_By_Region" class="el_v_tr_request_Request_By_Region">
+<span @Html.Raw(vTrRequestList.Request_By_Region.ViewAttributes)>
+@Html.Raw(vTrRequestList.Request_By_Region.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Request_By_Region.Visible (end) *@
+    @if (vTrRequestList.Request_Industry.Visible) { // vTrRequestList.Request_Industry.Visible (begin)
+        <td data-name="Request_Industry" @Html.Raw(vTrRequestList.Request_Industry.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Request_Industry" class="el_v_tr_request_Request_Industry">
+<span @Html.Raw(vTrRequestList.Request_Industry.ViewAttributes)>
+@Html.Raw(vTrRequestList.Request_Industry.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Request_Industry.Visible (end) *@
+    @if (vTrRequestList.Customer_ID.Visible) { // vTrRequestList.Customer_ID.Visible (begin)
+        <td data-name="Customer_ID" @Html.Raw(vTrRequestList.Customer_ID.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Customer_ID" class="el_v_tr_request_Customer_ID">
+<span @Html.Raw(vTrRequestList.Customer_ID.ViewAttributes)>
+@Html.Raw(vTrRequestList.Customer_ID.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Customer_ID.Visible (end) *@
+    @if (vTrRequestList.Customer_Name.Visible) { // vTrRequestList.Customer_Name.Visible (begin)
+        <td data-name="Customer_Name" @Html.Raw(vTrRequestList.Customer_Name.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Customer_Name" class="el_v_tr_request_Customer_Name">
+<span @Html.Raw(vTrRequestList.Customer_Name.ViewAttributes)>
+@Html.Raw(vTrRequestList.Customer_Name.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Customer_Name.Visible (end) *@
+    @if (vTrRequestList.SAP_Total.Visible) { // vTrRequestList.SAP_Total.Visible (begin)
+        <td data-name="SAP_Total" @Html.Raw(vTrRequestList.SAP_Total.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_SAP_Total" class="el_v_tr_request_SAP_Total">
+<span @Html.Raw(vTrRequestList.SAP_Total.ViewAttributes)>
+@Html.Raw(vTrRequestList.SAP_Total.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.SAP_Total.Visible (end) *@
+    @if (vTrRequestList.Override_Total.Visible) { // vTrRequestList.Override_Total.Visible (begin)
+        <td data-name="Override_Total" @Html.Raw(vTrRequestList.Override_Total.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Override_Total" class="el_v_tr_request_Override_Total">
+<span @Html.Raw(vTrRequestList.Override_Total.ViewAttributes)>
+@Html.Raw(vTrRequestList.Override_Total.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Override_Total.Visible (end) *@
+    @if (vTrRequestList.Variance_Total.Visible) { // vTrRequestList.Variance_Total.Visible (begin)
+        <td data-name="Variance_Total" @Html.Raw(vTrRequestList.Variance_Total.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Variance_Total" class="el_v_tr_request_Variance_Total">
+<span @Html.Raw(vTrRequestList.Variance_Total.ViewAttributes)>
+@Html.Raw(vTrRequestList.Variance_Total.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Variance_Total.Visible (end) *@
+    @if (vTrRequestList.Variance_Percent.Visible) { // vTrRequestList.Variance_Percent.Visible (begin)
+        <td data-name="Variance_Percent" @Html.Raw(vTrRequestList.Variance_Percent.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Variance_Percent" class="el_v_tr_request_Variance_Percent">
+<span @Html.Raw(vTrRequestList.Variance_Percent.ViewAttributes)>
+@Html.Raw(vTrRequestList.Variance_Percent.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Variance_Percent.Visible (end) *@
+    @if (vTrRequestList.Notes.Visible) { // vTrRequestList.Notes.Visible (begin)
+        <td data-name="Notes" @Html.Raw(vTrRequestList.Notes.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Notes" class="el_v_tr_request_Notes">
+<span @Html.Raw(vTrRequestList.Notes.ViewAttributes)>
+@Html.Raw(vTrRequestList.Notes.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Notes.Visible (end) *@
+    @if (vTrRequestList.Next_Approver.Visible) { // vTrRequestList.Next_Approver.Visible (begin)
+        <td data-name="Next_Approver" @Html.Raw(vTrRequestList.Next_Approver.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Next_Approver" class="el_v_tr_request_Next_Approver">
+<span @Html.Raw(vTrRequestList.Next_Approver.ViewAttributes)>
+@Html.Raw(vTrRequestList.Next_Approver.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Next_Approver.Visible (end) *@
+    @if (vTrRequestList.List_Approver.Visible) { // vTrRequestList.List_Approver.Visible (begin)
+        <td data-name="List_Approver" @Html.Raw(vTrRequestList.List_Approver.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_List_Approver" class="el_v_tr_request_List_Approver">
+<span @Html.Raw(vTrRequestList.List_Approver.ViewAttributes)>
+@Html.Raw(vTrRequestList.List_Approver.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.List_Approver.Visible (end) *@
+    @if (vTrRequestList.Last_Update_By.Visible) { // vTrRequestList.Last_Update_By.Visible (begin)
+        <td data-name="Last_Update_By" @Html.Raw(vTrRequestList.Last_Update_By.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Last_Update_By" class="el_v_tr_request_Last_Update_By">
+<span @Html.Raw(vTrRequestList.Last_Update_By.ViewAttributes)>
+@Html.Raw(vTrRequestList.Last_Update_By.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Last_Update_By.Visible (end) *@
+    @if (vTrRequestList.Created_By.Visible) { // vTrRequestList.Created_By.Visible (begin)
+        <td data-name="Created_By" @Html.Raw(vTrRequestList.Created_By.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Created_By" class="el_v_tr_request_Created_By">
+<span @Html.Raw(vTrRequestList.Created_By.ViewAttributes)>
+@Html.Raw(vTrRequestList.Created_By.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Created_By.Visible (end) *@
+    @if (vTrRequestList.Created_Date.Visible) { // vTrRequestList.Created_Date.Visible (begin)
+        <td data-name="Created_Date" @Html.Raw(vTrRequestList.Created_Date.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Created_Date" class="el_v_tr_request_Created_Date">
+<span @Html.Raw(vTrRequestList.Created_Date.ViewAttributes)>
+@Html.Raw(vTrRequestList.Created_Date.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Created_Date.Visible (end) *@
+    @if (vTrRequestList.ETL_Date.Visible) { // vTrRequestList.ETL_Date.Visible (begin)
+        <td data-name="ETL_Date" @Html.Raw(vTrRequestList.ETL_Date.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_ETL_Date" class="el_v_tr_request_ETL_Date">
+<span @Html.Raw(vTrRequestList.ETL_Date.ViewAttributes)>
+@Html.Raw(vTrRequestList.ETL_Date.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.ETL_Date.Visible (end) *@
+    @if (vTrRequestList.Request_Status.Visible) { // vTrRequestList.Request_Status.Visible (begin)
+        <td data-name="Request_Status" @Html.Raw(vTrRequestList.Request_Status.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Request_Status" class="el_v_tr_request_Request_Status">
+<span @Html.Raw(vTrRequestList.Request_Status.ViewAttributes)>
+@Html.Raw(vTrRequestList.Request_Status.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Request_Status.Visible (end) *@
+    @if (vTrRequestList.Request_PIC.Visible) { // vTrRequestList.Request_PIC.Visible (begin)
+        <td data-name="Request_PIC" @Html.Raw(vTrRequestList.Request_PIC.CellAttributes)>
+<span id="el@(vTrRequestList.RowIndex == "$rowindex$" ? "$rowindex$" : vTrRequestList.RowCount)_v_tr_request_Request_PIC" class="el_v_tr_request_Request_PIC">
+<span @Html.Raw(vTrRequestList.Request_PIC.ViewAttributes)>
+@Html.Raw(vTrRequestList.Request_PIC.GetViewValue())</span>
+</span>
+</td>
+    } @* vTrRequestList.Request_PIC.Visible (end) *@
+    @* Render list options (body, right) *@
+    @vTrRequestList.ListOptions.RenderBody("right", vTrRequestList.RowCount)
+    </tr>
+    } @* End if *@
+
+    // Reset for template row
+    if (SameString(vTrRequestList.RowIndex, "$rowindex$"))
+        vTrRequestList.RowIndex = 0;
+
+    // Reset inline add/copy row
+    if ((vTrRequestList.IsCopy || vTrRequestList.IsAdd) && vTrRequestList.RowIndex is int rowIndex2 && rowIndex2 == 0)
+        vTrRequestList.RowIndex = 1;
+} @* End While *@
+</tbody>
+</table><!-- /.ew-table -->
+} @* End If TotalRecords > 0 *@
+</div><!-- /.ew-grid-middle-panel -->
+@if (Empty(vTrRequestList.CurrentAction) && !vTrRequestList.UseAjaxActions) {
+<input type="hidden" name="action" id="action" value="">
+}
+</form><!-- /.ew-list-form -->
+@{ vTrRequestList.CloseRecordset(); }
+@if (!vTrRequestList.IsExport()) {
+<div class="card-footer ew-grid-lower-panel">
+@if (!vTrRequestList.IsGridAdd && !(vTrRequestList.IsGridEdit && vTrRequestList.ModalGridEdit) && !vTrRequestList.IsMultiEdit) {
+@Html.Raw(vTrRequestList.Pager.Render())
+}
+<div class="ew-list-other-options">
+@vTrRequestList.OtherOptions.RenderBody("bottom")
+</div>
+</div>
+}
+</div><!-- /.ew-grid -->
+} else { // Show other options
+<div class="ew-list-other-options">
+@vTrRequestList.OtherOptions.ForEach(opt => opt.ButtonClass = "").RenderBody()
+</div>
+}
+</div>
+</main>
+@vTrRequestList.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!vTrRequestList.IsExport()) {
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("v_tr_request");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

@@ -1,0 +1,135 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (mtParamView.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!mtParamView.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!mtParamView.IsExport()) {
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!mtParamView.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+    @mtParamView.ExportOptions.RenderBody()
+    @mtParamView.OtherOptions.RenderBody()
+</div>
+}
+@mtParamView.ShowPageHeader()
+@mtParamView.ShowMessages()
+<main class="view">
+<form name="fmt_paramview" id="fmt_paramview" class="ew-form ew-view-form overlay-wrapper" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (!mtParamView.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtParamView.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_param: currentTable } });
+var currentPageID = ew.PAGE_ID = "view";
+var currentForm;
+var fmt_paramview;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fmt_paramview")
+        .setPageId("view")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+}
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="modal" value="@ConvertToInt(mtParamView.IsModal)">
+<table class="@(mtParamView.TableClass)">
+@if (mtParamView.id.Visible) { // mtParamView.id.Visible (begin)
+    <tr id="r_id" @Html.Raw(mtParamView.id.RowAttributes)>
+        <td class="@(mtParamView.TableLeftColumnClass)"><span id="elh_mt_param_id">@Html.Raw(mtParamView.id.Caption)</span></td>
+        <td data-name="id" @Html.Raw(mtParamView.id.CellAttributes)>
+<span id="el_mt_param_id">
+<span @Html.Raw(mtParamView.id.ViewAttributes)>
+@Html.Raw(mtParamView.id.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* mtParamView.id.Visible (end) *@
+@if (mtParamView.Param_Type.Visible) { // mtParamView.Param_Type.Visible (begin)
+    <tr id="r_Param_Type" @Html.Raw(mtParamView.Param_Type.RowAttributes)>
+        <td class="@(mtParamView.TableLeftColumnClass)"><span id="elh_mt_param_Param_Type">@Html.Raw(mtParamView.Param_Type.Caption)</span></td>
+        <td data-name="Param_Type" @Html.Raw(mtParamView.Param_Type.CellAttributes)>
+<span id="el_mt_param_Param_Type">
+<span @Html.Raw(mtParamView.Param_Type.ViewAttributes)>
+@Html.Raw(mtParamView.Param_Type.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* mtParamView.Param_Type.Visible (end) *@
+@if (mtParamView.Param_Name.Visible) { // mtParamView.Param_Name.Visible (begin)
+    <tr id="r_Param_Name" @Html.Raw(mtParamView.Param_Name.RowAttributes)>
+        <td class="@(mtParamView.TableLeftColumnClass)"><span id="elh_mt_param_Param_Name">@Html.Raw(mtParamView.Param_Name.Caption)</span></td>
+        <td data-name="Param_Name" @Html.Raw(mtParamView.Param_Name.CellAttributes)>
+<span id="el_mt_param_Param_Name">
+<span @Html.Raw(mtParamView.Param_Name.ViewAttributes)>
+@Html.Raw(mtParamView.Param_Name.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* mtParamView.Param_Name.Visible (end) *@
+@if (mtParamView.Param_Value.Visible) { // mtParamView.Param_Value.Visible (begin)
+    <tr id="r_Param_Value" @Html.Raw(mtParamView.Param_Value.RowAttributes)>
+        <td class="@(mtParamView.TableLeftColumnClass)"><span id="elh_mt_param_Param_Value">@Html.Raw(mtParamView.Param_Value.Caption)</span></td>
+        <td data-name="Param_Value" @Html.Raw(mtParamView.Param_Value.CellAttributes)>
+<span id="el_mt_param_Param_Value">
+<span @Html.Raw(mtParamView.Param_Value.ViewAttributes)>
+@Html.Raw(mtParamView.Param_Value.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* mtParamView.Param_Value.Visible (end) *@
+@if (mtParamView.Param_Status.Visible) { // mtParamView.Param_Status.Visible (begin)
+    <tr id="r_Param_Status" @Html.Raw(mtParamView.Param_Status.RowAttributes)>
+        <td class="@(mtParamView.TableLeftColumnClass)"><span id="elh_mt_param_Param_Status">@Html.Raw(mtParamView.Param_Status.Caption)</span></td>
+        <td data-name="Param_Status" @Html.Raw(mtParamView.Param_Status.CellAttributes)>
+<span id="el_mt_param_Param_Status">
+<span @Html.Raw(mtParamView.Param_Status.ViewAttributes)>
+@Html.Raw(mtParamView.Param_Status.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* mtParamView.Param_Status.Visible (end) *@
+</table>
+@{ mtParamView.CloseRecordset(); }
+</form>
+</main>
+@mtParamView.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!mtParamView.IsExport()) {
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

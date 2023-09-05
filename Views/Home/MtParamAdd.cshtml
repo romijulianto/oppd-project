@@ -1,0 +1,177 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (mtParamAdd.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!mtParamAdd.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtParamAdd.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_param: currentTable } });
+var currentPageID = ew.PAGE_ID = "add";
+var currentForm;
+var fmt_paramadd;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fmt_paramadd")
+        .setPageId("add")
+
+        // Add fields
+        .setFields([
+
+            ["id", [fields.id.visible && fields.id.required ? ew.Validators.required(fields.id.caption) : null, ew.Validators.integer], fields.id.isInvalid],
+            ["Param_Type", [fields.Param_Type.visible && fields.Param_Type.required ? ew.Validators.required(fields.Param_Type.caption) : null], fields.Param_Type.isInvalid],
+            ["Param_Name", [fields.Param_Name.visible && fields.Param_Name.required ? ew.Validators.required(fields.Param_Name.caption) : null], fields.Param_Name.isInvalid],
+            ["Param_Value", [fields.Param_Value.visible && fields.Param_Value.required ? ew.Validators.required(fields.Param_Value.caption) : null], fields.Param_Value.isInvalid],
+            ["Param_Status", [fields.Param_Status.visible && fields.Param_Status.required ? ew.Validators.required(fields.Param_Status.caption) : null], fields.Param_Status.isInvalid]
+        ])
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+        })
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@mtParamAdd.ShowPageHeader()
+@mtParamAdd.ShowMessages()
+<form name="fmt_paramadd" id="fmt_paramadd" class="@(mtParamAdd.FormClassName)" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="insert">
+<input type="hidden" name="modal" value="@ConvertToInt(mtParamAdd.IsModal)">
+@if (IsJsonResponse()) {
+<input type="hidden" name="json" value="1">
+}
+<input type="hidden" name="@(mtParamAdd.OldKeyName)" value="@Html.Raw(mtParamAdd.OldKey)">
+<div class="ew-add-div"><!-- page* -->
+@if (mtParamAdd.id.Visible) { // mtParamAdd.id.Visible (begin)
+    <div id="r_id" @Html.Raw(mtParamAdd.id.RowAttributes)>
+        <label id="elh_mt_param_id" for="x_id" class="@(mtParamAdd.LeftColumnClass)">@Html.Raw(mtParamAdd.id.Caption)@Html.Raw(mtParamAdd.id.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtParamAdd.RightColumnClass)"><div @Html.Raw(mtParamAdd.id.CellAttributes)>
+<span id="el_mt_param_id">
+<input type="@(mtParamAdd.id.InputTextType)" name="x_id" id="x_id" data-table="mt_param" data-field="x_id" value="@Html.Raw(mtParamAdd.id.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(mtParamAdd.id.PlaceHolder))" data-format-pattern="@(mtParamAdd.id.FormatPattern)"@Html.Raw(mtParamAdd.id.EditAttributes) aria-describedby="x_id_help">
+@Html.Raw(mtParamAdd.id.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtParamAdd.id.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtParamAdd.id.Visible (end) *@
+@if (mtParamAdd.Param_Type.Visible) { // mtParamAdd.Param_Type.Visible (begin)
+    <div id="r_Param_Type" @Html.Raw(mtParamAdd.Param_Type.RowAttributes)>
+        <label id="elh_mt_param_Param_Type" for="x_Param_Type" class="@(mtParamAdd.LeftColumnClass)">@Html.Raw(mtParamAdd.Param_Type.Caption)@Html.Raw(mtParamAdd.Param_Type.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtParamAdd.RightColumnClass)"><div @Html.Raw(mtParamAdd.Param_Type.CellAttributes)>
+<span id="el_mt_param_Param_Type">
+<input type="@(mtParamAdd.Param_Type.InputTextType)" name="x_Param_Type" id="x_Param_Type" data-table="mt_param" data-field="x_Param_Type" value="@Html.Raw(mtParamAdd.Param_Type.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(mtParamAdd.Param_Type.PlaceHolder))" data-format-pattern="@(mtParamAdd.Param_Type.FormatPattern)"@Html.Raw(mtParamAdd.Param_Type.EditAttributes) aria-describedby="x_Param_Type_help">
+@Html.Raw(mtParamAdd.Param_Type.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtParamAdd.Param_Type.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtParamAdd.Param_Type.Visible (end) *@
+@if (mtParamAdd.Param_Name.Visible) { // mtParamAdd.Param_Name.Visible (begin)
+    <div id="r_Param_Name" @Html.Raw(mtParamAdd.Param_Name.RowAttributes)>
+        <label id="elh_mt_param_Param_Name" for="x_Param_Name" class="@(mtParamAdd.LeftColumnClass)">@Html.Raw(mtParamAdd.Param_Name.Caption)@Html.Raw(mtParamAdd.Param_Name.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtParamAdd.RightColumnClass)"><div @Html.Raw(mtParamAdd.Param_Name.CellAttributes)>
+<span id="el_mt_param_Param_Name">
+<input type="@(mtParamAdd.Param_Name.InputTextType)" name="x_Param_Name" id="x_Param_Name" data-table="mt_param" data-field="x_Param_Name" value="@Html.Raw(mtParamAdd.Param_Name.EditValue)" size="30" maxlength="200" placeholder="@Html.Raw(HtmlEncode(mtParamAdd.Param_Name.PlaceHolder))" data-format-pattern="@(mtParamAdd.Param_Name.FormatPattern)"@Html.Raw(mtParamAdd.Param_Name.EditAttributes) aria-describedby="x_Param_Name_help">
+@Html.Raw(mtParamAdd.Param_Name.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtParamAdd.Param_Name.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtParamAdd.Param_Name.Visible (end) *@
+@if (mtParamAdd.Param_Value.Visible) { // mtParamAdd.Param_Value.Visible (begin)
+    <div id="r_Param_Value" @Html.Raw(mtParamAdd.Param_Value.RowAttributes)>
+        <label id="elh_mt_param_Param_Value" for="x_Param_Value" class="@(mtParamAdd.LeftColumnClass)">@Html.Raw(mtParamAdd.Param_Value.Caption)@Html.Raw(mtParamAdd.Param_Value.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtParamAdd.RightColumnClass)"><div @Html.Raw(mtParamAdd.Param_Value.CellAttributes)>
+<span id="el_mt_param_Param_Value">
+<input type="@(mtParamAdd.Param_Value.InputTextType)" name="x_Param_Value" id="x_Param_Value" data-table="mt_param" data-field="x_Param_Value" value="@Html.Raw(mtParamAdd.Param_Value.EditValue)" size="30" maxlength="500" placeholder="@Html.Raw(HtmlEncode(mtParamAdd.Param_Value.PlaceHolder))" data-format-pattern="@(mtParamAdd.Param_Value.FormatPattern)"@Html.Raw(mtParamAdd.Param_Value.EditAttributes) aria-describedby="x_Param_Value_help">
+@Html.Raw(mtParamAdd.Param_Value.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtParamAdd.Param_Value.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtParamAdd.Param_Value.Visible (end) *@
+@if (mtParamAdd.Param_Status.Visible) { // mtParamAdd.Param_Status.Visible (begin)
+    <div id="r_Param_Status" @Html.Raw(mtParamAdd.Param_Status.RowAttributes)>
+        <label id="elh_mt_param_Param_Status" for="x_Param_Status" class="@(mtParamAdd.LeftColumnClass)">@Html.Raw(mtParamAdd.Param_Status.Caption)@Html.Raw(mtParamAdd.Param_Status.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(mtParamAdd.RightColumnClass)"><div @Html.Raw(mtParamAdd.Param_Status.CellAttributes)>
+<span id="el_mt_param_Param_Status">
+<input type="@(mtParamAdd.Param_Status.InputTextType)" name="x_Param_Status" id="x_Param_Status" data-table="mt_param" data-field="x_Param_Status" value="@Html.Raw(mtParamAdd.Param_Status.EditValue)" size="30" maxlength="20" placeholder="@Html.Raw(HtmlEncode(mtParamAdd.Param_Status.PlaceHolder))" data-format-pattern="@(mtParamAdd.Param_Status.FormatPattern)"@Html.Raw(mtParamAdd.Param_Status.EditAttributes) aria-describedby="x_Param_Status_help">
+@Html.Raw(mtParamAdd.Param_Status.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(mtParamAdd.Param_Status.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* mtParamAdd.Param_Status.Visible (end) *@
+</div><!-- /page* -->
+@{ mtParamAdd.CloseRecordset(); }
+@Html.Raw(mtParamAdd.IsModal ? "<template class=\"ew-modal-buttons\">" : "<div class=\"row ew-buttons\">")<!-- buttons .row -->
+    <div class="@(mtParamAdd.OffsetColumnClass)"><!-- buttons offset -->
+    <button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit" form="fmt_paramadd">@Html.Raw(Language.Phrase("AddBtn"))</button>
+@if (IsJsonResponse()) {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-bs-dismiss="modal">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+} else {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="fmt_paramadd" data-href="@AppPath(mtParamAdd.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+}
+    </div><!-- /buttons offset -->
+@Html.Raw(mtParamAdd.IsModal ? "</template>" : "</div>")<!-- /buttons .row -->
+</form>
+@mtParamAdd.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("mt_param");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

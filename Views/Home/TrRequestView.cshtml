@@ -1,0 +1,400 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (trRequestView.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!trRequestView.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!trRequestView.IsExport()) {
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!trRequestView.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+    @trRequestView.ExportOptions.RenderBody()
+    @trRequestView.OtherOptions.RenderBody()
+</div>
+}
+@trRequestView.ShowPageHeader()
+@trRequestView.ShowMessages()
+<main class="view">
+<form name="ftr_requestview" id="ftr_requestview" class="ew-form ew-view-form overlay-wrapper" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (!trRequestView.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(trRequestView.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { tr_request: currentTable } });
+var currentPageID = ew.PAGE_ID = "view";
+var currentForm;
+var ftr_requestview;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("ftr_requestview")
+        .setPageId("view")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+}
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="modal" value="@ConvertToInt(trRequestView.IsModal)">
+@if (!trRequestView.IsExport()) {
+@:<div class="ew-multi-page">
+    @:<div class="ew-nav@(trRequestView.MultiPages.ContainerClasses)" id="pages_trRequestView"><!-- multi-page tabs -->
+    <ul class="@(trRequestView.MultiPages.NavClasses)" role="tablist">
+        <li class="nav-item"><button class="@(trRequestView.MultiPages.NavLinkClasses(1))" data-bs-target="#tab_tr_request1" data-bs-toggle="tab" type="button" role="tab" aria-controls="tab_tr_request1" aria-selected="@(ConvertToJson(trRequestView.MultiPages.IsActive(1)))">@Html.Raw(trRequestView.PageCaption(1))</button></li>
+        <li class="nav-item"><button class="@(trRequestView.MultiPages.NavLinkClasses(2))" data-bs-target="#tab_tr_request2" data-bs-toggle="tab" type="button" role="tab" aria-controls="tab_tr_request2" aria-selected="@(ConvertToJson(trRequestView.MultiPages.IsActive(2)))">@Html.Raw(trRequestView.PageCaption(2))</button></li>
+        <li class="nav-item"><button class="@(trRequestView.MultiPages.NavLinkClasses(3))" data-bs-target="#tab_tr_request3" data-bs-toggle="tab" type="button" role="tab" aria-controls="tab_tr_request3" aria-selected="@(ConvertToJson(trRequestView.MultiPages.IsActive(3)))">@Html.Raw(trRequestView.PageCaption(3))</button></li>
+    </ul>
+    @:<div class="@(trRequestView.MultiPages.TabContentClasses)"">
+}
+@if (!trRequestView.IsExport()) {
+    @:<div class="@(trRequestView.MultiPages.TabPaneClasses(1))" id="tab_tr_request1" role="tabpanel"><!-- multi-page .tab-pane -->
+}
+<table class="@(trRequestView.TableClass)">
+@if (trRequestView.Request_No.Visible) { // trRequestView.Request_No.Visible (begin)
+    <tr id="r_Request_No" @Html.Raw(trRequestView.Request_No.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Request_No">@Html.Raw(trRequestView.Request_No.Caption)</span></td>
+        <td data-name="Request_No" @Html.Raw(trRequestView.Request_No.CellAttributes)>
+<span id="el_tr_request_Request_No" data-page="1">
+<span @Html.Raw(trRequestView.Request_No.ViewAttributes)>
+@Html.Raw(trRequestView.Request_No.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Request_No.Visible (end) *@
+@if (trRequestView.Reference_Doc.Visible) { // trRequestView.Reference_Doc.Visible (begin)
+    <tr id="r_Reference_Doc" @Html.Raw(trRequestView.Reference_Doc.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Reference_Doc">@Html.Raw(trRequestView.Reference_Doc.Caption)</span></td>
+        <td data-name="Reference_Doc" @Html.Raw(trRequestView.Reference_Doc.CellAttributes)>
+<span id="el_tr_request_Reference_Doc" data-page="1">
+<span @Html.Raw(trRequestView.Reference_Doc.ViewAttributes)>
+@Html.Raw(trRequestView.Reference_Doc.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Reference_Doc.Visible (end) *@
+@if (trRequestView.Reason.Visible) { // trRequestView.Reason.Visible (begin)
+    <tr id="r_Reason" @Html.Raw(trRequestView.Reason.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Reason">@Html.Raw(trRequestView.Reason.Caption)</span></td>
+        <td data-name="Reason" @Html.Raw(trRequestView.Reason.CellAttributes)>
+<span id="el_tr_request_Reason" data-page="1">
+<span @Html.Raw(trRequestView.Reason.ViewAttributes)>
+@Html.Raw(trRequestView.Reason.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Reason.Visible (end) *@
+@if (trRequestView.Customer_ID.Visible) { // trRequestView.Customer_ID.Visible (begin)
+    <tr id="r_Customer_ID" @Html.Raw(trRequestView.Customer_ID.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Customer_ID">@Html.Raw(trRequestView.Customer_ID.Caption)</span></td>
+        <td data-name="Customer_ID" @Html.Raw(trRequestView.Customer_ID.CellAttributes)>
+<span id="el_tr_request_Customer_ID" data-page="1">
+<span @Html.Raw(trRequestView.Customer_ID.ViewAttributes)>
+@Html.Raw(trRequestView.Customer_ID.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Customer_ID.Visible (end) *@
+@if (trRequestView.Customer_Name.Visible) { // trRequestView.Customer_Name.Visible (begin)
+    <tr id="r_Customer_Name" @Html.Raw(trRequestView.Customer_Name.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Customer_Name">@Html.Raw(trRequestView.Customer_Name.Caption)</span></td>
+        <td data-name="Customer_Name" @Html.Raw(trRequestView.Customer_Name.CellAttributes)>
+<span id="el_tr_request_Customer_Name" data-page="1">
+<span @Html.Raw(trRequestView.Customer_Name.ViewAttributes)>
+@Html.Raw(trRequestView.Customer_Name.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Customer_Name.Visible (end) *@
+@if (trRequestView.SAP_Total.Visible) { // trRequestView.SAP_Total.Visible (begin)
+    <tr id="r_SAP_Total" @Html.Raw(trRequestView.SAP_Total.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_SAP_Total">@Html.Raw(trRequestView.SAP_Total.Caption)</span></td>
+        <td data-name="SAP_Total" @Html.Raw(trRequestView.SAP_Total.CellAttributes)>
+<span id="el_tr_request_SAP_Total" data-page="1">
+<span @Html.Raw(trRequestView.SAP_Total.ViewAttributes)>
+@Html.Raw(trRequestView.SAP_Total.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.SAP_Total.Visible (end) *@
+@if (trRequestView.Override_Total.Visible) { // trRequestView.Override_Total.Visible (begin)
+    <tr id="r_Override_Total" @Html.Raw(trRequestView.Override_Total.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Override_Total">@Html.Raw(trRequestView.Override_Total.Caption)</span></td>
+        <td data-name="Override_Total" @Html.Raw(trRequestView.Override_Total.CellAttributes)>
+<span id="el_tr_request_Override_Total" data-page="1">
+<span @Html.Raw(trRequestView.Override_Total.ViewAttributes)>
+@Html.Raw(trRequestView.Override_Total.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Override_Total.Visible (end) *@
+@if (trRequestView.Variance_Total.Visible) { // trRequestView.Variance_Total.Visible (begin)
+    <tr id="r_Variance_Total" @Html.Raw(trRequestView.Variance_Total.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Variance_Total">@Html.Raw(trRequestView.Variance_Total.Caption)</span></td>
+        <td data-name="Variance_Total" @Html.Raw(trRequestView.Variance_Total.CellAttributes)>
+<span id="el_tr_request_Variance_Total" data-page="1">
+<span @Html.Raw(trRequestView.Variance_Total.ViewAttributes)>
+@Html.Raw(trRequestView.Variance_Total.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Variance_Total.Visible (end) *@
+@if (trRequestView.Variance_Percent.Visible) { // trRequestView.Variance_Percent.Visible (begin)
+    <tr id="r_Variance_Percent" @Html.Raw(trRequestView.Variance_Percent.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Variance_Percent">@Html.Raw(trRequestView.Variance_Percent.Caption)</span></td>
+        <td data-name="Variance_Percent" @Html.Raw(trRequestView.Variance_Percent.CellAttributes)>
+<span id="el_tr_request_Variance_Percent" data-page="1">
+<span @Html.Raw(trRequestView.Variance_Percent.ViewAttributes)>
+@Html.Raw(trRequestView.Variance_Percent.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Variance_Percent.Visible (end) *@
+@if (trRequestView.Notes.Visible) { // trRequestView.Notes.Visible (begin)
+    <tr id="r_Notes" @Html.Raw(trRequestView.Notes.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Notes">@Html.Raw(trRequestView.Notes.Caption)</span></td>
+        <td data-name="Notes" @Html.Raw(trRequestView.Notes.CellAttributes)>
+<span id="el_tr_request_Notes" data-page="1">
+<span @Html.Raw(trRequestView.Notes.ViewAttributes)>
+@Html.Raw(trRequestView.Notes.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Notes.Visible (end) *@
+@if (trRequestView.Next_Approver.Visible) { // trRequestView.Next_Approver.Visible (begin)
+    <tr id="r_Next_Approver" @Html.Raw(trRequestView.Next_Approver.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Next_Approver">@Html.Raw(trRequestView.Next_Approver.Caption)</span></td>
+        <td data-name="Next_Approver" @Html.Raw(trRequestView.Next_Approver.CellAttributes)>
+<span id="el_tr_request_Next_Approver" data-page="1">
+<span @Html.Raw(trRequestView.Next_Approver.ViewAttributes)>
+@Html.Raw(trRequestView.Next_Approver.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Next_Approver.Visible (end) *@
+@if (trRequestView.Request_Currency.Visible) { // trRequestView.Request_Currency.Visible (begin)
+    <tr id="r_Request_Currency" @Html.Raw(trRequestView.Request_Currency.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Request_Currency">@Html.Raw(trRequestView.Request_Currency.Caption)</span></td>
+        <td data-name="Request_Currency" @Html.Raw(trRequestView.Request_Currency.CellAttributes)>
+<span id="el_tr_request_Request_Currency" data-page="1">
+<span @Html.Raw(trRequestView.Request_Currency.ViewAttributes)>
+@Html.Raw(trRequestView.Request_Currency.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Request_Currency.Visible (end) *@
+</table>
+@if (!trRequestView.IsExport()) {
+    @:</div><!-- /multi-page .tab-pane -->
+}
+@if (!trRequestView.IsExport()) {
+    @:<div class="@(trRequestView.MultiPages.TabPaneClasses(2))" id="tab_tr_request2" role="tabpanel"><!-- multi-page .tab-pane -->
+}
+<table class="@(trRequestView.TableClass)">
+@if (trRequestView.Request_By.Visible) { // trRequestView.Request_By.Visible (begin)
+    <tr id="r_Request_By" @Html.Raw(trRequestView.Request_By.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Request_By">@Html.Raw(trRequestView.Request_By.Caption)</span></td>
+        <td data-name="Request_By" @Html.Raw(trRequestView.Request_By.CellAttributes)>
+<span id="el_tr_request_Request_By" data-page="2">
+<span @Html.Raw(trRequestView.Request_By.ViewAttributes)>
+@Html.Raw(trRequestView.Request_By.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Request_By.Visible (end) *@
+@if (trRequestView.Request_By_Name.Visible) { // trRequestView.Request_By_Name.Visible (begin)
+    <tr id="r_Request_By_Name" @Html.Raw(trRequestView.Request_By_Name.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Request_By_Name">@Html.Raw(trRequestView.Request_By_Name.Caption)</span></td>
+        <td data-name="Request_By_Name" @Html.Raw(trRequestView.Request_By_Name.CellAttributes)>
+<span id="el_tr_request_Request_By_Name" data-page="2">
+<span @Html.Raw(trRequestView.Request_By_Name.ViewAttributes)>
+@Html.Raw(trRequestView.Request_By_Name.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Request_By_Name.Visible (end) *@
+@if (trRequestView.Request_By_Position.Visible) { // trRequestView.Request_By_Position.Visible (begin)
+    <tr id="r_Request_By_Position" @Html.Raw(trRequestView.Request_By_Position.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Request_By_Position">@Html.Raw(trRequestView.Request_By_Position.Caption)</span></td>
+        <td data-name="Request_By_Position" @Html.Raw(trRequestView.Request_By_Position.CellAttributes)>
+<span id="el_tr_request_Request_By_Position" data-page="2">
+<span @Html.Raw(trRequestView.Request_By_Position.ViewAttributes)>
+@Html.Raw(trRequestView.Request_By_Position.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Request_By_Position.Visible (end) *@
+@if (trRequestView.Request_By_Branch.Visible) { // trRequestView.Request_By_Branch.Visible (begin)
+    <tr id="r_Request_By_Branch" @Html.Raw(trRequestView.Request_By_Branch.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Request_By_Branch">@Html.Raw(trRequestView.Request_By_Branch.Caption)</span></td>
+        <td data-name="Request_By_Branch" @Html.Raw(trRequestView.Request_By_Branch.CellAttributes)>
+<span id="el_tr_request_Request_By_Branch" data-page="2">
+<span @Html.Raw(trRequestView.Request_By_Branch.ViewAttributes)>
+@Html.Raw(trRequestView.Request_By_Branch.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Request_By_Branch.Visible (end) *@
+@if (trRequestView.Request_By_Region.Visible) { // trRequestView.Request_By_Region.Visible (begin)
+    <tr id="r_Request_By_Region" @Html.Raw(trRequestView.Request_By_Region.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Request_By_Region">@Html.Raw(trRequestView.Request_By_Region.Caption)</span></td>
+        <td data-name="Request_By_Region" @Html.Raw(trRequestView.Request_By_Region.CellAttributes)>
+<span id="el_tr_request_Request_By_Region" data-page="2">
+<span @Html.Raw(trRequestView.Request_By_Region.ViewAttributes)>
+@Html.Raw(trRequestView.Request_By_Region.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Request_By_Region.Visible (end) *@
+@if (trRequestView.Request_Industry.Visible) { // trRequestView.Request_Industry.Visible (begin)
+    <tr id="r_Request_Industry" @Html.Raw(trRequestView.Request_Industry.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Request_Industry">@Html.Raw(trRequestView.Request_Industry.Caption)</span></td>
+        <td data-name="Request_Industry" @Html.Raw(trRequestView.Request_Industry.CellAttributes)>
+<span id="el_tr_request_Request_Industry" data-page="2">
+<span @Html.Raw(trRequestView.Request_Industry.ViewAttributes)>
+@Html.Raw(trRequestView.Request_Industry.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Request_Industry.Visible (end) *@
+@if (trRequestView.Request_PIC.Visible) { // trRequestView.Request_PIC.Visible (begin)
+    <tr id="r_Request_PIC" @Html.Raw(trRequestView.Request_PIC.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Request_PIC">@Html.Raw(trRequestView.Request_PIC.Caption)</span></td>
+        <td data-name="Request_PIC" @Html.Raw(trRequestView.Request_PIC.CellAttributes)>
+<span id="el_tr_request_Request_PIC" data-page="2">
+<span @Html.Raw(trRequestView.Request_PIC.ViewAttributes)>
+@Html.Raw(trRequestView.Request_PIC.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Request_PIC.Visible (end) *@
+@if (trRequestView.Request_Status.Visible) { // trRequestView.Request_Status.Visible (begin)
+    <tr id="r_Request_Status" @Html.Raw(trRequestView.Request_Status.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Request_Status">@Html.Raw(trRequestView.Request_Status.Caption)</span></td>
+        <td data-name="Request_Status" @Html.Raw(trRequestView.Request_Status.CellAttributes)>
+<span id="el_tr_request_Request_Status" data-page="2">
+<span @Html.Raw(trRequestView.Request_Status.ViewAttributes)>
+@Html.Raw(trRequestView.Request_Status.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Request_Status.Visible (end) *@
+@if (trRequestView.List_Approver.Visible) { // trRequestView.List_Approver.Visible (begin)
+    <tr id="r_List_Approver" @Html.Raw(trRequestView.List_Approver.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_List_Approver">@Html.Raw(trRequestView.List_Approver.Caption)</span></td>
+        <td data-name="List_Approver" @Html.Raw(trRequestView.List_Approver.CellAttributes)>
+<span id="el_tr_request_List_Approver" data-page="2">
+<span @Html.Raw(trRequestView.List_Approver.ViewAttributes)>
+@Html.Raw(trRequestView.List_Approver.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.List_Approver.Visible (end) *@
+</table>
+@if (!trRequestView.IsExport()) {
+    @:</div><!-- /multi-page .tab-pane -->
+}
+@if (!trRequestView.IsExport()) {
+    @:<div class="@(trRequestView.MultiPages.TabPaneClasses(3))" id="tab_tr_request3" role="tabpanel"><!-- multi-page .tab-pane -->
+}
+<table class="@(trRequestView.TableClass)">
+@if (trRequestView.Last_Update_By.Visible) { // trRequestView.Last_Update_By.Visible (begin)
+    <tr id="r_Last_Update_By" @Html.Raw(trRequestView.Last_Update_By.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Last_Update_By">@Html.Raw(trRequestView.Last_Update_By.Caption)</span></td>
+        <td data-name="Last_Update_By" @Html.Raw(trRequestView.Last_Update_By.CellAttributes)>
+<span id="el_tr_request_Last_Update_By" data-page="3">
+<span @Html.Raw(trRequestView.Last_Update_By.ViewAttributes)>
+@Html.Raw(trRequestView.Last_Update_By.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Last_Update_By.Visible (end) *@
+@if (trRequestView.Created_By.Visible) { // trRequestView.Created_By.Visible (begin)
+    <tr id="r_Created_By" @Html.Raw(trRequestView.Created_By.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Created_By">@Html.Raw(trRequestView.Created_By.Caption)</span></td>
+        <td data-name="Created_By" @Html.Raw(trRequestView.Created_By.CellAttributes)>
+<span id="el_tr_request_Created_By" data-page="3">
+<span @Html.Raw(trRequestView.Created_By.ViewAttributes)>
+@Html.Raw(trRequestView.Created_By.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Created_By.Visible (end) *@
+@if (trRequestView.Created_Date.Visible) { // trRequestView.Created_Date.Visible (begin)
+    <tr id="r_Created_Date" @Html.Raw(trRequestView.Created_Date.RowAttributes)>
+        <td class="@(trRequestView.TableLeftColumnClass)"><span id="elh_tr_request_Created_Date">@Html.Raw(trRequestView.Created_Date.Caption)</span></td>
+        <td data-name="Created_Date" @Html.Raw(trRequestView.Created_Date.CellAttributes)>
+<span id="el_tr_request_Created_Date" data-page="3">
+<span @Html.Raw(trRequestView.Created_Date.ViewAttributes)>
+@Html.Raw(trRequestView.Created_Date.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestView.Created_Date.Visible (end) *@
+</table>
+@if (!trRequestView.IsExport()) {
+    @:</div><!-- /multi-page .tab-pane -->
+}
+@if (!trRequestView.IsExport()) {
+    @:</div>
+@:</div>
+@:</div>
+}
+@{ trRequestView.CloseRecordset(); }
+@if (!Empty(trRequestView.CurrentDetailTable)) {
+    trRequestView.DetailPages.ValidKeys = trRequestView.CurrentDetailTables;
+<div class="ew-detail-pages"><!-- detail-pages -->
+<div class="ew-nav@(trRequestView.DetailPages.ContainerClasses)" id="details_trRequestView"><!-- tabs -->
+    <ul class="@(trRequestView.DetailPages.NavClasses)" role="tablist"><!-- .nav -->
+@if (trRequestView.CurrentDetailTables.Contains("tr_request_detail") && trRequestDetail.DetailView) {
+        <li class="nav-item"><button class="@(trRequestView.DetailPages.NavLinkClasses("tr_request_detail"))@(trRequestView.DetailPages.ActiveClasses("tr_request_detail"))" data-bs-target="#tab_tr_request_detail" data-bs-toggle="tab" type="button" role="tab" aria-controls="tab_tr_request_detail" aria-selected="@(ConvertToJson(trRequestView.DetailPages.IsActive("tr_request_detail")))">@Html.Raw(Language.TablePhrase("tr_request_detail", "TblCaption"))</button></li>
+}
+@if (trRequestView.CurrentDetailTables.Contains("tr_request_approver") && trRequestApprover.DetailView) {
+        <li class="nav-item"><button class="@(trRequestView.DetailPages.NavLinkClasses("tr_request_approver"))@(trRequestView.DetailPages.ActiveClasses("tr_request_approver"))" data-bs-target="#tab_tr_request_approver" data-bs-toggle="tab" type="button" role="tab" aria-controls="tab_tr_request_approver" aria-selected="@(ConvertToJson(trRequestView.DetailPages.IsActive("tr_request_approver")))">@Html.Raw(Language.TablePhrase("tr_request_approver", "TblCaption"))</button></li>
+}
+@if (trRequestView.CurrentDetailTables.Contains("tr_request_approval_history") && trRequestApprovalHistory.DetailView) {
+        <li class="nav-item"><button class="@(trRequestView.DetailPages.NavLinkClasses("tr_request_approval_history"))@(trRequestView.DetailPages.ActiveClasses("tr_request_approval_history"))" data-bs-target="#tab_tr_request_approval_history" data-bs-toggle="tab" type="button" role="tab" aria-controls="tab_tr_request_approval_history" aria-selected="@(ConvertToJson(trRequestView.DetailPages.IsActive("tr_request_approval_history")))">@Html.Raw(Language.TablePhrase("tr_request_approval_history", "TblCaption"))</button></li>
+}
+    </ul><!-- /.nav -->
+    <div class="@(trRequestView.DetailPages.TabContentClasses)"><!-- .tab-content -->
+@if (trRequestView.CurrentDetailTables.Contains("tr_request_detail") && trRequestDetail.DetailView) {
+        <div class="@Html.Raw(trRequestView.DetailPages.TabPaneClasses("tr_request_detail"))@(trRequestView.DetailPages.ActiveClasses("tr_request_detail"))" id="tab_tr_request_detail" role="tabpanel"><!-- page* -->
+        @await Html.PartialAsync("TrRequestDetailGrid")
+        </div><!-- /page* -->
+    View = this;
+}
+@if (trRequestView.CurrentDetailTables.Contains("tr_request_approver") && trRequestApprover.DetailView) {
+        <div class="@Html.Raw(trRequestView.DetailPages.TabPaneClasses("tr_request_approver"))@(trRequestView.DetailPages.ActiveClasses("tr_request_approver"))" id="tab_tr_request_approver" role="tabpanel"><!-- page* -->
+        @await Html.PartialAsync("TrRequestApproverGrid")
+        </div><!-- /page* -->
+    View = this;
+}
+@if (trRequestView.CurrentDetailTables.Contains("tr_request_approval_history") && trRequestApprovalHistory.DetailView) {
+        <div class="@Html.Raw(trRequestView.DetailPages.TabPaneClasses("tr_request_approval_history"))@(trRequestView.DetailPages.ActiveClasses("tr_request_approval_history"))" id="tab_tr_request_approval_history" role="tabpanel"><!-- page* -->
+        @await Html.PartialAsync("TrRequestApprovalHistoryGrid")
+        </div><!-- /page* -->
+    View = this;
+}
+    </div><!-- /.tab-content -->
+</div><!-- /tabs -->
+</div><!-- /detail-pages -->
+}
+</form>
+</main>
+@trRequestView.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!trRequestView.IsExport()) {
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

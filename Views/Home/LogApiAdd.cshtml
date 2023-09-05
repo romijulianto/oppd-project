@@ -1,0 +1,190 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (logApiAdd.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!logApiAdd.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(logApiAdd.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { log_API: currentTable } });
+var currentPageID = ew.PAGE_ID = "add";
+var currentForm;
+var flog_APIadd;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("flog_APIadd")
+        .setPageId("add")
+
+        // Add fields
+        .setFields([
+
+            ["id", [fields.id.visible && fields.id.required ? ew.Validators.required(fields.id.caption) : null, ew.Validators.integer], fields.id.isInvalid],
+            ["API_Type", [fields.API_Type.visible && fields.API_Type.required ? ew.Validators.required(fields.API_Type.caption) : null], fields.API_Type.isInvalid],
+            ["API_Link", [fields.API_Link.visible && fields.API_Link.required ? ew.Validators.required(fields.API_Link.caption) : null], fields.API_Link.isInvalid],
+            ["API_Body", [fields.API_Body.visible && fields.API_Body.required ? ew.Validators.required(fields.API_Body.caption) : null], fields.API_Body.isInvalid],
+            ["API_Status", [fields.API_Status.visible && fields.API_Status.required ? ew.Validators.required(fields.API_Status.caption) : null], fields.API_Status.isInvalid],
+            ["API_Result", [fields.API_Result.visible && fields.API_Result.required ? ew.Validators.required(fields.API_Result.caption) : null], fields.API_Result.isInvalid]
+        ])
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+        })
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@logApiAdd.ShowPageHeader()
+@logApiAdd.ShowMessages()
+<form name="flog_APIadd" id="flog_APIadd" class="@(logApiAdd.FormClassName)" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="insert">
+<input type="hidden" name="modal" value="@ConvertToInt(logApiAdd.IsModal)">
+@if (IsJsonResponse()) {
+<input type="hidden" name="json" value="1">
+}
+<input type="hidden" name="@(logApiAdd.OldKeyName)" value="@Html.Raw(logApiAdd.OldKey)">
+<div class="ew-add-div"><!-- page* -->
+@if (logApiAdd.id.Visible) { // logApiAdd.id.Visible (begin)
+    <div id="r_id" @Html.Raw(logApiAdd.id.RowAttributes)>
+        <label id="elh_log_API_id" for="x_id" class="@(logApiAdd.LeftColumnClass)">@Html.Raw(logApiAdd.id.Caption)@Html.Raw(logApiAdd.id.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(logApiAdd.RightColumnClass)"><div @Html.Raw(logApiAdd.id.CellAttributes)>
+<span id="el_log_API_id">
+<input type="@(logApiAdd.id.InputTextType)" name="x_id" id="x_id" data-table="log_API" data-field="x_id" value="@Html.Raw(logApiAdd.id.EditValue)" size="30" placeholder="@Html.Raw(HtmlEncode(logApiAdd.id.PlaceHolder))" data-format-pattern="@(logApiAdd.id.FormatPattern)"@Html.Raw(logApiAdd.id.EditAttributes) aria-describedby="x_id_help">
+@Html.Raw(logApiAdd.id.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(logApiAdd.id.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* logApiAdd.id.Visible (end) *@
+@if (logApiAdd.API_Type.Visible) { // logApiAdd.API_Type.Visible (begin)
+    <div id="r_API_Type" @Html.Raw(logApiAdd.API_Type.RowAttributes)>
+        <label id="elh_log_API_API_Type" for="x_API_Type" class="@(logApiAdd.LeftColumnClass)">@Html.Raw(logApiAdd.API_Type.Caption)@Html.Raw(logApiAdd.API_Type.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(logApiAdd.RightColumnClass)"><div @Html.Raw(logApiAdd.API_Type.CellAttributes)>
+<span id="el_log_API_API_Type">
+<input type="@(logApiAdd.API_Type.InputTextType)" name="x_API_Type" id="x_API_Type" data-table="log_API" data-field="x_API_Type" value="@Html.Raw(logApiAdd.API_Type.EditValue)" size="30" maxlength="100" placeholder="@Html.Raw(HtmlEncode(logApiAdd.API_Type.PlaceHolder))" data-format-pattern="@(logApiAdd.API_Type.FormatPattern)"@Html.Raw(logApiAdd.API_Type.EditAttributes) aria-describedby="x_API_Type_help">
+@Html.Raw(logApiAdd.API_Type.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(logApiAdd.API_Type.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* logApiAdd.API_Type.Visible (end) *@
+@if (logApiAdd.API_Link.Visible) { // logApiAdd.API_Link.Visible (begin)
+    <div id="r_API_Link" @Html.Raw(logApiAdd.API_Link.RowAttributes)>
+        <label id="elh_log_API_API_Link" for="x_API_Link" class="@(logApiAdd.LeftColumnClass)">@Html.Raw(logApiAdd.API_Link.Caption)@Html.Raw(logApiAdd.API_Link.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(logApiAdd.RightColumnClass)"><div @Html.Raw(logApiAdd.API_Link.CellAttributes)>
+<span id="el_log_API_API_Link">
+<input type="@(logApiAdd.API_Link.InputTextType)" name="x_API_Link" id="x_API_Link" data-table="log_API" data-field="x_API_Link" value="@Html.Raw(logApiAdd.API_Link.EditValue)" size="30" maxlength="300" placeholder="@Html.Raw(HtmlEncode(logApiAdd.API_Link.PlaceHolder))" data-format-pattern="@(logApiAdd.API_Link.FormatPattern)"@Html.Raw(logApiAdd.API_Link.EditAttributes) aria-describedby="x_API_Link_help">
+@Html.Raw(logApiAdd.API_Link.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(logApiAdd.API_Link.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* logApiAdd.API_Link.Visible (end) *@
+@if (logApiAdd.API_Body.Visible) { // logApiAdd.API_Body.Visible (begin)
+    <div id="r_API_Body" @Html.Raw(logApiAdd.API_Body.RowAttributes)>
+        <label id="elh_log_API_API_Body" for="x_API_Body" class="@(logApiAdd.LeftColumnClass)">@Html.Raw(logApiAdd.API_Body.Caption)@Html.Raw(logApiAdd.API_Body.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(logApiAdd.RightColumnClass)"><div @Html.Raw(logApiAdd.API_Body.CellAttributes)>
+<span id="el_log_API_API_Body">
+<input type="@(logApiAdd.API_Body.InputTextType)" name="x_API_Body" id="x_API_Body" data-table="log_API" data-field="x_API_Body" value="@Html.Raw(logApiAdd.API_Body.EditValue)" size="30" maxlength="4000" placeholder="@Html.Raw(HtmlEncode(logApiAdd.API_Body.PlaceHolder))" data-format-pattern="@(logApiAdd.API_Body.FormatPattern)"@Html.Raw(logApiAdd.API_Body.EditAttributes) aria-describedby="x_API_Body_help">
+@Html.Raw(logApiAdd.API_Body.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(logApiAdd.API_Body.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* logApiAdd.API_Body.Visible (end) *@
+@if (logApiAdd.API_Status.Visible) { // logApiAdd.API_Status.Visible (begin)
+    <div id="r_API_Status" @Html.Raw(logApiAdd.API_Status.RowAttributes)>
+        <label id="elh_log_API_API_Status" for="x_API_Status" class="@(logApiAdd.LeftColumnClass)">@Html.Raw(logApiAdd.API_Status.Caption)@Html.Raw(logApiAdd.API_Status.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(logApiAdd.RightColumnClass)"><div @Html.Raw(logApiAdd.API_Status.CellAttributes)>
+<span id="el_log_API_API_Status">
+<input type="@(logApiAdd.API_Status.InputTextType)" name="x_API_Status" id="x_API_Status" data-table="log_API" data-field="x_API_Status" value="@Html.Raw(logApiAdd.API_Status.EditValue)" size="30" maxlength="1" placeholder="@Html.Raw(HtmlEncode(logApiAdd.API_Status.PlaceHolder))" data-format-pattern="@(logApiAdd.API_Status.FormatPattern)"@Html.Raw(logApiAdd.API_Status.EditAttributes) aria-describedby="x_API_Status_help">
+@Html.Raw(logApiAdd.API_Status.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(logApiAdd.API_Status.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* logApiAdd.API_Status.Visible (end) *@
+@if (logApiAdd.API_Result.Visible) { // logApiAdd.API_Result.Visible (begin)
+    <div id="r_API_Result" @Html.Raw(logApiAdd.API_Result.RowAttributes)>
+        <label id="elh_log_API_API_Result" for="x_API_Result" class="@(logApiAdd.LeftColumnClass)">@Html.Raw(logApiAdd.API_Result.Caption)@Html.Raw(logApiAdd.API_Result.Required ? Language.Phrase("FieldRequiredIndicator") : "")</label>
+        <div class="@(logApiAdd.RightColumnClass)"><div @Html.Raw(logApiAdd.API_Result.CellAttributes)>
+<span id="el_log_API_API_Result">
+<input type="@(logApiAdd.API_Result.InputTextType)" name="x_API_Result" id="x_API_Result" data-table="log_API" data-field="x_API_Result" value="@Html.Raw(logApiAdd.API_Result.EditValue)" size="30" maxlength="4000" placeholder="@Html.Raw(HtmlEncode(logApiAdd.API_Result.PlaceHolder))" data-format-pattern="@(logApiAdd.API_Result.FormatPattern)"@Html.Raw(logApiAdd.API_Result.EditAttributes) aria-describedby="x_API_Result_help">
+@Html.Raw(logApiAdd.API_Result.GetCustomMessage)
+<div class="invalid-feedback">@Html.Raw(logApiAdd.API_Result.GetErrorMessage())</div>
+</span>
+</div></div>
+    </div>
+} @* logApiAdd.API_Result.Visible (end) *@
+</div><!-- /page* -->
+@{ logApiAdd.CloseRecordset(); }
+@Html.Raw(logApiAdd.IsModal ? "<template class=\"ew-modal-buttons\">" : "<div class=\"row ew-buttons\">")<!-- buttons .row -->
+    <div class="@(logApiAdd.OffsetColumnClass)"><!-- buttons offset -->
+    <button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit" form="flog_APIadd">@Html.Raw(Language.Phrase("AddBtn"))</button>
+@if (IsJsonResponse()) {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-bs-dismiss="modal">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+} else {
+    <button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" form="flog_APIadd" data-href="@AppPath(logApiAdd.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+}
+    </div><!-- /buttons offset -->
+@Html.Raw(logApiAdd.IsModal ? "</template>" : "</div>")<!-- /buttons .row -->
+</form>
+@logApiAdd.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("log_API");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

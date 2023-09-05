@@ -1,0 +1,145 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (mtTemplateEmailDelete.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!mtTemplateEmailDelete.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtTemplateEmailDelete.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_template_email: currentTable } });
+var currentPageID = ew.PAGE_ID = "delete";
+var currentForm;
+var fmt_template_emaildelete;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fmt_template_emaildelete")
+        .setPageId("delete")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@mtTemplateEmailDelete.ShowPageHeader()
+@mtTemplateEmailDelete.ShowMessages()
+<form name="fmt_template_emaildelete" id="fmt_template_emaildelete" class="ew-form ew-delete-form" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="delete">
+@foreach (string key in mtTemplateEmailDelete.RecordKeys) {
+<input type="hidden" name="key_m[]" value="@key">
+}
+<div class="card ew-card ew-grid @(mtTemplateEmailDelete.TableGridClass)">
+<div class="card-body ew-grid-middle-panel @(mtTemplateEmailDelete.TableContainerClass)" style="@(mtTemplateEmailDelete.TableContainerStyle)">
+<table class="@(mtTemplateEmailDelete.TableClass)">
+    <thead>
+    <tr class="ew-table-header">
+@if (mtTemplateEmailDelete.id.Visible) { // mtTemplateEmailDelete.id.Visible (begin)
+        <th class="@Html.Raw(mtTemplateEmailDelete.id.HeaderCellClass)"><span id="elh_mt_template_email_id" class="mt_template_email_id">@Html.Raw(mtTemplateEmailDelete.id.Caption)</span></th>
+} @* mtTemplateEmailDelete.id.Visible (end) *@
+@if (mtTemplateEmailDelete.Template_Type.Visible) { // mtTemplateEmailDelete.Template_Type.Visible (begin)
+        <th class="@Html.Raw(mtTemplateEmailDelete.Template_Type.HeaderCellClass)"><span id="elh_mt_template_email_Template_Type" class="mt_template_email_Template_Type">@Html.Raw(mtTemplateEmailDelete.Template_Type.Caption)</span></th>
+} @* mtTemplateEmailDelete.Template_Type.Visible (end) *@
+@if (mtTemplateEmailDelete.Template_Name.Visible) { // mtTemplateEmailDelete.Template_Name.Visible (begin)
+        <th class="@Html.Raw(mtTemplateEmailDelete.Template_Name.HeaderCellClass)"><span id="elh_mt_template_email_Template_Name" class="mt_template_email_Template_Name">@Html.Raw(mtTemplateEmailDelete.Template_Name.Caption)</span></th>
+} @* mtTemplateEmailDelete.Template_Name.Visible (end) *@
+@if (mtTemplateEmailDelete.Template_Description.Visible) { // mtTemplateEmailDelete.Template_Description.Visible (begin)
+        <th class="@Html.Raw(mtTemplateEmailDelete.Template_Description.HeaderCellClass)"><span id="elh_mt_template_email_Template_Description" class="mt_template_email_Template_Description">@Html.Raw(mtTemplateEmailDelete.Template_Description.Caption)</span></th>
+} @* mtTemplateEmailDelete.Template_Description.Visible (end) *@
+    </tr>
+    </thead>
+    <tbody>
+@{ mtTemplateEmailDelete.RecordCount = 0; }
+@while (mtTemplateEmailDelete.Recordset != null && await mtTemplateEmailDelete.Recordset.ReadAsync()) { // DN
+    mtTemplateEmailDelete.RecordCount++;
+    mtTemplateEmailDelete.RowCount++;
+
+    // Set row properties
+    mtTemplateEmailDelete.ResetAttributes();
+    mtTemplateEmailDelete.RowType = RowType.View; // View
+
+    // Get the field contents
+    await mtTemplateEmailDelete.LoadRowValues(mtTemplateEmailDelete.Recordset);
+
+    // Render row
+    await mtTemplateEmailDelete.RenderRow();
+    <tr @Html.Raw(mtTemplateEmailDelete.RowAttributes)>
+@if (mtTemplateEmailDelete.id.Visible) { // mtTemplateEmailDelete.id.Visible (begin)
+        <td @Html.Raw(mtTemplateEmailDelete.id.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtTemplateEmailDelete.id.ViewAttributes)>
+@Html.Raw(mtTemplateEmailDelete.id.GetViewValue())</span>
+</span></td>
+} @* mtTemplateEmailDelete.id.Visible (end) *@
+@if (mtTemplateEmailDelete.Template_Type.Visible) { // mtTemplateEmailDelete.Template_Type.Visible (begin)
+        <td @Html.Raw(mtTemplateEmailDelete.Template_Type.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtTemplateEmailDelete.Template_Type.ViewAttributes)>
+@Html.Raw(mtTemplateEmailDelete.Template_Type.GetViewValue())</span>
+</span></td>
+} @* mtTemplateEmailDelete.Template_Type.Visible (end) *@
+@if (mtTemplateEmailDelete.Template_Name.Visible) { // mtTemplateEmailDelete.Template_Name.Visible (begin)
+        <td @Html.Raw(mtTemplateEmailDelete.Template_Name.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtTemplateEmailDelete.Template_Name.ViewAttributes)>
+@Html.Raw(mtTemplateEmailDelete.Template_Name.GetViewValue())</span>
+</span></td>
+} @* mtTemplateEmailDelete.Template_Name.Visible (end) *@
+@if (mtTemplateEmailDelete.Template_Description.Visible) { // mtTemplateEmailDelete.Template_Description.Visible (begin)
+        <td @Html.Raw(mtTemplateEmailDelete.Template_Description.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtTemplateEmailDelete.Template_Description.ViewAttributes)>
+@Html.Raw(mtTemplateEmailDelete.Template_Description.GetViewValue())</span>
+</span></td>
+} @* mtTemplateEmailDelete.Template_Description.Visible (end) *@
+    </tr>
+}
+@{ mtTemplateEmailDelete.CloseRecordset(); }
+</tbody>
+</table>
+</div>
+</div>
+<div class="ew-buttons ew-desktop-buttons">
+<button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit">@Html.Raw(Language.Phrase("DeleteBtn"))</button>
+<button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-href="@AppPath(mtTemplateEmailDelete.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+</div>
+</form>
+@mtTemplateEmailDelete.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

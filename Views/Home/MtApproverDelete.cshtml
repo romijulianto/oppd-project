@@ -1,0 +1,195 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (mtApproverDelete.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!mtApproverDelete.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtApproverDelete.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_approver: currentTable } });
+var currentPageID = ew.PAGE_ID = "delete";
+var currentForm;
+var fmt_approverdelete;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fmt_approverdelete")
+        .setPageId("delete")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@mtApproverDelete.ShowPageHeader()
+@mtApproverDelete.ShowMessages()
+<form name="fmt_approverdelete" id="fmt_approverdelete" class="ew-form ew-delete-form" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="delete">
+@foreach (string key in mtApproverDelete.RecordKeys) {
+<input type="hidden" name="key_m[]" value="@key">
+}
+<div class="card ew-card ew-grid @(mtApproverDelete.TableGridClass)">
+<div class="card-body ew-grid-middle-panel @(mtApproverDelete.TableContainerClass)" style="@(mtApproverDelete.TableContainerStyle)">
+<table class="@(mtApproverDelete.TableClass)">
+    <thead>
+    <tr class="ew-table-header">
+@if (mtApproverDelete.id.Visible) { // mtApproverDelete.id.Visible (begin)
+        <th class="@Html.Raw(mtApproverDelete.id.HeaderCellClass)"><span id="elh_mt_approver_id" class="mt_approver_id">@Html.Raw(mtApproverDelete.id.Caption)</span></th>
+} @* mtApproverDelete.id.Visible (end) *@
+@if (mtApproverDelete._UserName.Visible) { // mtApproverDelete._UserName.Visible (begin)
+        <th class="@Html.Raw(mtApproverDelete._UserName.HeaderCellClass)"><span id="elh_mt_approver__UserName" class="mt_approver__UserName">@Html.Raw(mtApproverDelete._UserName.Caption)</span></th>
+} @* mtApproverDelete._UserName.Visible (end) *@
+@if (mtApproverDelete.Full_Name.Visible) { // mtApproverDelete.Full_Name.Visible (begin)
+        <th class="@Html.Raw(mtApproverDelete.Full_Name.HeaderCellClass)"><span id="elh_mt_approver_Full_Name" class="mt_approver_Full_Name">@Html.Raw(mtApproverDelete.Full_Name.Caption)</span></th>
+} @* mtApproverDelete.Full_Name.Visible (end) *@
+@if (mtApproverDelete.Position.Visible) { // mtApproverDelete.Position.Visible (begin)
+        <th class="@Html.Raw(mtApproverDelete.Position.HeaderCellClass)"><span id="elh_mt_approver_Position" class="mt_approver_Position">@Html.Raw(mtApproverDelete.Position.Caption)</span></th>
+} @* mtApproverDelete.Position.Visible (end) *@
+@if (mtApproverDelete.Departement.Visible) { // mtApproverDelete.Departement.Visible (begin)
+        <th class="@Html.Raw(mtApproverDelete.Departement.HeaderCellClass)"><span id="elh_mt_approver_Departement" class="mt_approver_Departement">@Html.Raw(mtApproverDelete.Departement.Caption)</span></th>
+} @* mtApproverDelete.Departement.Visible (end) *@
+@if (mtApproverDelete.Division.Visible) { // mtApproverDelete.Division.Visible (begin)
+        <th class="@Html.Raw(mtApproverDelete.Division.HeaderCellClass)"><span id="elh_mt_approver_Division" class="mt_approver_Division">@Html.Raw(mtApproverDelete.Division.Caption)</span></th>
+} @* mtApproverDelete.Division.Visible (end) *@
+@if (mtApproverDelete.Area.Visible) { // mtApproverDelete.Area.Visible (begin)
+        <th class="@Html.Raw(mtApproverDelete.Area.HeaderCellClass)"><span id="elh_mt_approver_Area" class="mt_approver_Area">@Html.Raw(mtApproverDelete.Area.Caption)</span></th>
+} @* mtApproverDelete.Area.Visible (end) *@
+@if (mtApproverDelete.Business_Area.Visible) { // mtApproverDelete.Business_Area.Visible (begin)
+        <th class="@Html.Raw(mtApproverDelete.Business_Area.HeaderCellClass)"><span id="elh_mt_approver_Business_Area" class="mt_approver_Business_Area">@Html.Raw(mtApproverDelete.Business_Area.Caption)</span></th>
+} @* mtApproverDelete.Business_Area.Visible (end) *@
+@if (mtApproverDelete.Business_Area_Desc.Visible) { // mtApproverDelete.Business_Area_Desc.Visible (begin)
+        <th class="@Html.Raw(mtApproverDelete.Business_Area_Desc.HeaderCellClass)"><span id="elh_mt_approver_Business_Area_Desc" class="mt_approver_Business_Area_Desc">@Html.Raw(mtApproverDelete.Business_Area_Desc.Caption)</span></th>
+} @* mtApproverDelete.Business_Area_Desc.Visible (end) *@
+    </tr>
+    </thead>
+    <tbody>
+@{ mtApproverDelete.RecordCount = 0; }
+@while (mtApproverDelete.Recordset != null && await mtApproverDelete.Recordset.ReadAsync()) { // DN
+    mtApproverDelete.RecordCount++;
+    mtApproverDelete.RowCount++;
+
+    // Set row properties
+    mtApproverDelete.ResetAttributes();
+    mtApproverDelete.RowType = RowType.View; // View
+
+    // Get the field contents
+    await mtApproverDelete.LoadRowValues(mtApproverDelete.Recordset);
+
+    // Render row
+    await mtApproverDelete.RenderRow();
+    <tr @Html.Raw(mtApproverDelete.RowAttributes)>
+@if (mtApproverDelete.id.Visible) { // mtApproverDelete.id.Visible (begin)
+        <td @Html.Raw(mtApproverDelete.id.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtApproverDelete.id.ViewAttributes)>
+@Html.Raw(mtApproverDelete.id.GetViewValue())</span>
+</span></td>
+} @* mtApproverDelete.id.Visible (end) *@
+@if (mtApproverDelete._UserName.Visible) { // mtApproverDelete._UserName.Visible (begin)
+        <td @Html.Raw(mtApproverDelete._UserName.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtApproverDelete._UserName.ViewAttributes)>
+@Html.Raw(mtApproverDelete._UserName.GetViewValue())</span>
+</span></td>
+} @* mtApproverDelete._UserName.Visible (end) *@
+@if (mtApproverDelete.Full_Name.Visible) { // mtApproverDelete.Full_Name.Visible (begin)
+        <td @Html.Raw(mtApproverDelete.Full_Name.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtApproverDelete.Full_Name.ViewAttributes)>
+@Html.Raw(mtApproverDelete.Full_Name.GetViewValue())</span>
+</span></td>
+} @* mtApproverDelete.Full_Name.Visible (end) *@
+@if (mtApproverDelete.Position.Visible) { // mtApproverDelete.Position.Visible (begin)
+        <td @Html.Raw(mtApproverDelete.Position.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtApproverDelete.Position.ViewAttributes)>
+@Html.Raw(mtApproverDelete.Position.GetViewValue())</span>
+</span></td>
+} @* mtApproverDelete.Position.Visible (end) *@
+@if (mtApproverDelete.Departement.Visible) { // mtApproverDelete.Departement.Visible (begin)
+        <td @Html.Raw(mtApproverDelete.Departement.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtApproverDelete.Departement.ViewAttributes)>
+@Html.Raw(mtApproverDelete.Departement.GetViewValue())</span>
+</span></td>
+} @* mtApproverDelete.Departement.Visible (end) *@
+@if (mtApproverDelete.Division.Visible) { // mtApproverDelete.Division.Visible (begin)
+        <td @Html.Raw(mtApproverDelete.Division.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtApproverDelete.Division.ViewAttributes)>
+@Html.Raw(mtApproverDelete.Division.GetViewValue())</span>
+</span></td>
+} @* mtApproverDelete.Division.Visible (end) *@
+@if (mtApproverDelete.Area.Visible) { // mtApproverDelete.Area.Visible (begin)
+        <td @Html.Raw(mtApproverDelete.Area.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtApproverDelete.Area.ViewAttributes)>
+@Html.Raw(mtApproverDelete.Area.GetViewValue())</span>
+</span></td>
+} @* mtApproverDelete.Area.Visible (end) *@
+@if (mtApproverDelete.Business_Area.Visible) { // mtApproverDelete.Business_Area.Visible (begin)
+        <td @Html.Raw(mtApproverDelete.Business_Area.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtApproverDelete.Business_Area.ViewAttributes)>
+@Html.Raw(mtApproverDelete.Business_Area.GetViewValue())</span>
+</span></td>
+} @* mtApproverDelete.Business_Area.Visible (end) *@
+@if (mtApproverDelete.Business_Area_Desc.Visible) { // mtApproverDelete.Business_Area_Desc.Visible (begin)
+        <td @Html.Raw(mtApproverDelete.Business_Area_Desc.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtApproverDelete.Business_Area_Desc.ViewAttributes)>
+@Html.Raw(mtApproverDelete.Business_Area_Desc.GetViewValue())</span>
+</span></td>
+} @* mtApproverDelete.Business_Area_Desc.Visible (end) *@
+    </tr>
+}
+@{ mtApproverDelete.CloseRecordset(); }
+</tbody>
+</table>
+</div>
+</div>
+<div class="ew-buttons ew-desktop-buttons">
+<button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit">@Html.Raw(Language.Phrase("DeleteBtn"))</button>
+<button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-href="@AppPath(mtApproverDelete.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+</div>
+</form>
+@mtApproverDelete.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

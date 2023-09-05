@@ -1,0 +1,135 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (mtReasonDelete.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!mtReasonDelete.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtReasonDelete.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_reason: currentTable } });
+var currentPageID = ew.PAGE_ID = "delete";
+var currentForm;
+var fmt_reasondelete;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fmt_reasondelete")
+        .setPageId("delete")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@mtReasonDelete.ShowPageHeader()
+@mtReasonDelete.ShowMessages()
+<form name="fmt_reasondelete" id="fmt_reasondelete" class="ew-form ew-delete-form" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="delete">
+@foreach (string key in mtReasonDelete.RecordKeys) {
+<input type="hidden" name="key_m[]" value="@key">
+}
+<div class="card ew-card ew-grid @(mtReasonDelete.TableGridClass)">
+<div class="card-body ew-grid-middle-panel @(mtReasonDelete.TableContainerClass)" style="@(mtReasonDelete.TableContainerStyle)">
+<table class="@(mtReasonDelete.TableClass)">
+    <thead>
+    <tr class="ew-table-header">
+@if (mtReasonDelete.id.Visible) { // mtReasonDelete.id.Visible (begin)
+        <th class="@Html.Raw(mtReasonDelete.id.HeaderCellClass)"><span id="elh_mt_reason_id" class="mt_reason_id">@Html.Raw(mtReasonDelete.id.Caption)</span></th>
+} @* mtReasonDelete.id.Visible (end) *@
+@if (mtReasonDelete.Reason_Type.Visible) { // mtReasonDelete.Reason_Type.Visible (begin)
+        <th class="@Html.Raw(mtReasonDelete.Reason_Type.HeaderCellClass)"><span id="elh_mt_reason_Reason_Type" class="mt_reason_Reason_Type">@Html.Raw(mtReasonDelete.Reason_Type.Caption)</span></th>
+} @* mtReasonDelete.Reason_Type.Visible (end) *@
+@if (mtReasonDelete.Reason_Description.Visible) { // mtReasonDelete.Reason_Description.Visible (begin)
+        <th class="@Html.Raw(mtReasonDelete.Reason_Description.HeaderCellClass)"><span id="elh_mt_reason_Reason_Description" class="mt_reason_Reason_Description">@Html.Raw(mtReasonDelete.Reason_Description.Caption)</span></th>
+} @* mtReasonDelete.Reason_Description.Visible (end) *@
+    </tr>
+    </thead>
+    <tbody>
+@{ mtReasonDelete.RecordCount = 0; }
+@while (mtReasonDelete.Recordset != null && await mtReasonDelete.Recordset.ReadAsync()) { // DN
+    mtReasonDelete.RecordCount++;
+    mtReasonDelete.RowCount++;
+
+    // Set row properties
+    mtReasonDelete.ResetAttributes();
+    mtReasonDelete.RowType = RowType.View; // View
+
+    // Get the field contents
+    await mtReasonDelete.LoadRowValues(mtReasonDelete.Recordset);
+
+    // Render row
+    await mtReasonDelete.RenderRow();
+    <tr @Html.Raw(mtReasonDelete.RowAttributes)>
+@if (mtReasonDelete.id.Visible) { // mtReasonDelete.id.Visible (begin)
+        <td @Html.Raw(mtReasonDelete.id.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtReasonDelete.id.ViewAttributes)>
+@Html.Raw(mtReasonDelete.id.GetViewValue())</span>
+</span></td>
+} @* mtReasonDelete.id.Visible (end) *@
+@if (mtReasonDelete.Reason_Type.Visible) { // mtReasonDelete.Reason_Type.Visible (begin)
+        <td @Html.Raw(mtReasonDelete.Reason_Type.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtReasonDelete.Reason_Type.ViewAttributes)>
+@Html.Raw(mtReasonDelete.Reason_Type.GetViewValue())</span>
+</span></td>
+} @* mtReasonDelete.Reason_Type.Visible (end) *@
+@if (mtReasonDelete.Reason_Description.Visible) { // mtReasonDelete.Reason_Description.Visible (begin)
+        <td @Html.Raw(mtReasonDelete.Reason_Description.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtReasonDelete.Reason_Description.ViewAttributes)>
+@Html.Raw(mtReasonDelete.Reason_Description.GetViewValue())</span>
+</span></td>
+} @* mtReasonDelete.Reason_Description.Visible (end) *@
+    </tr>
+}
+@{ mtReasonDelete.CloseRecordset(); }
+</tbody>
+</table>
+</div>
+</div>
+<div class="ew-buttons ew-desktop-buttons">
+<button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit">@Html.Raw(Language.Phrase("DeleteBtn"))</button>
+<button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-href="@AppPath(mtReasonDelete.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+</div>
+</form>
+@mtReasonDelete.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

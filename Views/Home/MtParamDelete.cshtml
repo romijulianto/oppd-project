@@ -1,0 +1,155 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (mtParamDelete.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!mtParamDelete.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtParamDelete.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_param: currentTable } });
+var currentPageID = ew.PAGE_ID = "delete";
+var currentForm;
+var fmt_paramdelete;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fmt_paramdelete")
+        .setPageId("delete")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@mtParamDelete.ShowPageHeader()
+@mtParamDelete.ShowMessages()
+<form name="fmt_paramdelete" id="fmt_paramdelete" class="ew-form ew-delete-form" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="delete">
+@foreach (string key in mtParamDelete.RecordKeys) {
+<input type="hidden" name="key_m[]" value="@key">
+}
+<div class="card ew-card ew-grid @(mtParamDelete.TableGridClass)">
+<div class="card-body ew-grid-middle-panel @(mtParamDelete.TableContainerClass)" style="@(mtParamDelete.TableContainerStyle)">
+<table class="@(mtParamDelete.TableClass)">
+    <thead>
+    <tr class="ew-table-header">
+@if (mtParamDelete.id.Visible) { // mtParamDelete.id.Visible (begin)
+        <th class="@Html.Raw(mtParamDelete.id.HeaderCellClass)"><span id="elh_mt_param_id" class="mt_param_id">@Html.Raw(mtParamDelete.id.Caption)</span></th>
+} @* mtParamDelete.id.Visible (end) *@
+@if (mtParamDelete.Param_Type.Visible) { // mtParamDelete.Param_Type.Visible (begin)
+        <th class="@Html.Raw(mtParamDelete.Param_Type.HeaderCellClass)"><span id="elh_mt_param_Param_Type" class="mt_param_Param_Type">@Html.Raw(mtParamDelete.Param_Type.Caption)</span></th>
+} @* mtParamDelete.Param_Type.Visible (end) *@
+@if (mtParamDelete.Param_Name.Visible) { // mtParamDelete.Param_Name.Visible (begin)
+        <th class="@Html.Raw(mtParamDelete.Param_Name.HeaderCellClass)"><span id="elh_mt_param_Param_Name" class="mt_param_Param_Name">@Html.Raw(mtParamDelete.Param_Name.Caption)</span></th>
+} @* mtParamDelete.Param_Name.Visible (end) *@
+@if (mtParamDelete.Param_Value.Visible) { // mtParamDelete.Param_Value.Visible (begin)
+        <th class="@Html.Raw(mtParamDelete.Param_Value.HeaderCellClass)"><span id="elh_mt_param_Param_Value" class="mt_param_Param_Value">@Html.Raw(mtParamDelete.Param_Value.Caption)</span></th>
+} @* mtParamDelete.Param_Value.Visible (end) *@
+@if (mtParamDelete.Param_Status.Visible) { // mtParamDelete.Param_Status.Visible (begin)
+        <th class="@Html.Raw(mtParamDelete.Param_Status.HeaderCellClass)"><span id="elh_mt_param_Param_Status" class="mt_param_Param_Status">@Html.Raw(mtParamDelete.Param_Status.Caption)</span></th>
+} @* mtParamDelete.Param_Status.Visible (end) *@
+    </tr>
+    </thead>
+    <tbody>
+@{ mtParamDelete.RecordCount = 0; }
+@while (mtParamDelete.Recordset != null && await mtParamDelete.Recordset.ReadAsync()) { // DN
+    mtParamDelete.RecordCount++;
+    mtParamDelete.RowCount++;
+
+    // Set row properties
+    mtParamDelete.ResetAttributes();
+    mtParamDelete.RowType = RowType.View; // View
+
+    // Get the field contents
+    await mtParamDelete.LoadRowValues(mtParamDelete.Recordset);
+
+    // Render row
+    await mtParamDelete.RenderRow();
+    <tr @Html.Raw(mtParamDelete.RowAttributes)>
+@if (mtParamDelete.id.Visible) { // mtParamDelete.id.Visible (begin)
+        <td @Html.Raw(mtParamDelete.id.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtParamDelete.id.ViewAttributes)>
+@Html.Raw(mtParamDelete.id.GetViewValue())</span>
+</span></td>
+} @* mtParamDelete.id.Visible (end) *@
+@if (mtParamDelete.Param_Type.Visible) { // mtParamDelete.Param_Type.Visible (begin)
+        <td @Html.Raw(mtParamDelete.Param_Type.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtParamDelete.Param_Type.ViewAttributes)>
+@Html.Raw(mtParamDelete.Param_Type.GetViewValue())</span>
+</span></td>
+} @* mtParamDelete.Param_Type.Visible (end) *@
+@if (mtParamDelete.Param_Name.Visible) { // mtParamDelete.Param_Name.Visible (begin)
+        <td @Html.Raw(mtParamDelete.Param_Name.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtParamDelete.Param_Name.ViewAttributes)>
+@Html.Raw(mtParamDelete.Param_Name.GetViewValue())</span>
+</span></td>
+} @* mtParamDelete.Param_Name.Visible (end) *@
+@if (mtParamDelete.Param_Value.Visible) { // mtParamDelete.Param_Value.Visible (begin)
+        <td @Html.Raw(mtParamDelete.Param_Value.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtParamDelete.Param_Value.ViewAttributes)>
+@Html.Raw(mtParamDelete.Param_Value.GetViewValue())</span>
+</span></td>
+} @* mtParamDelete.Param_Value.Visible (end) *@
+@if (mtParamDelete.Param_Status.Visible) { // mtParamDelete.Param_Status.Visible (begin)
+        <td @Html.Raw(mtParamDelete.Param_Status.CellAttributes)>
+<span id="">
+<span @Html.Raw(mtParamDelete.Param_Status.ViewAttributes)>
+@Html.Raw(mtParamDelete.Param_Status.GetViewValue())</span>
+</span></td>
+} @* mtParamDelete.Param_Status.Visible (end) *@
+    </tr>
+}
+@{ mtParamDelete.CloseRecordset(); }
+</tbody>
+</table>
+</div>
+</div>
+<div class="ew-buttons ew-desktop-buttons">
+<button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit">@Html.Raw(Language.Phrase("DeleteBtn"))</button>
+<button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-href="@AppPath(mtParamDelete.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+</div>
+</form>
+@mtParamDelete.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

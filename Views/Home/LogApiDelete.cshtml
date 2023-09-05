@@ -1,0 +1,165 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (logApiDelete.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!logApiDelete.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(logApiDelete.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { log_API: currentTable } });
+var currentPageID = ew.PAGE_ID = "delete";
+var currentForm;
+var flog_APIdelete;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("flog_APIdelete")
+        .setPageId("delete")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@logApiDelete.ShowPageHeader()
+@logApiDelete.ShowMessages()
+<form name="flog_APIdelete" id="flog_APIdelete" class="ew-form ew-delete-form" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="delete">
+@foreach (string key in logApiDelete.RecordKeys) {
+<input type="hidden" name="key_m[]" value="@key">
+}
+<div class="card ew-card ew-grid @(logApiDelete.TableGridClass)">
+<div class="card-body ew-grid-middle-panel @(logApiDelete.TableContainerClass)" style="@(logApiDelete.TableContainerStyle)">
+<table class="@(logApiDelete.TableClass)">
+    <thead>
+    <tr class="ew-table-header">
+@if (logApiDelete.id.Visible) { // logApiDelete.id.Visible (begin)
+        <th class="@Html.Raw(logApiDelete.id.HeaderCellClass)"><span id="elh_log_API_id" class="log_API_id">@Html.Raw(logApiDelete.id.Caption)</span></th>
+} @* logApiDelete.id.Visible (end) *@
+@if (logApiDelete.API_Type.Visible) { // logApiDelete.API_Type.Visible (begin)
+        <th class="@Html.Raw(logApiDelete.API_Type.HeaderCellClass)"><span id="elh_log_API_API_Type" class="log_API_API_Type">@Html.Raw(logApiDelete.API_Type.Caption)</span></th>
+} @* logApiDelete.API_Type.Visible (end) *@
+@if (logApiDelete.API_Link.Visible) { // logApiDelete.API_Link.Visible (begin)
+        <th class="@Html.Raw(logApiDelete.API_Link.HeaderCellClass)"><span id="elh_log_API_API_Link" class="log_API_API_Link">@Html.Raw(logApiDelete.API_Link.Caption)</span></th>
+} @* logApiDelete.API_Link.Visible (end) *@
+@if (logApiDelete.API_Body.Visible) { // logApiDelete.API_Body.Visible (begin)
+        <th class="@Html.Raw(logApiDelete.API_Body.HeaderCellClass)"><span id="elh_log_API_API_Body" class="log_API_API_Body">@Html.Raw(logApiDelete.API_Body.Caption)</span></th>
+} @* logApiDelete.API_Body.Visible (end) *@
+@if (logApiDelete.API_Status.Visible) { // logApiDelete.API_Status.Visible (begin)
+        <th class="@Html.Raw(logApiDelete.API_Status.HeaderCellClass)"><span id="elh_log_API_API_Status" class="log_API_API_Status">@Html.Raw(logApiDelete.API_Status.Caption)</span></th>
+} @* logApiDelete.API_Status.Visible (end) *@
+@if (logApiDelete.API_Result.Visible) { // logApiDelete.API_Result.Visible (begin)
+        <th class="@Html.Raw(logApiDelete.API_Result.HeaderCellClass)"><span id="elh_log_API_API_Result" class="log_API_API_Result">@Html.Raw(logApiDelete.API_Result.Caption)</span></th>
+} @* logApiDelete.API_Result.Visible (end) *@
+    </tr>
+    </thead>
+    <tbody>
+@{ logApiDelete.RecordCount = 0; }
+@while (logApiDelete.Recordset != null && await logApiDelete.Recordset.ReadAsync()) { // DN
+    logApiDelete.RecordCount++;
+    logApiDelete.RowCount++;
+
+    // Set row properties
+    logApiDelete.ResetAttributes();
+    logApiDelete.RowType = RowType.View; // View
+
+    // Get the field contents
+    await logApiDelete.LoadRowValues(logApiDelete.Recordset);
+
+    // Render row
+    await logApiDelete.RenderRow();
+    <tr @Html.Raw(logApiDelete.RowAttributes)>
+@if (logApiDelete.id.Visible) { // logApiDelete.id.Visible (begin)
+        <td @Html.Raw(logApiDelete.id.CellAttributes)>
+<span id="">
+<span @Html.Raw(logApiDelete.id.ViewAttributes)>
+@Html.Raw(logApiDelete.id.GetViewValue())</span>
+</span></td>
+} @* logApiDelete.id.Visible (end) *@
+@if (logApiDelete.API_Type.Visible) { // logApiDelete.API_Type.Visible (begin)
+        <td @Html.Raw(logApiDelete.API_Type.CellAttributes)>
+<span id="">
+<span @Html.Raw(logApiDelete.API_Type.ViewAttributes)>
+@Html.Raw(logApiDelete.API_Type.GetViewValue())</span>
+</span></td>
+} @* logApiDelete.API_Type.Visible (end) *@
+@if (logApiDelete.API_Link.Visible) { // logApiDelete.API_Link.Visible (begin)
+        <td @Html.Raw(logApiDelete.API_Link.CellAttributes)>
+<span id="">
+<span @Html.Raw(logApiDelete.API_Link.ViewAttributes)>
+@Html.Raw(logApiDelete.API_Link.GetViewValue())</span>
+</span></td>
+} @* logApiDelete.API_Link.Visible (end) *@
+@if (logApiDelete.API_Body.Visible) { // logApiDelete.API_Body.Visible (begin)
+        <td @Html.Raw(logApiDelete.API_Body.CellAttributes)>
+<span id="">
+<span @Html.Raw(logApiDelete.API_Body.ViewAttributes)>
+@Html.Raw(logApiDelete.API_Body.GetViewValue())</span>
+</span></td>
+} @* logApiDelete.API_Body.Visible (end) *@
+@if (logApiDelete.API_Status.Visible) { // logApiDelete.API_Status.Visible (begin)
+        <td @Html.Raw(logApiDelete.API_Status.CellAttributes)>
+<span id="">
+<span @Html.Raw(logApiDelete.API_Status.ViewAttributes)>
+@Html.Raw(logApiDelete.API_Status.GetViewValue())</span>
+</span></td>
+} @* logApiDelete.API_Status.Visible (end) *@
+@if (logApiDelete.API_Result.Visible) { // logApiDelete.API_Result.Visible (begin)
+        <td @Html.Raw(logApiDelete.API_Result.CellAttributes)>
+<span id="">
+<span @Html.Raw(logApiDelete.API_Result.ViewAttributes)>
+@Html.Raw(logApiDelete.API_Result.GetViewValue())</span>
+</span></td>
+} @* logApiDelete.API_Result.Visible (end) *@
+    </tr>
+}
+@{ logApiDelete.CloseRecordset(); }
+</tbody>
+</table>
+</div>
+</div>
+<div class="ew-buttons ew-desktop-buttons">
+<button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit">@Html.Raw(Language.Phrase("DeleteBtn"))</button>
+<button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-href="@AppPath(logApiDelete.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+</div>
+</form>
+@logApiDelete.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

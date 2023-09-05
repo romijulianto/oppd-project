@@ -1,0 +1,246 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (trRequestDetailView.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!trRequestDetailView.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!trRequestDetailView.IsExport()) {
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!trRequestDetailView.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+    @trRequestDetailView.ExportOptions.RenderBody()
+    @trRequestDetailView.OtherOptions.RenderBody()
+</div>
+}
+@trRequestDetailView.ShowPageHeader()
+@trRequestDetailView.ShowMessages()
+<main class="view">
+<form name="ftr_request_detailview" id="ftr_request_detailview" class="ew-form ew-view-form overlay-wrapper" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (!trRequestDetailView.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(trRequestDetailView.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { tr_request_detail: currentTable } });
+var currentPageID = ew.PAGE_ID = "view";
+var currentForm;
+var ftr_request_detailview;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("ftr_request_detailview")
+        .setPageId("view")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+}
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="modal" value="@ConvertToInt(trRequestDetailView.IsModal)">
+<table class="@(trRequestDetailView.TableClass)">
+@if (trRequestDetailView.id.Visible) { // trRequestDetailView.id.Visible (begin)
+    <tr id="r_id" @Html.Raw(trRequestDetailView.id.RowAttributes)>
+        <td class="@(trRequestDetailView.TableLeftColumnClass)"><span id="elh_tr_request_detail_id">@Html.Raw(trRequestDetailView.id.Caption)</span></td>
+        <td data-name="id" @Html.Raw(trRequestDetailView.id.CellAttributes)>
+<span id="el_tr_request_detail_id">
+<span @Html.Raw(trRequestDetailView.id.ViewAttributes)>
+@Html.Raw(trRequestDetailView.id.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestDetailView.id.Visible (end) *@
+@if (trRequestDetailView.request_id.Visible) { // trRequestDetailView.request_id.Visible (begin)
+    <tr id="r_request_id" @Html.Raw(trRequestDetailView.request_id.RowAttributes)>
+        <td class="@(trRequestDetailView.TableLeftColumnClass)"><span id="elh_tr_request_detail_request_id">@Html.Raw(trRequestDetailView.request_id.Caption)</span></td>
+        <td data-name="request_id" @Html.Raw(trRequestDetailView.request_id.CellAttributes)>
+<span id="el_tr_request_detail_request_id">
+<span @Html.Raw(trRequestDetailView.request_id.ViewAttributes)>
+@Html.Raw(await GetFileViewTag((DbField)trRequestDetailView.request_id, ConvertToString(trRequestDetailView.request_id.GetViewValue()), false))
+</span>
+</span></td>
+    </tr>
+} @* trRequestDetailView.request_id.Visible (end) *@
+@if (trRequestDetailView.Item_No.Visible) { // trRequestDetailView.Item_No.Visible (begin)
+    <tr id="r_Item_No" @Html.Raw(trRequestDetailView.Item_No.RowAttributes)>
+        <td class="@(trRequestDetailView.TableLeftColumnClass)"><span id="elh_tr_request_detail_Item_No">@Html.Raw(trRequestDetailView.Item_No.Caption)</span></td>
+        <td data-name="Item_No" @Html.Raw(trRequestDetailView.Item_No.CellAttributes)>
+<span id="el_tr_request_detail_Item_No">
+<span @Html.Raw(trRequestDetailView.Item_No.ViewAttributes)>
+@Html.Raw(trRequestDetailView.Item_No.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestDetailView.Item_No.Visible (end) *@
+@if (trRequestDetailView.Part_No.Visible) { // trRequestDetailView.Part_No.Visible (begin)
+    <tr id="r_Part_No" @Html.Raw(trRequestDetailView.Part_No.RowAttributes)>
+        <td class="@(trRequestDetailView.TableLeftColumnClass)"><span id="elh_tr_request_detail_Part_No">@Html.Raw(trRequestDetailView.Part_No.Caption)</span></td>
+        <td data-name="Part_No" @Html.Raw(trRequestDetailView.Part_No.CellAttributes)>
+<span id="el_tr_request_detail_Part_No">
+<span @Html.Raw(trRequestDetailView.Part_No.ViewAttributes)>
+@Html.Raw(trRequestDetailView.Part_No.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestDetailView.Part_No.Visible (end) *@
+@if (trRequestDetailView.Part_Description.Visible) { // trRequestDetailView.Part_Description.Visible (begin)
+    <tr id="r_Part_Description" @Html.Raw(trRequestDetailView.Part_Description.RowAttributes)>
+        <td class="@(trRequestDetailView.TableLeftColumnClass)"><span id="elh_tr_request_detail_Part_Description">@Html.Raw(trRequestDetailView.Part_Description.Caption)</span></td>
+        <td data-name="Part_Description" @Html.Raw(trRequestDetailView.Part_Description.CellAttributes)>
+<span id="el_tr_request_detail_Part_Description">
+<span @Html.Raw(trRequestDetailView.Part_Description.ViewAttributes)>
+@Html.Raw(trRequestDetailView.Part_Description.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestDetailView.Part_Description.Visible (end) *@
+@if (trRequestDetailView.Qty.Visible) { // trRequestDetailView.Qty.Visible (begin)
+    <tr id="r_Qty" @Html.Raw(trRequestDetailView.Qty.RowAttributes)>
+        <td class="@(trRequestDetailView.TableLeftColumnClass)"><span id="elh_tr_request_detail_Qty">@Html.Raw(trRequestDetailView.Qty.Caption)</span></td>
+        <td data-name="Qty" @Html.Raw(trRequestDetailView.Qty.CellAttributes)>
+<span id="el_tr_request_detail_Qty">
+<span @Html.Raw(trRequestDetailView.Qty.ViewAttributes)>
+@Html.Raw(trRequestDetailView.Qty.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestDetailView.Qty.Visible (end) *@
+@if (trRequestDetailView.SAP_Unit_Price.Visible) { // trRequestDetailView.SAP_Unit_Price.Visible (begin)
+    <tr id="r_SAP_Unit_Price" @Html.Raw(trRequestDetailView.SAP_Unit_Price.RowAttributes)>
+        <td class="@(trRequestDetailView.TableLeftColumnClass)"><span id="elh_tr_request_detail_SAP_Unit_Price">@Html.Raw(trRequestDetailView.SAP_Unit_Price.Caption)</span></td>
+        <td data-name="SAP_Unit_Price" @Html.Raw(trRequestDetailView.SAP_Unit_Price.CellAttributes)>
+<span id="el_tr_request_detail_SAP_Unit_Price">
+<span @Html.Raw(trRequestDetailView.SAP_Unit_Price.ViewAttributes)>
+@Html.Raw(trRequestDetailView.SAP_Unit_Price.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestDetailView.SAP_Unit_Price.Visible (end) *@
+@if (trRequestDetailView.Extd_SAP_Price.Visible) { // trRequestDetailView.Extd_SAP_Price.Visible (begin)
+    <tr id="r_Extd_SAP_Price" @Html.Raw(trRequestDetailView.Extd_SAP_Price.RowAttributes)>
+        <td class="@(trRequestDetailView.TableLeftColumnClass)"><span id="elh_tr_request_detail_Extd_SAP_Price">@Html.Raw(trRequestDetailView.Extd_SAP_Price.Caption)</span></td>
+        <td data-name="Extd_SAP_Price" @Html.Raw(trRequestDetailView.Extd_SAP_Price.CellAttributes)>
+<span id="el_tr_request_detail_Extd_SAP_Price">
+<span @Html.Raw(trRequestDetailView.Extd_SAP_Price.ViewAttributes)>
+@Html.Raw(trRequestDetailView.Extd_SAP_Price.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestDetailView.Extd_SAP_Price.Visible (end) *@
+@if (trRequestDetailView.GP_SAP_Price.Visible) { // trRequestDetailView.GP_SAP_Price.Visible (begin)
+    <tr id="r_GP_SAP_Price" @Html.Raw(trRequestDetailView.GP_SAP_Price.RowAttributes)>
+        <td class="@(trRequestDetailView.TableLeftColumnClass)"><span id="elh_tr_request_detail_GP_SAP_Price">@Html.Raw(trRequestDetailView.GP_SAP_Price.Caption)</span></td>
+        <td data-name="GP_SAP_Price" @Html.Raw(trRequestDetailView.GP_SAP_Price.CellAttributes)>
+<span id="el_tr_request_detail_GP_SAP_Price">
+<span @Html.Raw(trRequestDetailView.GP_SAP_Price.ViewAttributes)>
+@Html.Raw(trRequestDetailView.GP_SAP_Price.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestDetailView.GP_SAP_Price.Visible (end) *@
+@if (trRequestDetailView.Override_Unit_Price.Visible) { // trRequestDetailView.Override_Unit_Price.Visible (begin)
+    <tr id="r_Override_Unit_Price" @Html.Raw(trRequestDetailView.Override_Unit_Price.RowAttributes)>
+        <td class="@(trRequestDetailView.TableLeftColumnClass)"><span id="elh_tr_request_detail_Override_Unit_Price">@Html.Raw(trRequestDetailView.Override_Unit_Price.Caption)</span></td>
+        <td data-name="Override_Unit_Price" @Html.Raw(trRequestDetailView.Override_Unit_Price.CellAttributes)>
+<span id="el_tr_request_detail_Override_Unit_Price">
+<span @Html.Raw(trRequestDetailView.Override_Unit_Price.ViewAttributes)>
+@Html.Raw(trRequestDetailView.Override_Unit_Price.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestDetailView.Override_Unit_Price.Visible (end) *@
+@if (trRequestDetailView.Extd_Override_Price.Visible) { // trRequestDetailView.Extd_Override_Price.Visible (begin)
+    <tr id="r_Extd_Override_Price" @Html.Raw(trRequestDetailView.Extd_Override_Price.RowAttributes)>
+        <td class="@(trRequestDetailView.TableLeftColumnClass)"><span id="elh_tr_request_detail_Extd_Override_Price">@Html.Raw(trRequestDetailView.Extd_Override_Price.Caption)</span></td>
+        <td data-name="Extd_Override_Price" @Html.Raw(trRequestDetailView.Extd_Override_Price.CellAttributes)>
+<span id="el_tr_request_detail_Extd_Override_Price">
+<span @Html.Raw(trRequestDetailView.Extd_Override_Price.ViewAttributes)>
+@Html.Raw(trRequestDetailView.Extd_Override_Price.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestDetailView.Extd_Override_Price.Visible (end) *@
+@if (trRequestDetailView.GP_Override_Price.Visible) { // trRequestDetailView.GP_Override_Price.Visible (begin)
+    <tr id="r_GP_Override_Price" @Html.Raw(trRequestDetailView.GP_Override_Price.RowAttributes)>
+        <td class="@(trRequestDetailView.TableLeftColumnClass)"><span id="elh_tr_request_detail_GP_Override_Price">@Html.Raw(trRequestDetailView.GP_Override_Price.Caption)</span></td>
+        <td data-name="GP_Override_Price" @Html.Raw(trRequestDetailView.GP_Override_Price.CellAttributes)>
+<span id="el_tr_request_detail_GP_Override_Price">
+<span @Html.Raw(trRequestDetailView.GP_Override_Price.ViewAttributes)>
+@Html.Raw(trRequestDetailView.GP_Override_Price.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestDetailView.GP_Override_Price.Visible (end) *@
+@if (trRequestDetailView.Override_Core.Visible) { // trRequestDetailView.Override_Core.Visible (begin)
+    <tr id="r_Override_Core" @Html.Raw(trRequestDetailView.Override_Core.RowAttributes)>
+        <td class="@(trRequestDetailView.TableLeftColumnClass)"><span id="elh_tr_request_detail_Override_Core">@Html.Raw(trRequestDetailView.Override_Core.Caption)</span></td>
+        <td data-name="Override_Core" @Html.Raw(trRequestDetailView.Override_Core.CellAttributes)>
+<span id="el_tr_request_detail_Override_Core">
+<span @Html.Raw(trRequestDetailView.Override_Core.ViewAttributes)>
+@Html.Raw(trRequestDetailView.Override_Core.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestDetailView.Override_Core.Visible (end) *@
+@if (trRequestDetailView.Override_Percent.Visible) { // trRequestDetailView.Override_Percent.Visible (begin)
+    <tr id="r_Override_Percent" @Html.Raw(trRequestDetailView.Override_Percent.RowAttributes)>
+        <td class="@(trRequestDetailView.TableLeftColumnClass)"><span id="elh_tr_request_detail_Override_Percent">@Html.Raw(trRequestDetailView.Override_Percent.Caption)</span></td>
+        <td data-name="Override_Percent" @Html.Raw(trRequestDetailView.Override_Percent.CellAttributes)>
+<span id="el_tr_request_detail_Override_Percent">
+<span @Html.Raw(trRequestDetailView.Override_Percent.ViewAttributes)>
+@Html.Raw(trRequestDetailView.Override_Percent.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestDetailView.Override_Percent.Visible (end) *@
+@if (trRequestDetailView.Core_Life_Ind.Visible) { // trRequestDetailView.Core_Life_Ind.Visible (begin)
+    <tr id="r_Core_Life_Ind" @Html.Raw(trRequestDetailView.Core_Life_Ind.RowAttributes)>
+        <td class="@(trRequestDetailView.TableLeftColumnClass)"><span id="elh_tr_request_detail_Core_Life_Ind">@Html.Raw(trRequestDetailView.Core_Life_Ind.Caption)</span></td>
+        <td data-name="Core_Life_Ind" @Html.Raw(trRequestDetailView.Core_Life_Ind.CellAttributes)>
+<span id="el_tr_request_detail_Core_Life_Ind">
+<span @Html.Raw(trRequestDetailView.Core_Life_Ind.ViewAttributes)>
+@Html.Raw(trRequestDetailView.Core_Life_Ind.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestDetailView.Core_Life_Ind.Visible (end) *@
+@if (trRequestDetailView.Notes.Visible) { // trRequestDetailView.Notes.Visible (begin)
+    <tr id="r_Notes" @Html.Raw(trRequestDetailView.Notes.RowAttributes)>
+        <td class="@(trRequestDetailView.TableLeftColumnClass)"><span id="elh_tr_request_detail_Notes">@Html.Raw(trRequestDetailView.Notes.Caption)</span></td>
+        <td data-name="Notes" @Html.Raw(trRequestDetailView.Notes.CellAttributes)>
+<span id="el_tr_request_detail_Notes">
+<span @Html.Raw(trRequestDetailView.Notes.ViewAttributes)>
+@Html.Raw(trRequestDetailView.Notes.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* trRequestDetailView.Notes.Visible (end) *@
+</table>
+@{ trRequestDetailView.CloseRecordset(); }
+</form>
+</main>
+@trRequestDetailView.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!trRequestDetailView.IsExport()) {
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

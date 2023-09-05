@@ -1,0 +1,145 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (logApiView.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!logApiView.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!logApiView.IsExport()) {
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!logApiView.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+    @logApiView.ExportOptions.RenderBody()
+    @logApiView.OtherOptions.RenderBody()
+</div>
+}
+@logApiView.ShowPageHeader()
+@logApiView.ShowMessages()
+<main class="view">
+<form name="flog_APIview" id="flog_APIview" class="ew-form ew-view-form overlay-wrapper" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (!logApiView.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(logApiView.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { log_API: currentTable } });
+var currentPageID = ew.PAGE_ID = "view";
+var currentForm;
+var flog_APIview;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("flog_APIview")
+        .setPageId("view")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+}
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="modal" value="@ConvertToInt(logApiView.IsModal)">
+<table class="@(logApiView.TableClass)">
+@if (logApiView.id.Visible) { // logApiView.id.Visible (begin)
+    <tr id="r_id" @Html.Raw(logApiView.id.RowAttributes)>
+        <td class="@(logApiView.TableLeftColumnClass)"><span id="elh_log_API_id">@Html.Raw(logApiView.id.Caption)</span></td>
+        <td data-name="id" @Html.Raw(logApiView.id.CellAttributes)>
+<span id="el_log_API_id">
+<span @Html.Raw(logApiView.id.ViewAttributes)>
+@Html.Raw(logApiView.id.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* logApiView.id.Visible (end) *@
+@if (logApiView.API_Type.Visible) { // logApiView.API_Type.Visible (begin)
+    <tr id="r_API_Type" @Html.Raw(logApiView.API_Type.RowAttributes)>
+        <td class="@(logApiView.TableLeftColumnClass)"><span id="elh_log_API_API_Type">@Html.Raw(logApiView.API_Type.Caption)</span></td>
+        <td data-name="API_Type" @Html.Raw(logApiView.API_Type.CellAttributes)>
+<span id="el_log_API_API_Type">
+<span @Html.Raw(logApiView.API_Type.ViewAttributes)>
+@Html.Raw(logApiView.API_Type.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* logApiView.API_Type.Visible (end) *@
+@if (logApiView.API_Link.Visible) { // logApiView.API_Link.Visible (begin)
+    <tr id="r_API_Link" @Html.Raw(logApiView.API_Link.RowAttributes)>
+        <td class="@(logApiView.TableLeftColumnClass)"><span id="elh_log_API_API_Link">@Html.Raw(logApiView.API_Link.Caption)</span></td>
+        <td data-name="API_Link" @Html.Raw(logApiView.API_Link.CellAttributes)>
+<span id="el_log_API_API_Link">
+<span @Html.Raw(logApiView.API_Link.ViewAttributes)>
+@Html.Raw(logApiView.API_Link.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* logApiView.API_Link.Visible (end) *@
+@if (logApiView.API_Body.Visible) { // logApiView.API_Body.Visible (begin)
+    <tr id="r_API_Body" @Html.Raw(logApiView.API_Body.RowAttributes)>
+        <td class="@(logApiView.TableLeftColumnClass)"><span id="elh_log_API_API_Body">@Html.Raw(logApiView.API_Body.Caption)</span></td>
+        <td data-name="API_Body" @Html.Raw(logApiView.API_Body.CellAttributes)>
+<span id="el_log_API_API_Body">
+<span @Html.Raw(logApiView.API_Body.ViewAttributes)>
+@Html.Raw(logApiView.API_Body.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* logApiView.API_Body.Visible (end) *@
+@if (logApiView.API_Status.Visible) { // logApiView.API_Status.Visible (begin)
+    <tr id="r_API_Status" @Html.Raw(logApiView.API_Status.RowAttributes)>
+        <td class="@(logApiView.TableLeftColumnClass)"><span id="elh_log_API_API_Status">@Html.Raw(logApiView.API_Status.Caption)</span></td>
+        <td data-name="API_Status" @Html.Raw(logApiView.API_Status.CellAttributes)>
+<span id="el_log_API_API_Status">
+<span @Html.Raw(logApiView.API_Status.ViewAttributes)>
+@Html.Raw(logApiView.API_Status.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* logApiView.API_Status.Visible (end) *@
+@if (logApiView.API_Result.Visible) { // logApiView.API_Result.Visible (begin)
+    <tr id="r_API_Result" @Html.Raw(logApiView.API_Result.RowAttributes)>
+        <td class="@(logApiView.TableLeftColumnClass)"><span id="elh_log_API_API_Result">@Html.Raw(logApiView.API_Result.Caption)</span></td>
+        <td data-name="API_Result" @Html.Raw(logApiView.API_Result.CellAttributes)>
+<span id="el_log_API_API_Result">
+<span @Html.Raw(logApiView.API_Result.ViewAttributes)>
+@Html.Raw(logApiView.API_Result.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* logApiView.API_Result.Visible (end) *@
+</table>
+@{ logApiView.CloseRecordset(); }
+</form>
+</main>
+@logApiView.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!logApiView.IsExport()) {
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

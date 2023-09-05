@@ -1,0 +1,305 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (mtParamList.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!mtParamList.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!mtParamList.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtParamList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_param: currentTable } });
+var currentPageID = ew.PAGE_ID = "list";
+var currentForm;
+var @(mtParamList.FormName);
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("@(mtParamList.FormName)")
+        .setPageId("list")
+        .setSubmitWithFetch(@(mtParamList.UseAjaxActions ? "true" : "false"))
+        .setFormKeyCountName("@(mtParamList.FormKeyCountName)")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+ew.PREVIEW_SELECTOR = ".ew-preview-btn";
+ew.PREVIEW_MODAL_CLASS = "modal modal-fullscreen-sm-down";
+ew.PREVIEW_ROW = true;
+ew.PREVIEW_SINGLE_ROW = false;
+ew.PREVIEW || ew.ready("head", ew.PATH_BASE + "js/preview.min.js?v=20.6.0", "preview");
+</script>
+<script>
+window.Tabulator || loadjs([
+    ew.PATH_BASE + "js/tabulator.min.js?v=20.6.3",
+    ew.PATH_BASE + "css/@CssFile("tabulator_bootstrap5.css", false)?v=20.6.3"
+], "import");
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!mtParamList.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+@if (mtParamList.TotalRecords > 0 && mtParamList.ExportOptions.Visible) {
+    mtParamList.ExportOptions.Render("body");
+}
+@if (mtParamList.ImportOptions.Visible) {
+    mtParamList.ImportOptions.Render("body");
+}
+@if (mtParamList.SearchOptions.Visible) {
+    mtParamList.SearchOptions.Render("body");
+}
+@if (mtParamList.FilterOptions.Visible) {
+    mtParamList.FilterOptions.Render("body");
+}
+</div>
+}
+@if (!mtParamList.IsModal) {
+<form name="fmt_paramsrch" id="fmt_paramsrch" class="ew-form ew-ext-search-form" action="@AppPath(CurrentPageName())" novalidate autocomplete="off">
+<div id="fmt_paramsrch_search_panel" class="mb-2 mb-sm-0 @(mtParamList.SearchPanelClass)"><!-- .ew-search-panel -->
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtParamList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_param: currentTable } });
+var currentForm;
+var fmt_paramsrch, currentSearchForm, currentAdvancedSearchForm;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery,
+        fields = currentTable.fields;
+
+    // Form object for search
+    let form = new ew.FormBuilder()
+        .setId("fmt_paramsrch")
+        .setPageId("list")
+@if (mtParamList.UseAjaxActions) {
+        <text>.setSubmitWithFetch(true)</text>
+}
+
+        // Dynamic selection lists
+        .setLists({
+        })
+
+        // Filters
+        .setFilterList(@Html.Raw(await mtParamList.GetFilterList()))
+        .build();
+    window[form.id] = form;
+    currentSearchForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<input type="hidden" name="cmd" value="search">
+@if (Security.CanSearch) {
+if (!mtParamList.IsExport() && Empty(mtParamList.CurrentAction) && mtParamList.HasSearchFields()) { @* Show search form (begin) *@
+<div class="ew-extended-search container-fluid ps-2">
+<div class="row mb-0">
+    <div class="col-sm-auto px-0 pe-sm-2">
+        <div class="ew-basic-search input-group">
+            <input type="search" name="@(Config.TableBasicSearch)" id="@(Config.TableBasicSearch)" class="form-control ew-basic-search-keyword" value="@Html.Raw(HtmlEncode(mtParamList.BasicSearch.SessionKeyword))" placeholder="@(HtmlEncode(Language.Phrase("Search")))" aria-label="@(HtmlEncode(Language.Phrase("Search")))">
+            <input type="hidden" name="@(Config.TableBasicSearchType)" id="@(Config.TableBasicSearchType)" class="ew-basic-search-type" value="@(HtmlEncode(mtParamList.BasicSearch.SessionType))">
+            <button type="button" data-bs-toggle="dropdown" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" aria-haspopup="true" aria-expanded="false">
+                <span id="searchtype">@Html.Raw(mtParamList.BasicSearch.TypeNameShort)</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end">
+                <button type="button" class="dropdown-item@(mtParamList.BasicSearch.SessionType == "" ? " active" : "")" form="fmt_paramsrch" data-ew-action="search-type">@Html.Raw(Language.Phrase("QuickSearchAuto"))</button>
+                <button type="button" class="dropdown-item@(mtParamList.BasicSearch.SessionType == "=" ? " active" : "")" form="fmt_paramsrch" data-ew-action="search-type" data-search-type="=">@Html.Raw(Language.Phrase("QuickSearchExact"))</button>
+                <button type="button" class="dropdown-item@(mtParamList.BasicSearch.SessionType == "AND" ? " active" : "")" form="fmt_paramsrch" data-ew-action="search-type" data-search-type="AND">@Html.Raw(Language.Phrase("QuickSearchAll"))</button>
+                <button type="button" class="dropdown-item@(mtParamList.BasicSearch.SessionType == "OR" ? " active" : "")" form="fmt_paramsrch" data-ew-action="search-type" data-search-type="OR">@Html.Raw(Language.Phrase("QuickSearchAny"))</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-auto mb-3">
+        <button class="btn btn-primary" name="btn-submit" id="btn-submit" type="submit">@Html.Raw(Language.Phrase("SearchBtn"))</button>
+    </div>
+</div>
+</div><!-- /.ew-extended-search -->
+} @* Show search form (end) *@
+}
+</div><!-- /.ew-search-panel -->
+</form>
+}
+@mtParamList.ShowPageHeader()
+@mtParamList.ShowMessages()
+<main class="list @(mtParamList.TotalRecords == 0 && !mtParamList.IsAdd ? " ew-no-record" : "")">
+<div id="ew-list">
+@if (mtParamList.TotalRecords > 0 || !Empty(mtParamList.CurrentAction)) {
+<div class="card ew-card ew-grid@(mtParamList.IsAddOrEdit ? " ew-grid-add-edit" : "") @(mtParamList.TableGridClass)">
+<form name="@(mtParamList.FormName)" id="@(mtParamList.FormName)" class="ew-form ew-list-form" action="@AppPath(mtParamList.PageName)" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+@if (mtParamList.IsModal) {
+<input type="hidden" name="modal" value="1">
+}
+<div id="gmp_mt_param" class="card-body ew-grid-middle-panel @(mtParamList.TableContainerClass)" style="@(mtParamList.TableContainerStyle)">
+@if (mtParamList.TotalRecords > 0 || mtParamList.IsGridEdit || mtParamList.IsMultiEdit) {
+<table id="tbl_mt_paramlist" class="@(mtParamList.TableClass)"><!-- .ew-table -->
+<thead>
+    <tr class="ew-table-header">
+@{
+    // Header row
+    mtParamList.RowType = RowType.Header;
+
+    // Render list options
+    await mtParamList.RenderListOptions();
+}
+@* Render list options (header, left) *@
+@mtParamList.ListOptions.RenderHeader("left")
+@if (mtParamList.id.Visible) { // mtParamList.id.Visible (begin)
+        <th data-name="id" class="@(mtParamList.id.HeaderCellClass)"><div id="elh_mt_param_id" class="mt_param_id">@Html.Raw(mtParamList.RenderFieldHeader(mtParamList.id))</div></th>
+} @* mtParamList.id.Visible (end) *@
+@if (mtParamList.Param_Type.Visible) { // mtParamList.Param_Type.Visible (begin)
+        <th data-name="Param_Type" class="@(mtParamList.Param_Type.HeaderCellClass)"><div id="elh_mt_param_Param_Type" class="mt_param_Param_Type">@Html.Raw(mtParamList.RenderFieldHeader(mtParamList.Param_Type))</div></th>
+} @* mtParamList.Param_Type.Visible (end) *@
+@if (mtParamList.Param_Name.Visible) { // mtParamList.Param_Name.Visible (begin)
+        <th data-name="Param_Name" class="@(mtParamList.Param_Name.HeaderCellClass)"><div id="elh_mt_param_Param_Name" class="mt_param_Param_Name">@Html.Raw(mtParamList.RenderFieldHeader(mtParamList.Param_Name))</div></th>
+} @* mtParamList.Param_Name.Visible (end) *@
+@if (mtParamList.Param_Value.Visible) { // mtParamList.Param_Value.Visible (begin)
+        <th data-name="Param_Value" class="@(mtParamList.Param_Value.HeaderCellClass)"><div id="elh_mt_param_Param_Value" class="mt_param_Param_Value">@Html.Raw(mtParamList.RenderFieldHeader(mtParamList.Param_Value))</div></th>
+} @* mtParamList.Param_Value.Visible (end) *@
+@if (mtParamList.Param_Status.Visible) { // mtParamList.Param_Status.Visible (begin)
+        <th data-name="Param_Status" class="@(mtParamList.Param_Status.HeaderCellClass)"><div id="elh_mt_param_Param_Status" class="mt_param_Param_Status">@Html.Raw(mtParamList.RenderFieldHeader(mtParamList.Param_Status))</div></th>
+} @* mtParamList.Param_Status.Visible (end) *@
+@* Render list options (header, right) *@
+@mtParamList.ListOptions.RenderHeader("right")
+    </tr>
+</thead>
+<tbody data-page="@(mtParamList.PageNumber)">
+@{
+    await mtParamList.SetupGrid();
+    bool eof = mtParamList.Recordset == null; // DN
+}
+@while (mtParamList.RecordCount < mtParamList.StopRecord || SameString(mtParamList.RowIndex, "$rowindex$")) { // Begin While
+    if (!eof && !SameString(mtParamList.RowIndex, "$rowindex$") &&
+        (!mtParamList.IsGridAdd || mtParamList.CurrentMode == "copy") &&
+        (!((mtParamList.IsCopy || mtParamList.IsAdd) && mtParamList.RowIndex is int rowIndex && rowIndex == 0))) // DN
+        eof = !await mtParamList.Recordset.ReadAsync();
+    mtParamList.RecordCount++;
+    if (mtParamList.RecordCount >= mtParamList.StartRecord) {
+        await mtParamList.SetupRow();
+    <tr @Html.Raw(mtParamList.RowAttributes)>
+    @* Render list options (body, left) *@
+    @mtParamList.ListOptions.RenderBody("left", mtParamList.RowCount)
+    @if (mtParamList.id.Visible) { // mtParamList.id.Visible (begin)
+        <td data-name="id" @Html.Raw(mtParamList.id.CellAttributes)>
+<span id="el@(mtParamList.RowIndex == "$rowindex$" ? "$rowindex$" : mtParamList.RowCount)_mt_param_id" class="el_mt_param_id">
+<span @Html.Raw(mtParamList.id.ViewAttributes)>
+@Html.Raw(mtParamList.id.GetViewValue())</span>
+</span>
+</td>
+    } @* mtParamList.id.Visible (end) *@
+    @if (mtParamList.Param_Type.Visible) { // mtParamList.Param_Type.Visible (begin)
+        <td data-name="Param_Type" @Html.Raw(mtParamList.Param_Type.CellAttributes)>
+<span id="el@(mtParamList.RowIndex == "$rowindex$" ? "$rowindex$" : mtParamList.RowCount)_mt_param_Param_Type" class="el_mt_param_Param_Type">
+<span @Html.Raw(mtParamList.Param_Type.ViewAttributes)>
+@Html.Raw(mtParamList.Param_Type.GetViewValue())</span>
+</span>
+</td>
+    } @* mtParamList.Param_Type.Visible (end) *@
+    @if (mtParamList.Param_Name.Visible) { // mtParamList.Param_Name.Visible (begin)
+        <td data-name="Param_Name" @Html.Raw(mtParamList.Param_Name.CellAttributes)>
+<span id="el@(mtParamList.RowIndex == "$rowindex$" ? "$rowindex$" : mtParamList.RowCount)_mt_param_Param_Name" class="el_mt_param_Param_Name">
+<span @Html.Raw(mtParamList.Param_Name.ViewAttributes)>
+@Html.Raw(mtParamList.Param_Name.GetViewValue())</span>
+</span>
+</td>
+    } @* mtParamList.Param_Name.Visible (end) *@
+    @if (mtParamList.Param_Value.Visible) { // mtParamList.Param_Value.Visible (begin)
+        <td data-name="Param_Value" @Html.Raw(mtParamList.Param_Value.CellAttributes)>
+<span id="el@(mtParamList.RowIndex == "$rowindex$" ? "$rowindex$" : mtParamList.RowCount)_mt_param_Param_Value" class="el_mt_param_Param_Value">
+<span @Html.Raw(mtParamList.Param_Value.ViewAttributes)>
+@Html.Raw(mtParamList.Param_Value.GetViewValue())</span>
+</span>
+</td>
+    } @* mtParamList.Param_Value.Visible (end) *@
+    @if (mtParamList.Param_Status.Visible) { // mtParamList.Param_Status.Visible (begin)
+        <td data-name="Param_Status" @Html.Raw(mtParamList.Param_Status.CellAttributes)>
+<span id="el@(mtParamList.RowIndex == "$rowindex$" ? "$rowindex$" : mtParamList.RowCount)_mt_param_Param_Status" class="el_mt_param_Param_Status">
+<span @Html.Raw(mtParamList.Param_Status.ViewAttributes)>
+@Html.Raw(mtParamList.Param_Status.GetViewValue())</span>
+</span>
+</td>
+    } @* mtParamList.Param_Status.Visible (end) *@
+    @* Render list options (body, right) *@
+    @mtParamList.ListOptions.RenderBody("right", mtParamList.RowCount)
+    </tr>
+    } @* End if *@
+
+    // Reset for template row
+    if (SameString(mtParamList.RowIndex, "$rowindex$"))
+        mtParamList.RowIndex = 0;
+
+    // Reset inline add/copy row
+    if ((mtParamList.IsCopy || mtParamList.IsAdd) && mtParamList.RowIndex is int rowIndex2 && rowIndex2 == 0)
+        mtParamList.RowIndex = 1;
+} @* End While *@
+</tbody>
+</table><!-- /.ew-table -->
+} @* End If TotalRecords > 0 *@
+</div><!-- /.ew-grid-middle-panel -->
+@if (Empty(mtParamList.CurrentAction) && !mtParamList.UseAjaxActions) {
+<input type="hidden" name="action" id="action" value="">
+}
+</form><!-- /.ew-list-form -->
+@{ mtParamList.CloseRecordset(); }
+@if (!mtParamList.IsExport()) {
+<div class="card-footer ew-grid-lower-panel">
+@if (!mtParamList.IsGridAdd && !(mtParamList.IsGridEdit && mtParamList.ModalGridEdit) && !mtParamList.IsMultiEdit) {
+@Html.Raw(mtParamList.Pager.Render())
+}
+<div class="ew-list-other-options">
+@mtParamList.OtherOptions.RenderBody("bottom")
+</div>
+</div>
+}
+</div><!-- /.ew-grid -->
+} else { // Show other options
+<div class="ew-list-other-options">
+@mtParamList.OtherOptions.ForEach(opt => opt.ButtonClass = "").RenderBody()
+</div>
+}
+</div>
+</main>
+@mtParamList.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!mtParamList.IsExport()) {
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("mt_param");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

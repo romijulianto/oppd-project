@@ -1,0 +1,2 @@
+dotnet --info
+dotnet build

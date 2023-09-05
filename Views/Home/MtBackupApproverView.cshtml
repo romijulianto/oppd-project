@@ -1,0 +1,185 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (mtBackupApproverView.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!mtBackupApproverView.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!mtBackupApproverView.IsExport()) {
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!mtBackupApproverView.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+    @mtBackupApproverView.ExportOptions.RenderBody()
+    @mtBackupApproverView.OtherOptions.RenderBody()
+</div>
+}
+@mtBackupApproverView.ShowPageHeader()
+@mtBackupApproverView.ShowMessages()
+<main class="view">
+<form name="fmt_backup_approverview" id="fmt_backup_approverview" class="ew-form ew-view-form overlay-wrapper" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (!mtBackupApproverView.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtBackupApproverView.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_backup_approver: currentTable } });
+var currentPageID = ew.PAGE_ID = "view";
+var currentForm;
+var fmt_backup_approverview;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("fmt_backup_approverview")
+        .setPageId("view")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+}
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="modal" value="@ConvertToInt(mtBackupApproverView.IsModal)">
+<table class="@(mtBackupApproverView.TableClass)">
+@if (mtBackupApproverView.id.Visible) { // mtBackupApproverView.id.Visible (begin)
+    <tr id="r_id" @Html.Raw(mtBackupApproverView.id.RowAttributes)>
+        <td class="@(mtBackupApproverView.TableLeftColumnClass)"><span id="elh_mt_backup_approver_id">@Html.Raw(mtBackupApproverView.id.Caption)</span></td>
+        <td data-name="id" @Html.Raw(mtBackupApproverView.id.CellAttributes)>
+<span id="el_mt_backup_approver_id">
+<span @Html.Raw(mtBackupApproverView.id.ViewAttributes)>
+@Html.Raw(mtBackupApproverView.id.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* mtBackupApproverView.id.Visible (end) *@
+@if (mtBackupApproverView._UserName.Visible) { // mtBackupApproverView._UserName.Visible (begin)
+    <tr id="r__UserName" @Html.Raw(mtBackupApproverView._UserName.RowAttributes)>
+        <td class="@(mtBackupApproverView.TableLeftColumnClass)"><span id="elh_mt_backup_approver__UserName">@Html.Raw(mtBackupApproverView._UserName.Caption)</span></td>
+        <td data-name="_UserName" @Html.Raw(mtBackupApproverView._UserName.CellAttributes)>
+<span id="el_mt_backup_approver__UserName">
+<span @Html.Raw(mtBackupApproverView._UserName.ViewAttributes)>
+@Html.Raw(mtBackupApproverView._UserName.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* mtBackupApproverView._UserName.Visible (end) *@
+@if (mtBackupApproverView.Full_Name.Visible) { // mtBackupApproverView.Full_Name.Visible (begin)
+    <tr id="r_Full_Name" @Html.Raw(mtBackupApproverView.Full_Name.RowAttributes)>
+        <td class="@(mtBackupApproverView.TableLeftColumnClass)"><span id="elh_mt_backup_approver_Full_Name">@Html.Raw(mtBackupApproverView.Full_Name.Caption)</span></td>
+        <td data-name="Full_Name" @Html.Raw(mtBackupApproverView.Full_Name.CellAttributes)>
+<span id="el_mt_backup_approver_Full_Name">
+<span @Html.Raw(mtBackupApproverView.Full_Name.ViewAttributes)>
+@Html.Raw(mtBackupApproverView.Full_Name.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* mtBackupApproverView.Full_Name.Visible (end) *@
+@if (mtBackupApproverView.Position.Visible) { // mtBackupApproverView.Position.Visible (begin)
+    <tr id="r_Position" @Html.Raw(mtBackupApproverView.Position.RowAttributes)>
+        <td class="@(mtBackupApproverView.TableLeftColumnClass)"><span id="elh_mt_backup_approver_Position">@Html.Raw(mtBackupApproverView.Position.Caption)</span></td>
+        <td data-name="Position" @Html.Raw(mtBackupApproverView.Position.CellAttributes)>
+<span id="el_mt_backup_approver_Position">
+<span @Html.Raw(mtBackupApproverView.Position.ViewAttributes)>
+@Html.Raw(mtBackupApproverView.Position.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* mtBackupApproverView.Position.Visible (end) *@
+@if (mtBackupApproverView.Departement.Visible) { // mtBackupApproverView.Departement.Visible (begin)
+    <tr id="r_Departement" @Html.Raw(mtBackupApproverView.Departement.RowAttributes)>
+        <td class="@(mtBackupApproverView.TableLeftColumnClass)"><span id="elh_mt_backup_approver_Departement">@Html.Raw(mtBackupApproverView.Departement.Caption)</span></td>
+        <td data-name="Departement" @Html.Raw(mtBackupApproverView.Departement.CellAttributes)>
+<span id="el_mt_backup_approver_Departement">
+<span @Html.Raw(mtBackupApproverView.Departement.ViewAttributes)>
+@Html.Raw(mtBackupApproverView.Departement.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* mtBackupApproverView.Departement.Visible (end) *@
+@if (mtBackupApproverView.Division.Visible) { // mtBackupApproverView.Division.Visible (begin)
+    <tr id="r_Division" @Html.Raw(mtBackupApproverView.Division.RowAttributes)>
+        <td class="@(mtBackupApproverView.TableLeftColumnClass)"><span id="elh_mt_backup_approver_Division">@Html.Raw(mtBackupApproverView.Division.Caption)</span></td>
+        <td data-name="Division" @Html.Raw(mtBackupApproverView.Division.CellAttributes)>
+<span id="el_mt_backup_approver_Division">
+<span @Html.Raw(mtBackupApproverView.Division.ViewAttributes)>
+@Html.Raw(mtBackupApproverView.Division.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* mtBackupApproverView.Division.Visible (end) *@
+@if (mtBackupApproverView.Area.Visible) { // mtBackupApproverView.Area.Visible (begin)
+    <tr id="r_Area" @Html.Raw(mtBackupApproverView.Area.RowAttributes)>
+        <td class="@(mtBackupApproverView.TableLeftColumnClass)"><span id="elh_mt_backup_approver_Area">@Html.Raw(mtBackupApproverView.Area.Caption)</span></td>
+        <td data-name="Area" @Html.Raw(mtBackupApproverView.Area.CellAttributes)>
+<span id="el_mt_backup_approver_Area">
+<span @Html.Raw(mtBackupApproverView.Area.ViewAttributes)>
+@Html.Raw(mtBackupApproverView.Area.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* mtBackupApproverView.Area.Visible (end) *@
+@if (mtBackupApproverView.Business_Area.Visible) { // mtBackupApproverView.Business_Area.Visible (begin)
+    <tr id="r_Business_Area" @Html.Raw(mtBackupApproverView.Business_Area.RowAttributes)>
+        <td class="@(mtBackupApproverView.TableLeftColumnClass)"><span id="elh_mt_backup_approver_Business_Area">@Html.Raw(mtBackupApproverView.Business_Area.Caption)</span></td>
+        <td data-name="Business_Area" @Html.Raw(mtBackupApproverView.Business_Area.CellAttributes)>
+<span id="el_mt_backup_approver_Business_Area">
+<span @Html.Raw(mtBackupApproverView.Business_Area.ViewAttributes)>
+@Html.Raw(mtBackupApproverView.Business_Area.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* mtBackupApproverView.Business_Area.Visible (end) *@
+@if (mtBackupApproverView.Report_To.Visible) { // mtBackupApproverView.Report_To.Visible (begin)
+    <tr id="r_Report_To" @Html.Raw(mtBackupApproverView.Report_To.RowAttributes)>
+        <td class="@(mtBackupApproverView.TableLeftColumnClass)"><span id="elh_mt_backup_approver_Report_To">@Html.Raw(mtBackupApproverView.Report_To.Caption)</span></td>
+        <td data-name="Report_To" @Html.Raw(mtBackupApproverView.Report_To.CellAttributes)>
+<span id="el_mt_backup_approver_Report_To">
+<span @Html.Raw(mtBackupApproverView.Report_To.ViewAttributes)>
+@Html.Raw(mtBackupApproverView.Report_To.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* mtBackupApproverView.Report_To.Visible (end) *@
+@if (mtBackupApproverView.Business_Area_Desc.Visible) { // mtBackupApproverView.Business_Area_Desc.Visible (begin)
+    <tr id="r_Business_Area_Desc" @Html.Raw(mtBackupApproverView.Business_Area_Desc.RowAttributes)>
+        <td class="@(mtBackupApproverView.TableLeftColumnClass)"><span id="elh_mt_backup_approver_Business_Area_Desc">@Html.Raw(mtBackupApproverView.Business_Area_Desc.Caption)</span></td>
+        <td data-name="Business_Area_Desc" @Html.Raw(mtBackupApproverView.Business_Area_Desc.CellAttributes)>
+<span id="el_mt_backup_approver_Business_Area_Desc">
+<span @Html.Raw(mtBackupApproverView.Business_Area_Desc.ViewAttributes)>
+@Html.Raw(mtBackupApproverView.Business_Area_Desc.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* mtBackupApproverView.Business_Area_Desc.Visible (end) *@
+</table>
+@{ mtBackupApproverView.CloseRecordset(); }
+</form>
+</main>
+@mtBackupApproverView.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!mtBackupApproverView.IsExport()) {
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

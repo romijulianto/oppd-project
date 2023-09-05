@@ -1,0 +1,807 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (trRequestApproverList.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!trRequestApproverList.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!trRequestApproverList.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(trRequestApproverList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { tr_request_approver: currentTable } });
+var currentPageID = ew.PAGE_ID = "list";
+var currentForm;
+var @(trRequestApproverList.FormName);
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("@(trRequestApproverList.FormName)")
+        .setPageId("list")
+        .setSubmitWithFetch(@(trRequestApproverList.UseAjaxActions ? "true" : "false"))
+        .setFormKeyCountName("@(trRequestApproverList.FormKeyCountName)")
+
+        // Dynamic selection lists
+        .setLists({
+            "_UserName": @Html.Raw(trRequestApproverList._UserName.ToClientList(trRequestApproverList)),
+            "Full_Name": @Html.Raw(trRequestApproverList.Full_Name.ToClientList(trRequestApproverList)),
+            "Position_Name": @Html.Raw(trRequestApproverList.Position_Name.ToClientList(trRequestApproverList)),
+            "Approval_Status": @Html.Raw(trRequestApproverList.Approval_Status.ToClientList(trRequestApproverList)),
+            "Approval_Date": @Html.Raw(trRequestApproverList.Approval_Date.ToClientList(trRequestApproverList)),
+            "Last_Update_By": @Html.Raw(trRequestApproverList.Last_Update_By.ToClientList(trRequestApproverList)),
+            "Created_By": @Html.Raw(trRequestApproverList.Created_By.ToClientList(trRequestApproverList)),
+            "Created_Date": @Html.Raw(trRequestApproverList.Created_Date.ToClientList(trRequestApproverList)),
+            "ETL_Date": @Html.Raw(trRequestApproverList.ETL_Date.ToClientList(trRequestApproverList)),
+        })
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+ew.PREVIEW_SELECTOR = ".ew-preview-btn";
+ew.PREVIEW_MODAL_CLASS = "modal modal-fullscreen-sm-down";
+ew.PREVIEW_ROW = true;
+ew.PREVIEW_SINGLE_ROW = false;
+ew.PREVIEW || ew.ready("head", ew.PATH_BASE + "js/preview.min.js?v=20.6.0", "preview");
+</script>
+<script>
+window.Tabulator || loadjs([
+    ew.PATH_BASE + "js/tabulator.min.js?v=20.6.3",
+    ew.PATH_BASE + "css/@CssFile("tabulator_bootstrap5.css", false)?v=20.6.3"
+], "import");
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!trRequestApproverList.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+@if (trRequestApproverList.TotalRecords > 0 && trRequestApproverList.ExportOptions.Visible) {
+    trRequestApproverList.ExportOptions.Render("body");
+}
+@if (trRequestApproverList.ImportOptions.Visible) {
+    trRequestApproverList.ImportOptions.Render("body");
+}
+@if (trRequestApproverList.SearchOptions.Visible) {
+    trRequestApproverList.SearchOptions.Render("body");
+}
+@if (trRequestApproverList.FilterOptions.Visible) {
+    trRequestApproverList.FilterOptions.Render("body");
+}
+</div>
+}
+@if (!trRequestApproverList.IsExport() || Config.ExportMasterRecord && trRequestApproverList.IsExport("print")) {
+if (!Empty(trRequestApproverList.DbMasterFilter) && trRequestApproverList.CurrentMasterTable == "v_tr_request") {
+    if (trRequestApproverList.MasterRecordExists) {
+        @await Html.PartialAsync("VTrRequestMaster.cshtml")
+    }
+}
+if (!Empty(trRequestApproverList.DbMasterFilter) && trRequestApproverList.CurrentMasterTable == "tr_request") {
+    if (trRequestApproverList.MasterRecordExists) {
+        @await Html.PartialAsync("TrRequestMaster.cshtml")
+    }
+}
+}
+@if (trRequestApproverList.ShowCurrentFilter) {
+    trRequestApproverList.ShowFilterList();
+}
+@if (!trRequestApproverList.IsModal) {
+<form name="ftr_request_approversrch" id="ftr_request_approversrch" class="ew-form ew-ext-search-form" action="@AppPath(CurrentPageName())" novalidate autocomplete="off">
+<div id="ftr_request_approversrch_search_panel" class="mb-2 mb-sm-0 @(trRequestApproverList.SearchPanelClass)"><!-- .ew-search-panel -->
+<script>
+var currentTable = @Html.Raw(ConvertToJson(trRequestApproverList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { tr_request_approver: currentTable } });
+var currentForm;
+var ftr_request_approversrch, currentSearchForm, currentAdvancedSearchForm;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery,
+        fields = currentTable.fields;
+
+    // Form object for search
+    let form = new ew.FormBuilder()
+        .setId("ftr_request_approversrch")
+        .setPageId("list")
+@if (trRequestApproverList.UseAjaxActions) {
+        <text>.setSubmitWithFetch(true)</text>
+}
+
+        // Add fields
+        .setFields([
+
+            ["_UserName", [], fields._UserName.isInvalid],
+            ["Full_Name", [], fields.Full_Name.isInvalid],
+            ["Position_Name", [], fields.Position_Name.isInvalid],
+            ["Approval_Status", [], fields.Approval_Status.isInvalid],
+            ["Approval_Date", [], fields.Approval_Date.isInvalid],
+            ["Last_Update_By", [], fields.Last_Update_By.isInvalid],
+            ["Created_By", [], fields.Created_By.isInvalid],
+            ["Created_Date", [], fields.Created_Date.isInvalid],
+            ["ETL_Date", [], fields.ETL_Date.isInvalid]
+        ])
+        // Validate form
+        .setValidate(
+            async function () {
+                if (!this.validateRequired)
+                    return true; // Ignore validation
+                let fobj = this.getForm();
+
+                // Validate fields
+                if (!this.validateFields())
+                    return false;
+
+                // Call Form_CustomValidate event
+                if (!(await this.customValidate?.(fobj) ?? true)) {
+                    this.focus();
+                    return false;
+                }
+                return true;
+            }
+        )
+
+        // Form_CustomValidate
+        .setCustomValidate(
+            function(fobj) { // DO NOT CHANGE THIS LINE!
+                    // Your custom validation code here, return false if invalid.
+                    return true;
+                }
+        )
+
+        // Use JavaScript validation or not
+        .setValidateRequired(ew.CLIENT_VALIDATE)
+
+        // Dynamic selection lists
+        .setLists({
+            "request_id": @Html.Raw(trRequestApproverList.request_id.ToClientList(trRequestApproverList)),
+            "_UserName": @Html.Raw(trRequestApproverList._UserName.ToClientList(trRequestApproverList)),
+            "Full_Name": @Html.Raw(trRequestApproverList.Full_Name.ToClientList(trRequestApproverList)),
+            "Position_Name": @Html.Raw(trRequestApproverList.Position_Name.ToClientList(trRequestApproverList)),
+            "Approval_Status": @Html.Raw(trRequestApproverList.Approval_Status.ToClientList(trRequestApproverList)),
+            "Approval_Date": @Html.Raw(trRequestApproverList.Approval_Date.ToClientList(trRequestApproverList)),
+            "Last_Update_By": @Html.Raw(trRequestApproverList.Last_Update_By.ToClientList(trRequestApproverList)),
+            "Created_By": @Html.Raw(trRequestApproverList.Created_By.ToClientList(trRequestApproverList)),
+            "Created_Date": @Html.Raw(trRequestApproverList.Created_Date.ToClientList(trRequestApproverList)),
+            "ETL_Date": @Html.Raw(trRequestApproverList.ETL_Date.ToClientList(trRequestApproverList)),
+        })
+
+        // Filters
+        .setFilterList(@Html.Raw(await trRequestApproverList.GetFilterList()))
+        .build();
+    window[form.id] = form;
+    currentSearchForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<input type="hidden" name="cmd" value="search">
+@if (Security.CanSearch) {
+if (!trRequestApproverList.IsExport() && Empty(trRequestApproverList.CurrentAction) && trRequestApproverList.HasSearchFields()) { @* Show search form (begin) *@
+<div class="ew-extended-search container-fluid ps-2">
+<div class="row mb-0@(trRequestApproverList.SearchFieldsPerRow > 0 ? " row-cols-sm-" + trRequestApproverList.SearchFieldsPerRow : "")">
+@{
+    // Render search row
+    trRequestApproverList.RowType = RowType.Search;
+    trRequestApproverList.ResetAttributes();
+    await trRequestApproverList.RenderRow();
+}
+@if (trRequestApproverList.request_id.Visible) { // trRequestApproverList.request_id.Visible (begin)
+    if (!trRequestApproverList.request_id.UseFilter) {
+        trRequestApproverList.SearchColumnCount++;
+    }
+    <div id="xs_request_id" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2@(trRequestApproverList.request_id.UseFilter ? " ew-filter-field" : "")">
+        <select
+            id="x_request_id"
+            name="x_request_id[]"
+            class="form-control ew-select@(trRequestApproverList.request_id.IsInvalidClass)"
+            data-select2-id="ftr_request_approversrch_x_request_id"
+            data-table="tr_request_approver"
+            data-field="x_request_id"
+            data-caption="@Html.Raw(HtmlEncode(RemoveHtml(trRequestApproverList.request_id.Caption)))"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="@(trRequestApproverList.request_id.DisplayValueSeparatorAttribute)"
+            data-placeholder="@(HtmlEncode(trRequestApproverList.request_id.PlaceHolder))"
+            data-ew-action="update-options"
+            @Html.Raw(trRequestApproverList.request_id.EditAttributes)>
+            @(trRequestApproverList.request_id.SelectOptionListHtml("x_request_id", true))
+        </select>
+        <div class="invalid-feedback">@Html.Raw(trRequestApproverList.request_id.GetErrorMessage(false))</div>
+        <script>
+        loadjs.ready("ftr_request_approversrch", function() {
+            var options = {
+                name: "x_request_id",
+                selectId: "ftr_request_approversrch_x_request_id",
+                ajax: { id: "x_request_id", form: "ftr_request_approversrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.tr_request_approver.fields.request_id.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+} @* trRequestApproverList.request_id.Visible (end) *@
+@if (trRequestApproverList._UserName.Visible) { // trRequestApproverList._UserName.Visible (begin)
+    if (!trRequestApproverList._UserName.UseFilter) {
+        trRequestApproverList.SearchColumnCount++;
+    }
+    <div id="xs__UserName" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2@(trRequestApproverList._UserName.UseFilter ? " ew-filter-field" : "")">
+        <select
+            id="x__UserName"
+            name="x__UserName[]"
+            class="form-control ew-select@(trRequestApproverList._UserName.IsInvalidClass)"
+            data-select2-id="ftr_request_approversrch_x__UserName"
+            data-table="tr_request_approver"
+            data-field="x__UserName"
+            data-caption="@Html.Raw(HtmlEncode(RemoveHtml(trRequestApproverList._UserName.Caption)))"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="@(trRequestApproverList._UserName.DisplayValueSeparatorAttribute)"
+            data-placeholder="@(HtmlEncode(trRequestApproverList._UserName.PlaceHolder))"
+            data-ew-action="update-options"
+            @Html.Raw(trRequestApproverList._UserName.EditAttributes)>
+            @(trRequestApproverList._UserName.SelectOptionListHtml("x__UserName", true))
+        </select>
+        <div class="invalid-feedback">@Html.Raw(trRequestApproverList._UserName.GetErrorMessage(false))</div>
+        <script>
+        loadjs.ready("ftr_request_approversrch", function() {
+            var options = {
+                name: "x__UserName",
+                selectId: "ftr_request_approversrch_x__UserName",
+                ajax: { id: "x__UserName", form: "ftr_request_approversrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.tr_request_approver.fields._UserName.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+} @* trRequestApproverList._UserName.Visible (end) *@
+@if (trRequestApproverList.Full_Name.Visible) { // trRequestApproverList.Full_Name.Visible (begin)
+    if (!trRequestApproverList.Full_Name.UseFilter) {
+        trRequestApproverList.SearchColumnCount++;
+    }
+    <div id="xs_Full_Name" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2@(trRequestApproverList.Full_Name.UseFilter ? " ew-filter-field" : "")">
+        <select
+            id="x_Full_Name"
+            name="x_Full_Name[]"
+            class="form-control ew-select@(trRequestApproverList.Full_Name.IsInvalidClass)"
+            data-select2-id="ftr_request_approversrch_x_Full_Name"
+            data-table="tr_request_approver"
+            data-field="x_Full_Name"
+            data-caption="@Html.Raw(HtmlEncode(RemoveHtml(trRequestApproverList.Full_Name.Caption)))"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="@(trRequestApproverList.Full_Name.DisplayValueSeparatorAttribute)"
+            data-placeholder="@(HtmlEncode(trRequestApproverList.Full_Name.PlaceHolder))"
+            data-ew-action="update-options"
+            @Html.Raw(trRequestApproverList.Full_Name.EditAttributes)>
+            @(trRequestApproverList.Full_Name.SelectOptionListHtml("x_Full_Name", true))
+        </select>
+        <div class="invalid-feedback">@Html.Raw(trRequestApproverList.Full_Name.GetErrorMessage(false))</div>
+        <script>
+        loadjs.ready("ftr_request_approversrch", function() {
+            var options = {
+                name: "x_Full_Name",
+                selectId: "ftr_request_approversrch_x_Full_Name",
+                ajax: { id: "x_Full_Name", form: "ftr_request_approversrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.tr_request_approver.fields.Full_Name.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+} @* trRequestApproverList.Full_Name.Visible (end) *@
+@if (trRequestApproverList.Position_Name.Visible) { // trRequestApproverList.Position_Name.Visible (begin)
+    if (!trRequestApproverList.Position_Name.UseFilter) {
+        trRequestApproverList.SearchColumnCount++;
+    }
+    <div id="xs_Position_Name" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2@(trRequestApproverList.Position_Name.UseFilter ? " ew-filter-field" : "")">
+        <select
+            id="x_Position_Name"
+            name="x_Position_Name[]"
+            class="form-control ew-select@(trRequestApproverList.Position_Name.IsInvalidClass)"
+            data-select2-id="ftr_request_approversrch_x_Position_Name"
+            data-table="tr_request_approver"
+            data-field="x_Position_Name"
+            data-caption="@Html.Raw(HtmlEncode(RemoveHtml(trRequestApproverList.Position_Name.Caption)))"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="@(trRequestApproverList.Position_Name.DisplayValueSeparatorAttribute)"
+            data-placeholder="@(HtmlEncode(trRequestApproverList.Position_Name.PlaceHolder))"
+            data-ew-action="update-options"
+            @Html.Raw(trRequestApproverList.Position_Name.EditAttributes)>
+            @(trRequestApproverList.Position_Name.SelectOptionListHtml("x_Position_Name", true))
+        </select>
+        <div class="invalid-feedback">@Html.Raw(trRequestApproverList.Position_Name.GetErrorMessage(false))</div>
+        <script>
+        loadjs.ready("ftr_request_approversrch", function() {
+            var options = {
+                name: "x_Position_Name",
+                selectId: "ftr_request_approversrch_x_Position_Name",
+                ajax: { id: "x_Position_Name", form: "ftr_request_approversrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.tr_request_approver.fields.Position_Name.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+} @* trRequestApproverList.Position_Name.Visible (end) *@
+@if (trRequestApproverList.Approval_Status.Visible) { // trRequestApproverList.Approval_Status.Visible (begin)
+    if (!trRequestApproverList.Approval_Status.UseFilter) {
+        trRequestApproverList.SearchColumnCount++;
+    }
+    <div id="xs_Approval_Status" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2@(trRequestApproverList.Approval_Status.UseFilter ? " ew-filter-field" : "")">
+        <select
+            id="x_Approval_Status"
+            name="x_Approval_Status[]"
+            class="form-control ew-select@(trRequestApproverList.Approval_Status.IsInvalidClass)"
+            data-select2-id="ftr_request_approversrch_x_Approval_Status"
+            data-table="tr_request_approver"
+            data-field="x_Approval_Status"
+            data-caption="@Html.Raw(HtmlEncode(RemoveHtml(trRequestApproverList.Approval_Status.Caption)))"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="@(trRequestApproverList.Approval_Status.DisplayValueSeparatorAttribute)"
+            data-placeholder="@(HtmlEncode(trRequestApproverList.Approval_Status.PlaceHolder))"
+            data-ew-action="update-options"
+            @Html.Raw(trRequestApproverList.Approval_Status.EditAttributes)>
+            @(trRequestApproverList.Approval_Status.SelectOptionListHtml("x_Approval_Status", true))
+        </select>
+        <div class="invalid-feedback">@Html.Raw(trRequestApproverList.Approval_Status.GetErrorMessage(false))</div>
+        <script>
+        loadjs.ready("ftr_request_approversrch", function() {
+            var options = {
+                name: "x_Approval_Status",
+                selectId: "ftr_request_approversrch_x_Approval_Status",
+                ajax: { id: "x_Approval_Status", form: "ftr_request_approversrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.tr_request_approver.fields.Approval_Status.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+} @* trRequestApproverList.Approval_Status.Visible (end) *@
+@if (trRequestApproverList.Approval_Date.Visible) { // trRequestApproverList.Approval_Date.Visible (begin)
+    if (!trRequestApproverList.Approval_Date.UseFilter) {
+        trRequestApproverList.SearchColumnCount++;
+    }
+    <div id="xs_Approval_Date" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2@(trRequestApproverList.Approval_Date.UseFilter ? " ew-filter-field" : "")">
+        <select
+            id="x_Approval_Date"
+            name="x_Approval_Date[]"
+            class="form-control ew-select@(trRequestApproverList.Approval_Date.IsInvalidClass)"
+            data-select2-id="ftr_request_approversrch_x_Approval_Date"
+            data-table="tr_request_approver"
+            data-field="x_Approval_Date"
+            data-caption="@Html.Raw(HtmlEncode(RemoveHtml(trRequestApproverList.Approval_Date.Caption)))"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="@(trRequestApproverList.Approval_Date.DisplayValueSeparatorAttribute)"
+            data-placeholder="@(HtmlEncode(trRequestApproverList.Approval_Date.PlaceHolder))"
+            data-ew-action="update-options"
+            @Html.Raw(trRequestApproverList.Approval_Date.EditAttributes)>
+            @(trRequestApproverList.Approval_Date.SelectOptionListHtml("x_Approval_Date", true))
+        </select>
+        <div class="invalid-feedback">@Html.Raw(trRequestApproverList.Approval_Date.GetErrorMessage(false))</div>
+        <script>
+        loadjs.ready("ftr_request_approversrch", function() {
+            var options = {
+                name: "x_Approval_Date",
+                selectId: "ftr_request_approversrch_x_Approval_Date",
+                ajax: { id: "x_Approval_Date", form: "ftr_request_approversrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.tr_request_approver.fields.Approval_Date.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+} @* trRequestApproverList.Approval_Date.Visible (end) *@
+@if (trRequestApproverList.Last_Update_By.Visible) { // trRequestApproverList.Last_Update_By.Visible (begin)
+    if (!trRequestApproverList.Last_Update_By.UseFilter) {
+        trRequestApproverList.SearchColumnCount++;
+    }
+    <div id="xs_Last_Update_By" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2@(trRequestApproverList.Last_Update_By.UseFilter ? " ew-filter-field" : "")">
+        <select
+            id="x_Last_Update_By"
+            name="x_Last_Update_By[]"
+            class="form-control ew-select@(trRequestApproverList.Last_Update_By.IsInvalidClass)"
+            data-select2-id="ftr_request_approversrch_x_Last_Update_By"
+            data-table="tr_request_approver"
+            data-field="x_Last_Update_By"
+            data-caption="@Html.Raw(HtmlEncode(RemoveHtml(trRequestApproverList.Last_Update_By.Caption)))"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="@(trRequestApproverList.Last_Update_By.DisplayValueSeparatorAttribute)"
+            data-placeholder="@(HtmlEncode(trRequestApproverList.Last_Update_By.PlaceHolder))"
+            data-ew-action="update-options"
+            @Html.Raw(trRequestApproverList.Last_Update_By.EditAttributes)>
+            @(trRequestApproverList.Last_Update_By.SelectOptionListHtml("x_Last_Update_By", true))
+        </select>
+        <div class="invalid-feedback">@Html.Raw(trRequestApproverList.Last_Update_By.GetErrorMessage(false))</div>
+        <script>
+        loadjs.ready("ftr_request_approversrch", function() {
+            var options = {
+                name: "x_Last_Update_By",
+                selectId: "ftr_request_approversrch_x_Last_Update_By",
+                ajax: { id: "x_Last_Update_By", form: "ftr_request_approversrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.tr_request_approver.fields.Last_Update_By.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+} @* trRequestApproverList.Last_Update_By.Visible (end) *@
+@if (trRequestApproverList.Created_By.Visible) { // trRequestApproverList.Created_By.Visible (begin)
+    if (!trRequestApproverList.Created_By.UseFilter) {
+        trRequestApproverList.SearchColumnCount++;
+    }
+    <div id="xs_Created_By" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2@(trRequestApproverList.Created_By.UseFilter ? " ew-filter-field" : "")">
+        <select
+            id="x_Created_By"
+            name="x_Created_By[]"
+            class="form-control ew-select@(trRequestApproverList.Created_By.IsInvalidClass)"
+            data-select2-id="ftr_request_approversrch_x_Created_By"
+            data-table="tr_request_approver"
+            data-field="x_Created_By"
+            data-caption="@Html.Raw(HtmlEncode(RemoveHtml(trRequestApproverList.Created_By.Caption)))"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="@(trRequestApproverList.Created_By.DisplayValueSeparatorAttribute)"
+            data-placeholder="@(HtmlEncode(trRequestApproverList.Created_By.PlaceHolder))"
+            data-ew-action="update-options"
+            @Html.Raw(trRequestApproverList.Created_By.EditAttributes)>
+            @(trRequestApproverList.Created_By.SelectOptionListHtml("x_Created_By", true))
+        </select>
+        <div class="invalid-feedback">@Html.Raw(trRequestApproverList.Created_By.GetErrorMessage(false))</div>
+        <script>
+        loadjs.ready("ftr_request_approversrch", function() {
+            var options = {
+                name: "x_Created_By",
+                selectId: "ftr_request_approversrch_x_Created_By",
+                ajax: { id: "x_Created_By", form: "ftr_request_approversrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.tr_request_approver.fields.Created_By.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+} @* trRequestApproverList.Created_By.Visible (end) *@
+@if (trRequestApproverList.Created_Date.Visible) { // trRequestApproverList.Created_Date.Visible (begin)
+    if (!trRequestApproverList.Created_Date.UseFilter) {
+        trRequestApproverList.SearchColumnCount++;
+    }
+    <div id="xs_Created_Date" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2@(trRequestApproverList.Created_Date.UseFilter ? " ew-filter-field" : "")">
+        <select
+            id="x_Created_Date"
+            name="x_Created_Date[]"
+            class="form-control ew-select@(trRequestApproverList.Created_Date.IsInvalidClass)"
+            data-select2-id="ftr_request_approversrch_x_Created_Date"
+            data-table="tr_request_approver"
+            data-field="x_Created_Date"
+            data-caption="@Html.Raw(HtmlEncode(RemoveHtml(trRequestApproverList.Created_Date.Caption)))"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="@(trRequestApproverList.Created_Date.DisplayValueSeparatorAttribute)"
+            data-placeholder="@(HtmlEncode(trRequestApproverList.Created_Date.PlaceHolder))"
+            data-ew-action="update-options"
+            @Html.Raw(trRequestApproverList.Created_Date.EditAttributes)>
+            @(trRequestApproverList.Created_Date.SelectOptionListHtml("x_Created_Date", true))
+        </select>
+        <div class="invalid-feedback">@Html.Raw(trRequestApproverList.Created_Date.GetErrorMessage(false))</div>
+        <script>
+        loadjs.ready("ftr_request_approversrch", function() {
+            var options = {
+                name: "x_Created_Date",
+                selectId: "ftr_request_approversrch_x_Created_Date",
+                ajax: { id: "x_Created_Date", form: "ftr_request_approversrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.tr_request_approver.fields.Created_Date.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+} @* trRequestApproverList.Created_Date.Visible (end) *@
+@if (trRequestApproverList.ETL_Date.Visible) { // trRequestApproverList.ETL_Date.Visible (begin)
+    if (!trRequestApproverList.ETL_Date.UseFilter) {
+        trRequestApproverList.SearchColumnCount++;
+    }
+    <div id="xs_ETL_Date" class="col-sm-auto d-sm-flex align-items-start mb-3 px-0 pe-sm-2@(trRequestApproverList.ETL_Date.UseFilter ? " ew-filter-field" : "")">
+        <select
+            id="x_ETL_Date"
+            name="x_ETL_Date[]"
+            class="form-control ew-select@(trRequestApproverList.ETL_Date.IsInvalidClass)"
+            data-select2-id="ftr_request_approversrch_x_ETL_Date"
+            data-table="tr_request_approver"
+            data-field="x_ETL_Date"
+            data-caption="@Html.Raw(HtmlEncode(RemoveHtml(trRequestApproverList.ETL_Date.Caption)))"
+            data-filter="true"
+            multiple
+            size="1"
+            data-value-separator="@(trRequestApproverList.ETL_Date.DisplayValueSeparatorAttribute)"
+            data-placeholder="@(HtmlEncode(trRequestApproverList.ETL_Date.PlaceHolder))"
+            data-ew-action="update-options"
+            @Html.Raw(trRequestApproverList.ETL_Date.EditAttributes)>
+            @(trRequestApproverList.ETL_Date.SelectOptionListHtml("x_ETL_Date", true))
+        </select>
+        <div class="invalid-feedback">@Html.Raw(trRequestApproverList.ETL_Date.GetErrorMessage(false))</div>
+        <script>
+        loadjs.ready("ftr_request_approversrch", function() {
+            var options = {
+                name: "x_ETL_Date",
+                selectId: "ftr_request_approversrch_x_ETL_Date",
+                ajax: { id: "x_ETL_Date", form: "ftr_request_approversrch", limit: ew.FILTER_PAGE_SIZE, data: { ajax: "filter" } }
+            };
+            options = Object.assign({}, ew.filterOptions, options, ew.vars.tables.tr_request_approver.fields.ETL_Date.filterOptions);
+            ew.createFilter(options);
+        });
+        </script>
+    </div><!-- /.col-sm-auto -->
+} @* trRequestApproverList.ETL_Date.Visible (end) *@
+</div><!-- /.row -->
+<div class="row mb-0">
+    <div class="col-sm-auto px-0 pe-sm-2">
+        <div class="ew-basic-search input-group">
+            <input type="search" name="@(Config.TableBasicSearch)" id="@(Config.TableBasicSearch)" class="form-control ew-basic-search-keyword" value="@Html.Raw(HtmlEncode(trRequestApproverList.BasicSearch.SessionKeyword))" placeholder="@(HtmlEncode(Language.Phrase("Search")))" aria-label="@(HtmlEncode(Language.Phrase("Search")))">
+            <input type="hidden" name="@(Config.TableBasicSearchType)" id="@(Config.TableBasicSearchType)" class="ew-basic-search-type" value="@(HtmlEncode(trRequestApproverList.BasicSearch.SessionType))">
+            <button type="button" data-bs-toggle="dropdown" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" aria-haspopup="true" aria-expanded="false">
+                <span id="searchtype">@Html.Raw(trRequestApproverList.BasicSearch.TypeNameShort)</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end">
+                <button type="button" class="dropdown-item@(trRequestApproverList.BasicSearch.SessionType == "" ? " active" : "")" form="ftr_request_approversrch" data-ew-action="search-type">@Html.Raw(Language.Phrase("QuickSearchAuto"))</button>
+                <button type="button" class="dropdown-item@(trRequestApproverList.BasicSearch.SessionType == "=" ? " active" : "")" form="ftr_request_approversrch" data-ew-action="search-type" data-search-type="=">@Html.Raw(Language.Phrase("QuickSearchExact"))</button>
+                <button type="button" class="dropdown-item@(trRequestApproverList.BasicSearch.SessionType == "AND" ? " active" : "")" form="ftr_request_approversrch" data-ew-action="search-type" data-search-type="AND">@Html.Raw(Language.Phrase("QuickSearchAll"))</button>
+                <button type="button" class="dropdown-item@(trRequestApproverList.BasicSearch.SessionType == "OR" ? " active" : "")" form="ftr_request_approversrch" data-ew-action="search-type" data-search-type="OR">@Html.Raw(Language.Phrase("QuickSearchAny"))</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-auto mb-3">
+        <button class="btn btn-primary" name="btn-submit" id="btn-submit" type="submit">@Html.Raw(Language.Phrase("SearchBtn"))</button>
+    </div>
+</div>
+</div><!-- /.ew-extended-search -->
+} @* Show search form (end) *@
+}
+</div><!-- /.ew-search-panel -->
+</form>
+}
+@trRequestApproverList.ShowPageHeader()
+@trRequestApproverList.ShowMessages()
+<main class="list @(trRequestApproverList.TotalRecords == 0 && !trRequestApproverList.IsAdd ? " ew-no-record" : "")">
+<div id="ew-list">
+@if (trRequestApproverList.TotalRecords > 0 || !Empty(trRequestApproverList.CurrentAction)) {
+<div class="card ew-card ew-grid@(trRequestApproverList.IsAddOrEdit ? " ew-grid-add-edit" : "") @(trRequestApproverList.TableGridClass)">
+<form name="@(trRequestApproverList.FormName)" id="@(trRequestApproverList.FormName)" class="ew-form ew-list-form" action="@AppPath(trRequestApproverList.PageName)" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+@if (trRequestApproverList.IsModal) {
+<input type="hidden" name="modal" value="1">
+}
+@if (trRequestApproverList.CurrentMasterTable == "v_tr_request" && !Empty(trRequestApproverList.CurrentAction)) {
+<input type="hidden" name="@(Config.TableShowMaster)" value="v_tr_request">
+<input type="hidden" name="fk_id" value="@(HtmlEncode(trRequestApproverList.request_id.SessionValue))">
+}
+@if (trRequestApproverList.CurrentMasterTable == "tr_request" && !Empty(trRequestApproverList.CurrentAction)) {
+<input type="hidden" name="@(Config.TableShowMaster)" value="tr_request">
+<input type="hidden" name="fk_id" value="@(HtmlEncode(trRequestApproverList.request_id.SessionValue))">
+}
+<div id="gmp_tr_request_approver" class="card-body ew-grid-middle-panel @(trRequestApproverList.TableContainerClass)" style="@(trRequestApproverList.TableContainerStyle)">
+@if (trRequestApproverList.TotalRecords > 0 || trRequestApproverList.IsGridEdit || trRequestApproverList.IsMultiEdit) {
+<table id="tbl_tr_request_approverlist" class="@(trRequestApproverList.TableClass)"><!-- .ew-table -->
+<thead>
+    <tr class="ew-table-header">
+@{
+    // Header row
+    trRequestApproverList.RowType = RowType.Header;
+
+    // Render list options
+    await trRequestApproverList.RenderListOptions();
+}
+@* Render list options (header, left) *@
+@trRequestApproverList.ListOptions.RenderHeader("left")
+@if (trRequestApproverList._UserName.Visible) { // trRequestApproverList._UserName.Visible (begin)
+        <th data-name="_UserName" class="@(trRequestApproverList._UserName.HeaderCellClass)"><div id="elh_tr_request_approver__UserName" class="tr_request_approver__UserName">@Html.Raw(trRequestApproverList.RenderFieldHeader(trRequestApproverList._UserName))</div></th>
+} @* trRequestApproverList._UserName.Visible (end) *@
+@if (trRequestApproverList.Full_Name.Visible) { // trRequestApproverList.Full_Name.Visible (begin)
+        <th data-name="Full_Name" class="@(trRequestApproverList.Full_Name.HeaderCellClass)"><div id="elh_tr_request_approver_Full_Name" class="tr_request_approver_Full_Name">@Html.Raw(trRequestApproverList.RenderFieldHeader(trRequestApproverList.Full_Name))</div></th>
+} @* trRequestApproverList.Full_Name.Visible (end) *@
+@if (trRequestApproverList.Position_Name.Visible) { // trRequestApproverList.Position_Name.Visible (begin)
+        <th data-name="Position_Name" class="@(trRequestApproverList.Position_Name.HeaderCellClass)"><div id="elh_tr_request_approver_Position_Name" class="tr_request_approver_Position_Name">@Html.Raw(trRequestApproverList.RenderFieldHeader(trRequestApproverList.Position_Name))</div></th>
+} @* trRequestApproverList.Position_Name.Visible (end) *@
+@if (trRequestApproverList.Approval_Status.Visible) { // trRequestApproverList.Approval_Status.Visible (begin)
+        <th data-name="Approval_Status" class="@(trRequestApproverList.Approval_Status.HeaderCellClass)"><div id="elh_tr_request_approver_Approval_Status" class="tr_request_approver_Approval_Status">@Html.Raw(trRequestApproverList.RenderFieldHeader(trRequestApproverList.Approval_Status))</div></th>
+} @* trRequestApproverList.Approval_Status.Visible (end) *@
+@if (trRequestApproverList.Approval_Date.Visible) { // trRequestApproverList.Approval_Date.Visible (begin)
+        <th data-name="Approval_Date" class="@(trRequestApproverList.Approval_Date.HeaderCellClass)"><div id="elh_tr_request_approver_Approval_Date" class="tr_request_approver_Approval_Date">@Html.Raw(trRequestApproverList.RenderFieldHeader(trRequestApproverList.Approval_Date))</div></th>
+} @* trRequestApproverList.Approval_Date.Visible (end) *@
+@if (trRequestApproverList.Last_Update_By.Visible) { // trRequestApproverList.Last_Update_By.Visible (begin)
+        <th data-name="Last_Update_By" class="@(trRequestApproverList.Last_Update_By.HeaderCellClass)"><div id="elh_tr_request_approver_Last_Update_By" class="tr_request_approver_Last_Update_By">@Html.Raw(trRequestApproverList.RenderFieldHeader(trRequestApproverList.Last_Update_By))</div></th>
+} @* trRequestApproverList.Last_Update_By.Visible (end) *@
+@if (trRequestApproverList.Created_By.Visible) { // trRequestApproverList.Created_By.Visible (begin)
+        <th data-name="Created_By" class="@(trRequestApproverList.Created_By.HeaderCellClass)"><div id="elh_tr_request_approver_Created_By" class="tr_request_approver_Created_By">@Html.Raw(trRequestApproverList.RenderFieldHeader(trRequestApproverList.Created_By))</div></th>
+} @* trRequestApproverList.Created_By.Visible (end) *@
+@if (trRequestApproverList.Created_Date.Visible) { // trRequestApproverList.Created_Date.Visible (begin)
+        <th data-name="Created_Date" class="@(trRequestApproverList.Created_Date.HeaderCellClass)"><div id="elh_tr_request_approver_Created_Date" class="tr_request_approver_Created_Date">@Html.Raw(trRequestApproverList.RenderFieldHeader(trRequestApproverList.Created_Date))</div></th>
+} @* trRequestApproverList.Created_Date.Visible (end) *@
+@if (trRequestApproverList.ETL_Date.Visible) { // trRequestApproverList.ETL_Date.Visible (begin)
+        <th data-name="ETL_Date" class="@(trRequestApproverList.ETL_Date.HeaderCellClass)"><div id="elh_tr_request_approver_ETL_Date" class="tr_request_approver_ETL_Date">@Html.Raw(trRequestApproverList.RenderFieldHeader(trRequestApproverList.ETL_Date))</div></th>
+} @* trRequestApproverList.ETL_Date.Visible (end) *@
+@* Render list options (header, right) *@
+@trRequestApproverList.ListOptions.RenderHeader("right")
+    </tr>
+</thead>
+<tbody data-page="@(trRequestApproverList.PageNumber)">
+@{
+    await trRequestApproverList.SetupGrid();
+    bool eof = trRequestApproverList.Recordset == null; // DN
+}
+@while (trRequestApproverList.RecordCount < trRequestApproverList.StopRecord || SameString(trRequestApproverList.RowIndex, "$rowindex$")) { // Begin While
+    if (!eof && !SameString(trRequestApproverList.RowIndex, "$rowindex$") &&
+        (!trRequestApproverList.IsGridAdd || trRequestApproverList.CurrentMode == "copy") &&
+        (!((trRequestApproverList.IsCopy || trRequestApproverList.IsAdd) && trRequestApproverList.RowIndex is int rowIndex && rowIndex == 0))) // DN
+        eof = !await trRequestApproverList.Recordset.ReadAsync();
+    trRequestApproverList.RecordCount++;
+    if (trRequestApproverList.RecordCount >= trRequestApproverList.StartRecord) {
+        await trRequestApproverList.SetupRow();
+    <tr @Html.Raw(trRequestApproverList.RowAttributes)>
+    @* Render list options (body, left) *@
+    @trRequestApproverList.ListOptions.RenderBody("left", trRequestApproverList.RowCount)
+    @if (trRequestApproverList._UserName.Visible) { // trRequestApproverList._UserName.Visible (begin)
+        <td data-name="_UserName" @Html.Raw(trRequestApproverList._UserName.CellAttributes)>
+<span id="el@(trRequestApproverList.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverList.RowCount)_tr_request_approver__UserName" class="el_tr_request_approver__UserName">
+<span @Html.Raw(trRequestApproverList._UserName.ViewAttributes)>
+@Html.Raw(trRequestApproverList._UserName.GetViewValue())</span>
+</span>
+</td>
+    } @* trRequestApproverList._UserName.Visible (end) *@
+    @if (trRequestApproverList.Full_Name.Visible) { // trRequestApproverList.Full_Name.Visible (begin)
+        <td data-name="Full_Name" @Html.Raw(trRequestApproverList.Full_Name.CellAttributes)>
+<span id="el@(trRequestApproverList.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverList.RowCount)_tr_request_approver_Full_Name" class="el_tr_request_approver_Full_Name">
+<span @Html.Raw(trRequestApproverList.Full_Name.ViewAttributes)>
+@Html.Raw(trRequestApproverList.Full_Name.GetViewValue())</span>
+</span>
+</td>
+    } @* trRequestApproverList.Full_Name.Visible (end) *@
+    @if (trRequestApproverList.Position_Name.Visible) { // trRequestApproverList.Position_Name.Visible (begin)
+        <td data-name="Position_Name" @Html.Raw(trRequestApproverList.Position_Name.CellAttributes)>
+<span id="el@(trRequestApproverList.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverList.RowCount)_tr_request_approver_Position_Name" class="el_tr_request_approver_Position_Name">
+<span @Html.Raw(trRequestApproverList.Position_Name.ViewAttributes)>
+@Html.Raw(trRequestApproverList.Position_Name.GetViewValue())</span>
+</span>
+</td>
+    } @* trRequestApproverList.Position_Name.Visible (end) *@
+    @if (trRequestApproverList.Approval_Status.Visible) { // trRequestApproverList.Approval_Status.Visible (begin)
+        <td data-name="Approval_Status" @Html.Raw(trRequestApproverList.Approval_Status.CellAttributes)>
+<span id="el@(trRequestApproverList.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverList.RowCount)_tr_request_approver_Approval_Status" class="el_tr_request_approver_Approval_Status">
+<span @Html.Raw(trRequestApproverList.Approval_Status.ViewAttributes)>
+@Html.Raw(trRequestApproverList.Approval_Status.GetViewValue())</span>
+</span>
+</td>
+    } @* trRequestApproverList.Approval_Status.Visible (end) *@
+    @if (trRequestApproverList.Approval_Date.Visible) { // trRequestApproverList.Approval_Date.Visible (begin)
+        <td data-name="Approval_Date" @Html.Raw(trRequestApproverList.Approval_Date.CellAttributes)>
+<span id="el@(trRequestApproverList.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverList.RowCount)_tr_request_approver_Approval_Date" class="el_tr_request_approver_Approval_Date">
+<span @Html.Raw(trRequestApproverList.Approval_Date.ViewAttributes)>
+@Html.Raw(trRequestApproverList.Approval_Date.GetViewValue())</span>
+</span>
+</td>
+    } @* trRequestApproverList.Approval_Date.Visible (end) *@
+    @if (trRequestApproverList.Last_Update_By.Visible) { // trRequestApproverList.Last_Update_By.Visible (begin)
+        <td data-name="Last_Update_By" @Html.Raw(trRequestApproverList.Last_Update_By.CellAttributes)>
+<span id="el@(trRequestApproverList.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverList.RowCount)_tr_request_approver_Last_Update_By" class="el_tr_request_approver_Last_Update_By">
+<span @Html.Raw(trRequestApproverList.Last_Update_By.ViewAttributes)>
+@Html.Raw(trRequestApproverList.Last_Update_By.GetViewValue())</span>
+</span>
+</td>
+    } @* trRequestApproverList.Last_Update_By.Visible (end) *@
+    @if (trRequestApproverList.Created_By.Visible) { // trRequestApproverList.Created_By.Visible (begin)
+        <td data-name="Created_By" @Html.Raw(trRequestApproverList.Created_By.CellAttributes)>
+<span id="el@(trRequestApproverList.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverList.RowCount)_tr_request_approver_Created_By" class="el_tr_request_approver_Created_By">
+<span @Html.Raw(trRequestApproverList.Created_By.ViewAttributes)>
+@Html.Raw(trRequestApproverList.Created_By.GetViewValue())</span>
+</span>
+</td>
+    } @* trRequestApproverList.Created_By.Visible (end) *@
+    @if (trRequestApproverList.Created_Date.Visible) { // trRequestApproverList.Created_Date.Visible (begin)
+        <td data-name="Created_Date" @Html.Raw(trRequestApproverList.Created_Date.CellAttributes)>
+<span id="el@(trRequestApproverList.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverList.RowCount)_tr_request_approver_Created_Date" class="el_tr_request_approver_Created_Date">
+<span @Html.Raw(trRequestApproverList.Created_Date.ViewAttributes)>
+@Html.Raw(trRequestApproverList.Created_Date.GetViewValue())</span>
+</span>
+</td>
+    } @* trRequestApproverList.Created_Date.Visible (end) *@
+    @if (trRequestApproverList.ETL_Date.Visible) { // trRequestApproverList.ETL_Date.Visible (begin)
+        <td data-name="ETL_Date" @Html.Raw(trRequestApproverList.ETL_Date.CellAttributes)>
+<span id="el@(trRequestApproverList.RowIndex == "$rowindex$" ? "$rowindex$" : trRequestApproverList.RowCount)_tr_request_approver_ETL_Date" class="el_tr_request_approver_ETL_Date">
+<span @Html.Raw(trRequestApproverList.ETL_Date.ViewAttributes)>
+@Html.Raw(trRequestApproverList.ETL_Date.GetViewValue())</span>
+</span>
+</td>
+    } @* trRequestApproverList.ETL_Date.Visible (end) *@
+    @* Render list options (body, right) *@
+    @trRequestApproverList.ListOptions.RenderBody("right", trRequestApproverList.RowCount)
+    </tr>
+    } @* End if *@
+
+    // Reset for template row
+    if (SameString(trRequestApproverList.RowIndex, "$rowindex$"))
+        trRequestApproverList.RowIndex = 0;
+
+    // Reset inline add/copy row
+    if ((trRequestApproverList.IsCopy || trRequestApproverList.IsAdd) && trRequestApproverList.RowIndex is int rowIndex2 && rowIndex2 == 0)
+        trRequestApproverList.RowIndex = 1;
+} @* End While *@
+</tbody>
+</table><!-- /.ew-table -->
+} @* End If TotalRecords > 0 *@
+</div><!-- /.ew-grid-middle-panel -->
+@if (Empty(trRequestApproverList.CurrentAction) && !trRequestApproverList.UseAjaxActions) {
+<input type="hidden" name="action" id="action" value="">
+}
+</form><!-- /.ew-list-form -->
+@{ trRequestApproverList.CloseRecordset(); }
+@if (!trRequestApproverList.IsExport()) {
+<div class="card-footer ew-grid-lower-panel">
+@if (!trRequestApproverList.IsGridAdd && !(trRequestApproverList.IsGridEdit && trRequestApproverList.ModalGridEdit) && !trRequestApproverList.IsMultiEdit) {
+@Html.Raw(trRequestApproverList.Pager.Render())
+}
+<div class="ew-list-other-options">
+@trRequestApproverList.OtherOptions.RenderBody("bottom")
+</div>
+</div>
+}
+</div><!-- /.ew-grid -->
+} else { // Show other options
+<div class="ew-list-other-options">
+@trRequestApproverList.OtherOptions.ForEach(opt => opt.ButtonClass = "").RenderBody()
+</div>
+}
+</div>
+</main>
+@trRequestApproverList.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!trRequestApproverList.IsExport()) {
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("tr_request_approver");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

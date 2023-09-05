@@ -1,0 +1,145 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (logEmailView.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!logEmailView.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!logEmailView.IsExport()) {
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!logEmailView.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+    @logEmailView.ExportOptions.RenderBody()
+    @logEmailView.OtherOptions.RenderBody()
+</div>
+}
+@logEmailView.ShowPageHeader()
+@logEmailView.ShowMessages()
+<main class="view">
+<form name="flog_emailview" id="flog_emailview" class="ew-form ew-view-form overlay-wrapper" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (!logEmailView.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(logEmailView.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { log_email: currentTable } });
+var currentPageID = ew.PAGE_ID = "view";
+var currentForm;
+var flog_emailview;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("flog_emailview")
+        .setPageId("view")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+}
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="modal" value="@ConvertToInt(logEmailView.IsModal)">
+<table class="@(logEmailView.TableClass)">
+@if (logEmailView.id.Visible) { // logEmailView.id.Visible (begin)
+    <tr id="r_id" @Html.Raw(logEmailView.id.RowAttributes)>
+        <td class="@(logEmailView.TableLeftColumnClass)"><span id="elh_log_email_id">@Html.Raw(logEmailView.id.Caption)</span></td>
+        <td data-name="id" @Html.Raw(logEmailView.id.CellAttributes)>
+<span id="el_log_email_id">
+<span @Html.Raw(logEmailView.id.ViewAttributes)>
+@Html.Raw(logEmailView.id.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* logEmailView.id.Visible (end) *@
+@if (logEmailView.Email_Type.Visible) { // logEmailView.Email_Type.Visible (begin)
+    <tr id="r_Email_Type" @Html.Raw(logEmailView.Email_Type.RowAttributes)>
+        <td class="@(logEmailView.TableLeftColumnClass)"><span id="elh_log_email_Email_Type">@Html.Raw(logEmailView.Email_Type.Caption)</span></td>
+        <td data-name="Email_Type" @Html.Raw(logEmailView.Email_Type.CellAttributes)>
+<span id="el_log_email_Email_Type">
+<span @Html.Raw(logEmailView.Email_Type.ViewAttributes)>
+@Html.Raw(logEmailView.Email_Type.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* logEmailView.Email_Type.Visible (end) *@
+@if (logEmailView.Email_To.Visible) { // logEmailView.Email_To.Visible (begin)
+    <tr id="r_Email_To" @Html.Raw(logEmailView.Email_To.RowAttributes)>
+        <td class="@(logEmailView.TableLeftColumnClass)"><span id="elh_log_email_Email_To">@Html.Raw(logEmailView.Email_To.Caption)</span></td>
+        <td data-name="Email_To" @Html.Raw(logEmailView.Email_To.CellAttributes)>
+<span id="el_log_email_Email_To">
+<span @Html.Raw(logEmailView.Email_To.ViewAttributes)>
+@Html.Raw(logEmailView.Email_To.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* logEmailView.Email_To.Visible (end) *@
+@if (logEmailView.Email_Cc.Visible) { // logEmailView.Email_Cc.Visible (begin)
+    <tr id="r_Email_Cc" @Html.Raw(logEmailView.Email_Cc.RowAttributes)>
+        <td class="@(logEmailView.TableLeftColumnClass)"><span id="elh_log_email_Email_Cc">@Html.Raw(logEmailView.Email_Cc.Caption)</span></td>
+        <td data-name="Email_Cc" @Html.Raw(logEmailView.Email_Cc.CellAttributes)>
+<span id="el_log_email_Email_Cc">
+<span @Html.Raw(logEmailView.Email_Cc.ViewAttributes)>
+@Html.Raw(logEmailView.Email_Cc.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* logEmailView.Email_Cc.Visible (end) *@
+@if (logEmailView.Email_Subject.Visible) { // logEmailView.Email_Subject.Visible (begin)
+    <tr id="r_Email_Subject" @Html.Raw(logEmailView.Email_Subject.RowAttributes)>
+        <td class="@(logEmailView.TableLeftColumnClass)"><span id="elh_log_email_Email_Subject">@Html.Raw(logEmailView.Email_Subject.Caption)</span></td>
+        <td data-name="Email_Subject" @Html.Raw(logEmailView.Email_Subject.CellAttributes)>
+<span id="el_log_email_Email_Subject">
+<span @Html.Raw(logEmailView.Email_Subject.ViewAttributes)>
+@Html.Raw(logEmailView.Email_Subject.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* logEmailView.Email_Subject.Visible (end) *@
+@if (logEmailView.Email_Body.Visible) { // logEmailView.Email_Body.Visible (begin)
+    <tr id="r_Email_Body" @Html.Raw(logEmailView.Email_Body.RowAttributes)>
+        <td class="@(logEmailView.TableLeftColumnClass)"><span id="elh_log_email_Email_Body">@Html.Raw(logEmailView.Email_Body.Caption)</span></td>
+        <td data-name="Email_Body" @Html.Raw(logEmailView.Email_Body.CellAttributes)>
+<span id="el_log_email_Email_Body">
+<span @Html.Raw(logEmailView.Email_Body.ViewAttributes)>
+@Html.Raw(logEmailView.Email_Body.GetViewValue())</span>
+</span></td>
+    </tr>
+} @* logEmailView.Email_Body.Visible (end) *@
+</table>
+@{ logEmailView.CloseRecordset(); }
+</form>
+</main>
+@logEmailView.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!logEmailView.IsExport()) {
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}

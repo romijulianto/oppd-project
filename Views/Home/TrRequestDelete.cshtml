@@ -1,0 +1,345 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (trRequestDelete.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!trRequestDelete.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+<script>
+var currentTable = @Html.Raw(ConvertToJson(trRequestDelete.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { tr_request: currentTable } });
+var currentPageID = ew.PAGE_ID = "delete";
+var currentForm;
+var ftr_requestdelete;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("ftr_requestdelete")
+        .setPageId("delete")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+@trRequestDelete.ShowPageHeader()
+@trRequestDelete.ShowMessages()
+<form name="ftr_requestdelete" id="ftr_requestdelete" class="ew-form ew-delete-form" action="@AppPath(CurrentPageName())" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+<input type="hidden" name="action" id="action" value="delete">
+@foreach (string key in trRequestDelete.RecordKeys) {
+<input type="hidden" name="key_m[]" value="@key">
+}
+<div class="card ew-card ew-grid @(trRequestDelete.TableGridClass)">
+<div class="card-body ew-grid-middle-panel @(trRequestDelete.TableContainerClass)" style="@(trRequestDelete.TableContainerStyle)">
+<table class="@(trRequestDelete.TableClass)">
+    <thead>
+    <tr class="ew-table-header">
+@if (trRequestDelete.Request_No.Visible) { // trRequestDelete.Request_No.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Request_No.HeaderCellClass)"><span id="elh_tr_request_Request_No" class="tr_request_Request_No">@Html.Raw(trRequestDelete.Request_No.Caption)</span></th>
+} @* trRequestDelete.Request_No.Visible (end) *@
+@if (trRequestDelete.Reference_Doc.Visible) { // trRequestDelete.Reference_Doc.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Reference_Doc.HeaderCellClass)"><span id="elh_tr_request_Reference_Doc" class="tr_request_Reference_Doc">@Html.Raw(trRequestDelete.Reference_Doc.Caption)</span></th>
+} @* trRequestDelete.Reference_Doc.Visible (end) *@
+@if (trRequestDelete.Reason.Visible) { // trRequestDelete.Reason.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Reason.HeaderCellClass)"><span id="elh_tr_request_Reason" class="tr_request_Reason">@Html.Raw(trRequestDelete.Reason.Caption)</span></th>
+} @* trRequestDelete.Reason.Visible (end) *@
+@if (trRequestDelete.Request_By.Visible) { // trRequestDelete.Request_By.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Request_By.HeaderCellClass)"><span id="elh_tr_request_Request_By" class="tr_request_Request_By">@Html.Raw(trRequestDelete.Request_By.Caption)</span></th>
+} @* trRequestDelete.Request_By.Visible (end) *@
+@if (trRequestDelete.Request_By_Name.Visible) { // trRequestDelete.Request_By_Name.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Request_By_Name.HeaderCellClass)"><span id="elh_tr_request_Request_By_Name" class="tr_request_Request_By_Name">@Html.Raw(trRequestDelete.Request_By_Name.Caption)</span></th>
+} @* trRequestDelete.Request_By_Name.Visible (end) *@
+@if (trRequestDelete.Request_By_Position.Visible) { // trRequestDelete.Request_By_Position.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Request_By_Position.HeaderCellClass)"><span id="elh_tr_request_Request_By_Position" class="tr_request_Request_By_Position">@Html.Raw(trRequestDelete.Request_By_Position.Caption)</span></th>
+} @* trRequestDelete.Request_By_Position.Visible (end) *@
+@if (trRequestDelete.Request_By_Branch.Visible) { // trRequestDelete.Request_By_Branch.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Request_By_Branch.HeaderCellClass)"><span id="elh_tr_request_Request_By_Branch" class="tr_request_Request_By_Branch">@Html.Raw(trRequestDelete.Request_By_Branch.Caption)</span></th>
+} @* trRequestDelete.Request_By_Branch.Visible (end) *@
+@if (trRequestDelete.Request_By_Region.Visible) { // trRequestDelete.Request_By_Region.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Request_By_Region.HeaderCellClass)"><span id="elh_tr_request_Request_By_Region" class="tr_request_Request_By_Region">@Html.Raw(trRequestDelete.Request_By_Region.Caption)</span></th>
+} @* trRequestDelete.Request_By_Region.Visible (end) *@
+@if (trRequestDelete.Request_Industry.Visible) { // trRequestDelete.Request_Industry.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Request_Industry.HeaderCellClass)"><span id="elh_tr_request_Request_Industry" class="tr_request_Request_Industry">@Html.Raw(trRequestDelete.Request_Industry.Caption)</span></th>
+} @* trRequestDelete.Request_Industry.Visible (end) *@
+@if (trRequestDelete.Customer_ID.Visible) { // trRequestDelete.Customer_ID.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Customer_ID.HeaderCellClass)"><span id="elh_tr_request_Customer_ID" class="tr_request_Customer_ID">@Html.Raw(trRequestDelete.Customer_ID.Caption)</span></th>
+} @* trRequestDelete.Customer_ID.Visible (end) *@
+@if (trRequestDelete.Customer_Name.Visible) { // trRequestDelete.Customer_Name.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Customer_Name.HeaderCellClass)"><span id="elh_tr_request_Customer_Name" class="tr_request_Customer_Name">@Html.Raw(trRequestDelete.Customer_Name.Caption)</span></th>
+} @* trRequestDelete.Customer_Name.Visible (end) *@
+@if (trRequestDelete.SAP_Total.Visible) { // trRequestDelete.SAP_Total.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.SAP_Total.HeaderCellClass)"><span id="elh_tr_request_SAP_Total" class="tr_request_SAP_Total">@Html.Raw(trRequestDelete.SAP_Total.Caption)</span></th>
+} @* trRequestDelete.SAP_Total.Visible (end) *@
+@if (trRequestDelete.Override_Total.Visible) { // trRequestDelete.Override_Total.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Override_Total.HeaderCellClass)"><span id="elh_tr_request_Override_Total" class="tr_request_Override_Total">@Html.Raw(trRequestDelete.Override_Total.Caption)</span></th>
+} @* trRequestDelete.Override_Total.Visible (end) *@
+@if (trRequestDelete.Variance_Total.Visible) { // trRequestDelete.Variance_Total.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Variance_Total.HeaderCellClass)"><span id="elh_tr_request_Variance_Total" class="tr_request_Variance_Total">@Html.Raw(trRequestDelete.Variance_Total.Caption)</span></th>
+} @* trRequestDelete.Variance_Total.Visible (end) *@
+@if (trRequestDelete.Variance_Percent.Visible) { // trRequestDelete.Variance_Percent.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Variance_Percent.HeaderCellClass)"><span id="elh_tr_request_Variance_Percent" class="tr_request_Variance_Percent">@Html.Raw(trRequestDelete.Variance_Percent.Caption)</span></th>
+} @* trRequestDelete.Variance_Percent.Visible (end) *@
+@if (trRequestDelete.Notes.Visible) { // trRequestDelete.Notes.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Notes.HeaderCellClass)"><span id="elh_tr_request_Notes" class="tr_request_Notes">@Html.Raw(trRequestDelete.Notes.Caption)</span></th>
+} @* trRequestDelete.Notes.Visible (end) *@
+@if (trRequestDelete.Next_Approver.Visible) { // trRequestDelete.Next_Approver.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Next_Approver.HeaderCellClass)"><span id="elh_tr_request_Next_Approver" class="tr_request_Next_Approver">@Html.Raw(trRequestDelete.Next_Approver.Caption)</span></th>
+} @* trRequestDelete.Next_Approver.Visible (end) *@
+@if (trRequestDelete.Request_PIC.Visible) { // trRequestDelete.Request_PIC.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Request_PIC.HeaderCellClass)"><span id="elh_tr_request_Request_PIC" class="tr_request_Request_PIC">@Html.Raw(trRequestDelete.Request_PIC.Caption)</span></th>
+} @* trRequestDelete.Request_PIC.Visible (end) *@
+@if (trRequestDelete.Request_Status.Visible) { // trRequestDelete.Request_Status.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Request_Status.HeaderCellClass)"><span id="elh_tr_request_Request_Status" class="tr_request_Request_Status">@Html.Raw(trRequestDelete.Request_Status.Caption)</span></th>
+} @* trRequestDelete.Request_Status.Visible (end) *@
+@if (trRequestDelete.List_Approver.Visible) { // trRequestDelete.List_Approver.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.List_Approver.HeaderCellClass)"><span id="elh_tr_request_List_Approver" class="tr_request_List_Approver">@Html.Raw(trRequestDelete.List_Approver.Caption)</span></th>
+} @* trRequestDelete.List_Approver.Visible (end) *@
+@if (trRequestDelete.Last_Update_By.Visible) { // trRequestDelete.Last_Update_By.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Last_Update_By.HeaderCellClass)"><span id="elh_tr_request_Last_Update_By" class="tr_request_Last_Update_By">@Html.Raw(trRequestDelete.Last_Update_By.Caption)</span></th>
+} @* trRequestDelete.Last_Update_By.Visible (end) *@
+@if (trRequestDelete.Created_By.Visible) { // trRequestDelete.Created_By.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Created_By.HeaderCellClass)"><span id="elh_tr_request_Created_By" class="tr_request_Created_By">@Html.Raw(trRequestDelete.Created_By.Caption)</span></th>
+} @* trRequestDelete.Created_By.Visible (end) *@
+@if (trRequestDelete.Created_Date.Visible) { // trRequestDelete.Created_Date.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Created_Date.HeaderCellClass)"><span id="elh_tr_request_Created_Date" class="tr_request_Created_Date">@Html.Raw(trRequestDelete.Created_Date.Caption)</span></th>
+} @* trRequestDelete.Created_Date.Visible (end) *@
+@if (trRequestDelete.Request_Currency.Visible) { // trRequestDelete.Request_Currency.Visible (begin)
+        <th class="@Html.Raw(trRequestDelete.Request_Currency.HeaderCellClass)"><span id="elh_tr_request_Request_Currency" class="tr_request_Request_Currency">@Html.Raw(trRequestDelete.Request_Currency.Caption)</span></th>
+} @* trRequestDelete.Request_Currency.Visible (end) *@
+    </tr>
+    </thead>
+    <tbody>
+@{ trRequestDelete.RecordCount = 0; }
+@while (trRequestDelete.Recordset != null && await trRequestDelete.Recordset.ReadAsync()) { // DN
+    trRequestDelete.RecordCount++;
+    trRequestDelete.RowCount++;
+
+    // Set row properties
+    trRequestDelete.ResetAttributes();
+    trRequestDelete.RowType = RowType.View; // View
+
+    // Get the field contents
+    await trRequestDelete.LoadRowValues(trRequestDelete.Recordset);
+
+    // Render row
+    await trRequestDelete.RenderRow();
+    <tr @Html.Raw(trRequestDelete.RowAttributes)>
+@if (trRequestDelete.Request_No.Visible) { // trRequestDelete.Request_No.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Request_No.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Request_No.ViewAttributes)>
+@Html.Raw(trRequestDelete.Request_No.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Request_No.Visible (end) *@
+@if (trRequestDelete.Reference_Doc.Visible) { // trRequestDelete.Reference_Doc.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Reference_Doc.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Reference_Doc.ViewAttributes)>
+@Html.Raw(trRequestDelete.Reference_Doc.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Reference_Doc.Visible (end) *@
+@if (trRequestDelete.Reason.Visible) { // trRequestDelete.Reason.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Reason.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Reason.ViewAttributes)>
+@Html.Raw(trRequestDelete.Reason.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Reason.Visible (end) *@
+@if (trRequestDelete.Request_By.Visible) { // trRequestDelete.Request_By.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Request_By.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Request_By.ViewAttributes)>
+@Html.Raw(trRequestDelete.Request_By.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Request_By.Visible (end) *@
+@if (trRequestDelete.Request_By_Name.Visible) { // trRequestDelete.Request_By_Name.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Request_By_Name.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Request_By_Name.ViewAttributes)>
+@Html.Raw(trRequestDelete.Request_By_Name.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Request_By_Name.Visible (end) *@
+@if (trRequestDelete.Request_By_Position.Visible) { // trRequestDelete.Request_By_Position.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Request_By_Position.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Request_By_Position.ViewAttributes)>
+@Html.Raw(trRequestDelete.Request_By_Position.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Request_By_Position.Visible (end) *@
+@if (trRequestDelete.Request_By_Branch.Visible) { // trRequestDelete.Request_By_Branch.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Request_By_Branch.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Request_By_Branch.ViewAttributes)>
+@Html.Raw(trRequestDelete.Request_By_Branch.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Request_By_Branch.Visible (end) *@
+@if (trRequestDelete.Request_By_Region.Visible) { // trRequestDelete.Request_By_Region.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Request_By_Region.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Request_By_Region.ViewAttributes)>
+@Html.Raw(trRequestDelete.Request_By_Region.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Request_By_Region.Visible (end) *@
+@if (trRequestDelete.Request_Industry.Visible) { // trRequestDelete.Request_Industry.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Request_Industry.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Request_Industry.ViewAttributes)>
+@Html.Raw(trRequestDelete.Request_Industry.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Request_Industry.Visible (end) *@
+@if (trRequestDelete.Customer_ID.Visible) { // trRequestDelete.Customer_ID.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Customer_ID.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Customer_ID.ViewAttributes)>
+@Html.Raw(trRequestDelete.Customer_ID.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Customer_ID.Visible (end) *@
+@if (trRequestDelete.Customer_Name.Visible) { // trRequestDelete.Customer_Name.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Customer_Name.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Customer_Name.ViewAttributes)>
+@Html.Raw(trRequestDelete.Customer_Name.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Customer_Name.Visible (end) *@
+@if (trRequestDelete.SAP_Total.Visible) { // trRequestDelete.SAP_Total.Visible (begin)
+        <td @Html.Raw(trRequestDelete.SAP_Total.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.SAP_Total.ViewAttributes)>
+@Html.Raw(trRequestDelete.SAP_Total.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.SAP_Total.Visible (end) *@
+@if (trRequestDelete.Override_Total.Visible) { // trRequestDelete.Override_Total.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Override_Total.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Override_Total.ViewAttributes)>
+@Html.Raw(trRequestDelete.Override_Total.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Override_Total.Visible (end) *@
+@if (trRequestDelete.Variance_Total.Visible) { // trRequestDelete.Variance_Total.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Variance_Total.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Variance_Total.ViewAttributes)>
+@Html.Raw(trRequestDelete.Variance_Total.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Variance_Total.Visible (end) *@
+@if (trRequestDelete.Variance_Percent.Visible) { // trRequestDelete.Variance_Percent.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Variance_Percent.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Variance_Percent.ViewAttributes)>
+@Html.Raw(trRequestDelete.Variance_Percent.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Variance_Percent.Visible (end) *@
+@if (trRequestDelete.Notes.Visible) { // trRequestDelete.Notes.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Notes.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Notes.ViewAttributes)>
+@Html.Raw(trRequestDelete.Notes.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Notes.Visible (end) *@
+@if (trRequestDelete.Next_Approver.Visible) { // trRequestDelete.Next_Approver.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Next_Approver.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Next_Approver.ViewAttributes)>
+@Html.Raw(trRequestDelete.Next_Approver.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Next_Approver.Visible (end) *@
+@if (trRequestDelete.Request_PIC.Visible) { // trRequestDelete.Request_PIC.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Request_PIC.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Request_PIC.ViewAttributes)>
+@Html.Raw(trRequestDelete.Request_PIC.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Request_PIC.Visible (end) *@
+@if (trRequestDelete.Request_Status.Visible) { // trRequestDelete.Request_Status.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Request_Status.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Request_Status.ViewAttributes)>
+@Html.Raw(trRequestDelete.Request_Status.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Request_Status.Visible (end) *@
+@if (trRequestDelete.List_Approver.Visible) { // trRequestDelete.List_Approver.Visible (begin)
+        <td @Html.Raw(trRequestDelete.List_Approver.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.List_Approver.ViewAttributes)>
+@Html.Raw(trRequestDelete.List_Approver.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.List_Approver.Visible (end) *@
+@if (trRequestDelete.Last_Update_By.Visible) { // trRequestDelete.Last_Update_By.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Last_Update_By.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Last_Update_By.ViewAttributes)>
+@Html.Raw(trRequestDelete.Last_Update_By.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Last_Update_By.Visible (end) *@
+@if (trRequestDelete.Created_By.Visible) { // trRequestDelete.Created_By.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Created_By.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Created_By.ViewAttributes)>
+@Html.Raw(trRequestDelete.Created_By.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Created_By.Visible (end) *@
+@if (trRequestDelete.Created_Date.Visible) { // trRequestDelete.Created_Date.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Created_Date.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Created_Date.ViewAttributes)>
+@Html.Raw(trRequestDelete.Created_Date.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Created_Date.Visible (end) *@
+@if (trRequestDelete.Request_Currency.Visible) { // trRequestDelete.Request_Currency.Visible (begin)
+        <td @Html.Raw(trRequestDelete.Request_Currency.CellAttributes)>
+<span id="">
+<span @Html.Raw(trRequestDelete.Request_Currency.ViewAttributes)>
+@Html.Raw(trRequestDelete.Request_Currency.GetViewValue())</span>
+</span></td>
+} @* trRequestDelete.Request_Currency.Visible (end) *@
+    </tr>
+}
+@{ trRequestDelete.CloseRecordset(); }
+</tbody>
+</table>
+</div>
+</div>
+<div class="ew-buttons ew-desktop-buttons">
+<button class="btn btn-primary ew-btn" name="btn-action" id="btn-action" type="submit">@Html.Raw(Language.Phrase("DeleteBtn"))</button>
+<button class="btn btn-default ew-btn" name="btn-cancel" id="btn-cancel" type="button" data-href="@AppPath(trRequestDelete.ReturnUrl)">@Html.Raw(Language.Phrase("CancelBtn"))</button>
+</div>
+</form>
+@trRequestDelete.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>

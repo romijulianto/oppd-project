@@ -1,0 +1,349 @@
+@{
+    // View
+    View = this;
+
+    // Check action result
+    if (mtApproverList.ActionResult is EmptyResult) { // Terminate page
+        return;
+    }
+
+    // Layout
+    if (!mtApproverList.UseLayout) // UseLayout = false // DN
+        Layout = "";
+    else
+        Layout = "_Layout";
+
+    // Local variables (Temp data)
+    #pragma warning disable 168
+    string? sqlWrk, filterWrk, whereWrk, curVal, dispVal;
+    List<Dictionary<string, object>>? rswrk;
+    string[]? arWrk;
+    List<object?>? listWrk;
+    object? guidWrk;
+    Func<string>? lookupFilter;
+    #pragma warning restore 168
+}
+@if (!mtApproverList.IsExport()) {
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtApproverList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_approver: currentTable } });
+var currentPageID = ew.PAGE_ID = "list";
+var currentForm;
+var @(mtApproverList.FormName);
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery;
+    let fields = currentTable.fields;
+
+    // Form object
+    let form = new ew.FormBuilder()
+        .setId("@(mtApproverList.FormName)")
+        .setPageId("list")
+        .setSubmitWithFetch(@(mtApproverList.UseAjaxActions ? "true" : "false"))
+        .setFormKeyCountName("@(mtApproverList.FormKeyCountName)")
+        .build();
+    window[form.id] = form;
+    currentForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<script>
+ew.PREVIEW_SELECTOR = ".ew-preview-btn";
+ew.PREVIEW_MODAL_CLASS = "modal modal-fullscreen-sm-down";
+ew.PREVIEW_ROW = true;
+ew.PREVIEW_SINGLE_ROW = false;
+ew.PREVIEW || ew.ready("head", ew.PATH_BASE + "js/preview.min.js?v=20.6.0", "preview");
+</script>
+<script>
+window.Tabulator || loadjs([
+    ew.PATH_BASE + "js/tabulator.min.js?v=20.6.3",
+    ew.PATH_BASE + "css/@CssFile("tabulator_bootstrap5.css", false)?v=20.6.3"
+], "import");
+</script>
+<script>
+loadjs.ready("head", function() {
+    // Write your client script here, no need to add script tags.
+});
+</script>
+}
+@if (!mtApproverList.IsExport()) {
+<div class="btn-toolbar ew-toolbar">
+@if (mtApproverList.TotalRecords > 0 && mtApproverList.ExportOptions.Visible) {
+    mtApproverList.ExportOptions.Render("body");
+}
+@if (mtApproverList.ImportOptions.Visible) {
+    mtApproverList.ImportOptions.Render("body");
+}
+@if (mtApproverList.SearchOptions.Visible) {
+    mtApproverList.SearchOptions.Render("body");
+}
+@if (mtApproverList.FilterOptions.Visible) {
+    mtApproverList.FilterOptions.Render("body");
+}
+</div>
+}
+@if (!mtApproverList.IsModal) {
+<form name="fmt_approversrch" id="fmt_approversrch" class="ew-form ew-ext-search-form" action="@AppPath(CurrentPageName())" novalidate autocomplete="off">
+<div id="fmt_approversrch_search_panel" class="mb-2 mb-sm-0 @(mtApproverList.SearchPanelClass)"><!-- .ew-search-panel -->
+<script>
+var currentTable = @Html.Raw(ConvertToJson(mtApproverList.ToClientVar()));
+ew.deepAssign(ew.vars, { tables: { mt_approver: currentTable } });
+var currentForm;
+var fmt_approversrch, currentSearchForm, currentAdvancedSearchForm;
+loadjs.ready(["wrapper", "head"], function () {
+    let $ = jQuery,
+        fields = currentTable.fields;
+
+    // Form object for search
+    let form = new ew.FormBuilder()
+        .setId("fmt_approversrch")
+        .setPageId("list")
+@if (mtApproverList.UseAjaxActions) {
+        <text>.setSubmitWithFetch(true)</text>
+}
+
+        // Dynamic selection lists
+        .setLists({
+        })
+
+        // Filters
+        .setFilterList(@Html.Raw(await mtApproverList.GetFilterList()))
+        .build();
+    window[form.id] = form;
+    currentSearchForm = form;
+    loadjs.done(form.id);
+});
+</script>
+<input type="hidden" name="cmd" value="search">
+@if (Security.CanSearch) {
+if (!mtApproverList.IsExport() && Empty(mtApproverList.CurrentAction) && mtApproverList.HasSearchFields()) { @* Show search form (begin) *@
+<div class="ew-extended-search container-fluid ps-2">
+<div class="row mb-0">
+    <div class="col-sm-auto px-0 pe-sm-2">
+        <div class="ew-basic-search input-group">
+            <input type="search" name="@(Config.TableBasicSearch)" id="@(Config.TableBasicSearch)" class="form-control ew-basic-search-keyword" value="@Html.Raw(HtmlEncode(mtApproverList.BasicSearch.SessionKeyword))" placeholder="@(HtmlEncode(Language.Phrase("Search")))" aria-label="@(HtmlEncode(Language.Phrase("Search")))">
+            <input type="hidden" name="@(Config.TableBasicSearchType)" id="@(Config.TableBasicSearchType)" class="ew-basic-search-type" value="@(HtmlEncode(mtApproverList.BasicSearch.SessionType))">
+            <button type="button" data-bs-toggle="dropdown" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" aria-haspopup="true" aria-expanded="false">
+                <span id="searchtype">@Html.Raw(mtApproverList.BasicSearch.TypeNameShort)</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end">
+                <button type="button" class="dropdown-item@(mtApproverList.BasicSearch.SessionType == "" ? " active" : "")" form="fmt_approversrch" data-ew-action="search-type">@Html.Raw(Language.Phrase("QuickSearchAuto"))</button>
+                <button type="button" class="dropdown-item@(mtApproverList.BasicSearch.SessionType == "=" ? " active" : "")" form="fmt_approversrch" data-ew-action="search-type" data-search-type="=">@Html.Raw(Language.Phrase("QuickSearchExact"))</button>
+                <button type="button" class="dropdown-item@(mtApproverList.BasicSearch.SessionType == "AND" ? " active" : "")" form="fmt_approversrch" data-ew-action="search-type" data-search-type="AND">@Html.Raw(Language.Phrase("QuickSearchAll"))</button>
+                <button type="button" class="dropdown-item@(mtApproverList.BasicSearch.SessionType == "OR" ? " active" : "")" form="fmt_approversrch" data-ew-action="search-type" data-search-type="OR">@Html.Raw(Language.Phrase("QuickSearchAny"))</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-auto mb-3">
+        <button class="btn btn-primary" name="btn-submit" id="btn-submit" type="submit">@Html.Raw(Language.Phrase("SearchBtn"))</button>
+    </div>
+</div>
+</div><!-- /.ew-extended-search -->
+} @* Show search form (end) *@
+}
+</div><!-- /.ew-search-panel -->
+</form>
+}
+@mtApproverList.ShowPageHeader()
+@mtApproverList.ShowMessages()
+<main class="list @(mtApproverList.TotalRecords == 0 && !mtApproverList.IsAdd ? " ew-no-record" : "")">
+<div id="ew-list">
+@if (mtApproverList.TotalRecords > 0 || !Empty(mtApproverList.CurrentAction)) {
+<div class="card ew-card ew-grid@(mtApproverList.IsAddOrEdit ? " ew-grid-add-edit" : "") @(mtApproverList.TableGridClass)">
+<form name="@(mtApproverList.FormName)" id="@(mtApproverList.FormName)" class="ew-form ew-list-form" action="@AppPath(mtApproverList.PageName)" method="post" novalidate autocomplete="off">
+@if (CurrentPage.CheckToken) {
+    <input type="hidden" name="@Config.TokenNameKey" value="@Config.TokenName"><!-- CSRF token name -->
+    @Html.AntiForgeryToken()
+}
+@if (mtApproverList.IsModal) {
+<input type="hidden" name="modal" value="1">
+}
+<div id="gmp_mt_approver" class="card-body ew-grid-middle-panel @(mtApproverList.TableContainerClass)" style="@(mtApproverList.TableContainerStyle)">
+@if (mtApproverList.TotalRecords > 0 || mtApproverList.IsGridEdit || mtApproverList.IsMultiEdit) {
+<table id="tbl_mt_approverlist" class="@(mtApproverList.TableClass)"><!-- .ew-table -->
+<thead>
+    <tr class="ew-table-header">
+@{
+    // Header row
+    mtApproverList.RowType = RowType.Header;
+
+    // Render list options
+    await mtApproverList.RenderListOptions();
+}
+@* Render list options (header, left) *@
+@mtApproverList.ListOptions.RenderHeader("left")
+@if (mtApproverList.id.Visible) { // mtApproverList.id.Visible (begin)
+        <th data-name="id" class="@(mtApproverList.id.HeaderCellClass)"><div id="elh_mt_approver_id" class="mt_approver_id">@Html.Raw(mtApproverList.RenderFieldHeader(mtApproverList.id))</div></th>
+} @* mtApproverList.id.Visible (end) *@
+@if (mtApproverList._UserName.Visible) { // mtApproverList._UserName.Visible (begin)
+        <th data-name="_UserName" class="@(mtApproverList._UserName.HeaderCellClass)"><div id="elh_mt_approver__UserName" class="mt_approver__UserName">@Html.Raw(mtApproverList.RenderFieldHeader(mtApproverList._UserName))</div></th>
+} @* mtApproverList._UserName.Visible (end) *@
+@if (mtApproverList.Full_Name.Visible) { // mtApproverList.Full_Name.Visible (begin)
+        <th data-name="Full_Name" class="@(mtApproverList.Full_Name.HeaderCellClass)"><div id="elh_mt_approver_Full_Name" class="mt_approver_Full_Name">@Html.Raw(mtApproverList.RenderFieldHeader(mtApproverList.Full_Name))</div></th>
+} @* mtApproverList.Full_Name.Visible (end) *@
+@if (mtApproverList.Position.Visible) { // mtApproverList.Position.Visible (begin)
+        <th data-name="Position" class="@(mtApproverList.Position.HeaderCellClass)"><div id="elh_mt_approver_Position" class="mt_approver_Position">@Html.Raw(mtApproverList.RenderFieldHeader(mtApproverList.Position))</div></th>
+} @* mtApproverList.Position.Visible (end) *@
+@if (mtApproverList.Departement.Visible) { // mtApproverList.Departement.Visible (begin)
+        <th data-name="Departement" class="@(mtApproverList.Departement.HeaderCellClass)"><div id="elh_mt_approver_Departement" class="mt_approver_Departement">@Html.Raw(mtApproverList.RenderFieldHeader(mtApproverList.Departement))</div></th>
+} @* mtApproverList.Departement.Visible (end) *@
+@if (mtApproverList.Division.Visible) { // mtApproverList.Division.Visible (begin)
+        <th data-name="Division" class="@(mtApproverList.Division.HeaderCellClass)"><div id="elh_mt_approver_Division" class="mt_approver_Division">@Html.Raw(mtApproverList.RenderFieldHeader(mtApproverList.Division))</div></th>
+} @* mtApproverList.Division.Visible (end) *@
+@if (mtApproverList.Area.Visible) { // mtApproverList.Area.Visible (begin)
+        <th data-name="Area" class="@(mtApproverList.Area.HeaderCellClass)"><div id="elh_mt_approver_Area" class="mt_approver_Area">@Html.Raw(mtApproverList.RenderFieldHeader(mtApproverList.Area))</div></th>
+} @* mtApproverList.Area.Visible (end) *@
+@if (mtApproverList.Business_Area.Visible) { // mtApproverList.Business_Area.Visible (begin)
+        <th data-name="Business_Area" class="@(mtApproverList.Business_Area.HeaderCellClass)"><div id="elh_mt_approver_Business_Area" class="mt_approver_Business_Area">@Html.Raw(mtApproverList.RenderFieldHeader(mtApproverList.Business_Area))</div></th>
+} @* mtApproverList.Business_Area.Visible (end) *@
+@if (mtApproverList.Business_Area_Desc.Visible) { // mtApproverList.Business_Area_Desc.Visible (begin)
+        <th data-name="Business_Area_Desc" class="@(mtApproverList.Business_Area_Desc.HeaderCellClass)"><div id="elh_mt_approver_Business_Area_Desc" class="mt_approver_Business_Area_Desc">@Html.Raw(mtApproverList.RenderFieldHeader(mtApproverList.Business_Area_Desc))</div></th>
+} @* mtApproverList.Business_Area_Desc.Visible (end) *@
+@* Render list options (header, right) *@
+@mtApproverList.ListOptions.RenderHeader("right")
+    </tr>
+</thead>
+<tbody data-page="@(mtApproverList.PageNumber)">
+@{
+    await mtApproverList.SetupGrid();
+    bool eof = mtApproverList.Recordset == null; // DN
+}
+@while (mtApproverList.RecordCount < mtApproverList.StopRecord || SameString(mtApproverList.RowIndex, "$rowindex$")) { // Begin While
+    if (!eof && !SameString(mtApproverList.RowIndex, "$rowindex$") &&
+        (!mtApproverList.IsGridAdd || mtApproverList.CurrentMode == "copy") &&
+        (!((mtApproverList.IsCopy || mtApproverList.IsAdd) && mtApproverList.RowIndex is int rowIndex && rowIndex == 0))) // DN
+        eof = !await mtApproverList.Recordset.ReadAsync();
+    mtApproverList.RecordCount++;
+    if (mtApproverList.RecordCount >= mtApproverList.StartRecord) {
+        await mtApproverList.SetupRow();
+    <tr @Html.Raw(mtApproverList.RowAttributes)>
+    @* Render list options (body, left) *@
+    @mtApproverList.ListOptions.RenderBody("left", mtApproverList.RowCount)
+    @if (mtApproverList.id.Visible) { // mtApproverList.id.Visible (begin)
+        <td data-name="id" @Html.Raw(mtApproverList.id.CellAttributes)>
+<span id="el@(mtApproverList.RowIndex == "$rowindex$" ? "$rowindex$" : mtApproverList.RowCount)_mt_approver_id" class="el_mt_approver_id">
+<span @Html.Raw(mtApproverList.id.ViewAttributes)>
+@Html.Raw(mtApproverList.id.GetViewValue())</span>
+</span>
+</td>
+    } @* mtApproverList.id.Visible (end) *@
+    @if (mtApproverList._UserName.Visible) { // mtApproverList._UserName.Visible (begin)
+        <td data-name="_UserName" @Html.Raw(mtApproverList._UserName.CellAttributes)>
+<span id="el@(mtApproverList.RowIndex == "$rowindex$" ? "$rowindex$" : mtApproverList.RowCount)_mt_approver__UserName" class="el_mt_approver__UserName">
+<span @Html.Raw(mtApproverList._UserName.ViewAttributes)>
+@Html.Raw(mtApproverList._UserName.GetViewValue())</span>
+</span>
+</td>
+    } @* mtApproverList._UserName.Visible (end) *@
+    @if (mtApproverList.Full_Name.Visible) { // mtApproverList.Full_Name.Visible (begin)
+        <td data-name="Full_Name" @Html.Raw(mtApproverList.Full_Name.CellAttributes)>
+<span id="el@(mtApproverList.RowIndex == "$rowindex$" ? "$rowindex$" : mtApproverList.RowCount)_mt_approver_Full_Name" class="el_mt_approver_Full_Name">
+<span @Html.Raw(mtApproverList.Full_Name.ViewAttributes)>
+@Html.Raw(mtApproverList.Full_Name.GetViewValue())</span>
+</span>
+</td>
+    } @* mtApproverList.Full_Name.Visible (end) *@
+    @if (mtApproverList.Position.Visible) { // mtApproverList.Position.Visible (begin)
+        <td data-name="Position" @Html.Raw(mtApproverList.Position.CellAttributes)>
+<span id="el@(mtApproverList.RowIndex == "$rowindex$" ? "$rowindex$" : mtApproverList.RowCount)_mt_approver_Position" class="el_mt_approver_Position">
+<span @Html.Raw(mtApproverList.Position.ViewAttributes)>
+@Html.Raw(mtApproverList.Position.GetViewValue())</span>
+</span>
+</td>
+    } @* mtApproverList.Position.Visible (end) *@
+    @if (mtApproverList.Departement.Visible) { // mtApproverList.Departement.Visible (begin)
+        <td data-name="Departement" @Html.Raw(mtApproverList.Departement.CellAttributes)>
+<span id="el@(mtApproverList.RowIndex == "$rowindex$" ? "$rowindex$" : mtApproverList.RowCount)_mt_approver_Departement" class="el_mt_approver_Departement">
+<span @Html.Raw(mtApproverList.Departement.ViewAttributes)>
+@Html.Raw(mtApproverList.Departement.GetViewValue())</span>
+</span>
+</td>
+    } @* mtApproverList.Departement.Visible (end) *@
+    @if (mtApproverList.Division.Visible) { // mtApproverList.Division.Visible (begin)
+        <td data-name="Division" @Html.Raw(mtApproverList.Division.CellAttributes)>
+<span id="el@(mtApproverList.RowIndex == "$rowindex$" ? "$rowindex$" : mtApproverList.RowCount)_mt_approver_Division" class="el_mt_approver_Division">
+<span @Html.Raw(mtApproverList.Division.ViewAttributes)>
+@Html.Raw(mtApproverList.Division.GetViewValue())</span>
+</span>
+</td>
+    } @* mtApproverList.Division.Visible (end) *@
+    @if (mtApproverList.Area.Visible) { // mtApproverList.Area.Visible (begin)
+        <td data-name="Area" @Html.Raw(mtApproverList.Area.CellAttributes)>
+<span id="el@(mtApproverList.RowIndex == "$rowindex$" ? "$rowindex$" : mtApproverList.RowCount)_mt_approver_Area" class="el_mt_approver_Area">
+<span @Html.Raw(mtApproverList.Area.ViewAttributes)>
+@Html.Raw(mtApproverList.Area.GetViewValue())</span>
+</span>
+</td>
+    } @* mtApproverList.Area.Visible (end) *@
+    @if (mtApproverList.Business_Area.Visible) { // mtApproverList.Business_Area.Visible (begin)
+        <td data-name="Business_Area" @Html.Raw(mtApproverList.Business_Area.CellAttributes)>
+<span id="el@(mtApproverList.RowIndex == "$rowindex$" ? "$rowindex$" : mtApproverList.RowCount)_mt_approver_Business_Area" class="el_mt_approver_Business_Area">
+<span @Html.Raw(mtApproverList.Business_Area.ViewAttributes)>
+@Html.Raw(mtApproverList.Business_Area.GetViewValue())</span>
+</span>
+</td>
+    } @* mtApproverList.Business_Area.Visible (end) *@
+    @if (mtApproverList.Business_Area_Desc.Visible) { // mtApproverList.Business_Area_Desc.Visible (begin)
+        <td data-name="Business_Area_Desc" @Html.Raw(mtApproverList.Business_Area_Desc.CellAttributes)>
+<span id="el@(mtApproverList.RowIndex == "$rowindex$" ? "$rowindex$" : mtApproverList.RowCount)_mt_approver_Business_Area_Desc" class="el_mt_approver_Business_Area_Desc">
+<span @Html.Raw(mtApproverList.Business_Area_Desc.ViewAttributes)>
+@Html.Raw(mtApproverList.Business_Area_Desc.GetViewValue())</span>
+</span>
+</td>
+    } @* mtApproverList.Business_Area_Desc.Visible (end) *@
+    @* Render list options (body, right) *@
+    @mtApproverList.ListOptions.RenderBody("right", mtApproverList.RowCount)
+    </tr>
+    } @* End if *@
+
+    // Reset for template row
+    if (SameString(mtApproverList.RowIndex, "$rowindex$"))
+        mtApproverList.RowIndex = 0;
+
+    // Reset inline add/copy row
+    if ((mtApproverList.IsCopy || mtApproverList.IsAdd) && mtApproverList.RowIndex is int rowIndex2 && rowIndex2 == 0)
+        mtApproverList.RowIndex = 1;
+} @* End While *@
+</tbody>
+</table><!-- /.ew-table -->
+} @* End If TotalRecords > 0 *@
+</div><!-- /.ew-grid-middle-panel -->
+@if (Empty(mtApproverList.CurrentAction) && !mtApproverList.UseAjaxActions) {
+<input type="hidden" name="action" id="action" value="">
+}
+</form><!-- /.ew-list-form -->
+@{ mtApproverList.CloseRecordset(); }
+@if (!mtApproverList.IsExport()) {
+<div class="card-footer ew-grid-lower-panel">
+@if (!mtApproverList.IsGridAdd && !(mtApproverList.IsGridEdit && mtApproverList.ModalGridEdit) && !mtApproverList.IsMultiEdit) {
+@Html.Raw(mtApproverList.Pager.Render())
+}
+<div class="ew-list-other-options">
+@mtApproverList.OtherOptions.RenderBody("bottom")
+</div>
+</div>
+}
+</div><!-- /.ew-grid -->
+} else { // Show other options
+<div class="ew-list-other-options">
+@mtApproverList.OtherOptions.ForEach(opt => opt.ButtonClass = "").RenderBody()
+</div>
+}
+</div>
+</main>
+@mtApproverList.ShowPageFooter()
+@Html.Raw(GetDebugMessage())
+@ElapsedTime()
+@if (!mtApproverList.IsExport()) {
+<script>
+// Field event handlers
+loadjs.ready("head", function() {
+    ew.addEventHandlers("mt_approver");
+});
+</script>
+<script>
+loadjs.ready("load", function() {
+    // Write your table-specific startup script here
+    // document.write("page loaded");
+});
+</script>
+}
